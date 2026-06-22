@@ -14,22 +14,39 @@
     padding: 0;
     border: none;
     background: none;
-    font-size: $breadcrumb-font-size;
+    color: var(--idb-color-on-surface-muted);
+    font-size: var(--idb-font-size-label);
+    line-height: var(--idb-line-height-label);
+    font-weight: var(--idb-font-weight);
 }
 
 .toolbar .breadcrumb li {
     &:not(:first-child) {
-        padding-left: $breadcrumb-item-padding-x;
+        padding-left: 0;
         &::before {
-            float: left; // Suppress inline spacings and underlining of the separator
-            padding-right: $breadcrumb-item-padding-x;
-            color: $breadcrumb-divider-color;
-            content: var(--#{$variable-prefix}breadcrumb-divider, escape-svg($breadcrumb-divider)) #{"/* rtl:"} var(--#{$variable-prefix}breadcrumb-divider, escape-svg($breadcrumb-divider-flipped)) #{"*/"};
-          }
+            float: none;
+            padding-right: 0;
+            margin: 0 var(--idb-space-xs);
+            color: var(--idb-color-on-surface-muted);
+            content: "/";
+        }
     }
 }
 
+.toolbar .breadcrumb .breadcrumb-ellipsis {
+    display: none;
+    color: var(--idb-color-on-surface-muted);
+}
 
+@include media-breakpoint-down(lg) {
+    .toolbar .breadcrumb .breadcrumb-ellipsis:nth-last-child(n + 4) {
+        display: list-item;
+    }
+
+    .toolbar .breadcrumb .breadcrumb-ellipsis:nth-last-child(n + 4) ~ li:not(:last-child) {
+        display: none;
+    }
+}
 
 .toolbar .home a {
     text-decoration: none;
@@ -40,7 +57,7 @@
 }
 
 .toolbar .breadcrumb a {
-    color: $breadcrumbTextColor;
+    color: var(--idb-color-on-surface-muted);
 }
 
 @include media-breakpoint-down(sm) {
@@ -52,8 +69,8 @@
 
 .toolbar .breadcrumb .active a,
 .toolbar .breadcrumb a.active {
-    font-weight: bold;
-    color: $brand-700;
+    font-weight: 600;
+    color: var(--idb-color-on-surface-muted);
 }
 
 .actions {

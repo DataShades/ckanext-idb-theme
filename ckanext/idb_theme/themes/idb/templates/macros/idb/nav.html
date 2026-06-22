@@ -2,6 +2,9 @@
     <li class="{{ 'home' if initial }} {{ 'active' if active }}">
         {{ ui.link(content, href=href, **kwargs) }}
     </li>
+    {%- if initial -%}
+        <li class="breadcrumb-ellipsis" aria-hidden="true">…</li>
+    {%- endif -%}
 {%- endmacro %}
 
 {%- macro nav_item(content, href, active) -%}
