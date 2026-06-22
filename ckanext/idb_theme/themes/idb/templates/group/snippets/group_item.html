@@ -15,7 +15,7 @@ Example:
 {% set type = group.type or 'group' %}
 {% set url = h.url_for(type ~ '.read', id=group.name) %}
 {% block item %}
-    <li class="groups-cards">
+    <li class="groups-cards idb-summary-card">
         {% block link %}
             {% set view_label = _('Open details page for {group_name}').format(group_name=group.display_name) %}
             {%- call ui.util.call(ui.tooltip, tooltip=view_label) -%}

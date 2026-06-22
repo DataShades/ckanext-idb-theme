@@ -33,17 +33,17 @@
     }
 }
 
-.toolbar .breadcrumb .breadcrumb-ellipsis {
+.toolbar .breadcrumb .idb-breadcrumb-ellipsis {
     display: none;
     color: var(--idb-color-on-surface-muted);
 }
 
 @include media-breakpoint-down(lg) {
-    .toolbar .breadcrumb .breadcrumb-ellipsis:nth-last-child(n + 4) {
+    .toolbar .breadcrumb .idb-breadcrumb-ellipsis:nth-last-child(n + 4) {
         display: list-item;
     }
 
-    .toolbar .breadcrumb .breadcrumb-ellipsis:nth-last-child(n + 4) ~ li:not(:last-child) {
+    .toolbar .breadcrumb .idb-breadcrumb-ellipsis:nth-last-child(n + 4) ~ li:not(:last-child) {
         display: none;
     }
 }
