@@ -47,6 +47,6 @@ def idb_theme_get_group_count(type: str = 'group') -> dict[str, int]:
     elif type == 'group':
         q = q.filter(model.Group.is_organization == False)
     else:
-        raise ValueError(f'Invalid group type: {type}')
+        raise ValueError(f'Invalid group type: {type}')  # noqa: TRY003
     return q.count()
 
