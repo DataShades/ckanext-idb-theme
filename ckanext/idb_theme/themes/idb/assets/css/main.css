@@ -15488,7 +15488,11 @@ footer .ckan-footer-logo {
   gap: 0.5rem;
   align-items: center;
   justify-content: center;
-  box-shadow: none;
+  border-radius: var(--idb-border-radius);
+  --bs-btn-padding-x: 1.5rem;
+  --bs-btn-padding-y: 0.5rem;
+  font-size: var(--idb-font-size-label-large);
+  line-height: var(--idb-line-height-label-large);
 }
 
 .btn-primary-outline {
