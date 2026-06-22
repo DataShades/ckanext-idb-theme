@@ -15,6 +15,7 @@
   --idb-color-success: #2E7D32;
   --idb-color-error: #C62828;
   --idb-color-warning: #8A6D00;
+  --idb-color-on-primary: #FFFFFF;
   --idb-font-family: "Open Sans";
   --idb-font-weight: 400;
   --idb-font-size-title: 2.25rem;
@@ -27,6 +28,10 @@
   --idb-line-height-text: 1.5rem;
   --idb-font-size-label: 0.75rem;
   --idb-line-height-label: 1rem;
+  --idb-font-size-display-small: 2.25rem;
+  --idb-line-height-display-small: 2.75rem;
+  --idb-font-size-label-large: 0.875rem;
+  --idb-line-height-label-large: 1.25rem;
   --idb-space-xs: 8px;
   --idb-space-sm: 16px;
   --idb-space-md: 24px;
@@ -14609,6 +14614,61 @@ td.diff_header {
     margin-bottom: 2rem;
   }
 }
+.info-graph {
+  padding: var(--idb-space-md) var(--idb-space-lg);
+}
+.info-graph-bar {
+  display: flex;
+  align-items: stretch;
+  border-top: 1px solid var(--idb-color-on-primary);
+  padding-top: var(--idb-space-md);
+}
+.info-graph-metric {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--idb-space-xs);
+  padding: 0 var(--idb-space-sm);
+  text-align: center;
+}
+.info-graph-metric__value {
+  font-size: var(--idb-font-size-display-small);
+  line-height: var(--idb-line-height-display-small);
+  font-weight: 700;
+  color: var(--idb-color-on-primary);
+}
+.info-graph-metric__label {
+  font-size: var(--idb-font-size-label-large);
+  line-height: var(--idb-line-height-label-large);
+  font-weight: 400;
+  color: var(--idb-color-on-primary);
+  opacity: 0.7;
+}
+.info-graph-divider {
+  width: 1px;
+  background-color: var(--idb-color-on-primary);
+  opacity: 0.3;
+  align-self: stretch;
+  flex-shrink: 0;
+}
+
+@media (max-width: 767.98px) {
+  .info-graph {
+    padding: var(--idb-space-sm);
+  }
+  .info-graph-bar {
+    flex-direction: column;
+    gap: var(--idb-space-sm);
+  }
+  .info-graph-divider {
+    width: 100%;
+    height: 1px;
+  }
+  .info-graph-metric {
+    padding: var(--idb-space-xs) 0;
+  }
+}
 .account-masthead {
   background: #F0F4F6;
 }
@@ -15617,4 +15677,19 @@ input[id^=lang-].btn-check + label.btn:hover {
   to {
     width: 0%;
   }
+}
+.bg-primary {
+  background-color: var(--idb-color-primary);
+}
+
+.bg-primary-linear {
+  background: linear-gradient(90deg, #004E70 0%, #206B82 100%);
+}
+
+.border-primary-linear {
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.fs-36 {
+  font-size: 2rem !important;
 }
