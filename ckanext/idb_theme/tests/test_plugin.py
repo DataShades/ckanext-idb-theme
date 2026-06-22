@@ -1,5 +1,4 @@
-"""
-Tests for plugin.py.
+"""Tests for plugin.py.
 
 Tests are written using the pytest library (https://docs.pytest.org), and you
 should read the testing guidelines in the CKAN docs:
@@ -48,7 +47,6 @@ To temporary patch the CKAN configuration for the duration of a test you can use
         pass
 """
 import pytest
-import ckanext.idb_theme.plugin as plugin
 
 
 @pytest.mark.ckan_config("ckan.plugins", "idb_theme")
