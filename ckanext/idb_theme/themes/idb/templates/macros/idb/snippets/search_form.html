@@ -1,0 +1,9 @@
+{%- set sorting_selected = sorting -%}
+{%- set sorting = sorting_options -%}
+{%- set form_id = kwargs.setdefault("attrs", {}).id -%}
+{%- set fields = active_filters -%}
+{%- set facets = {"titles": facet_titles, "search": facets, "fields": {}, "remove_field": h.remove_url_param} -%}
+{%- for k, v in active_filters -%}
+    {%- do facets.fields.setdefault(k, []).append(v) -%}
+{%- endfor %}
+{%- include "snippets/search_form.html" -%}

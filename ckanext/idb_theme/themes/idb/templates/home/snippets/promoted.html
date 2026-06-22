@@ -1,0 +1,12 @@
+{% set intro = g.site_intro_text %}
+
+<div class="module-promotion">
+    {% if intro %}
+        {{ h.render_markdown(intro) }}
+    {% else %}
+        {{ ui.heading(_("Welcome to CKAN"), level=1) }}
+        <p>
+            {{ _("This is a nice introductory paragraph about CKAN or the site in general. We don't have any copy to go here yet but soon we will") }}
+        </p>
+    {% endif %}
+</div>

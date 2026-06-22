@@ -1,0 +1,32 @@
+{%- macro chart(content, type, data, labels) -%}
+    {# Documentation: https://chartist.dev/ #}
+    {%- if data -%}
+        {%- set id = ui.util.id() -%}
+        {%- set payload = {"series": data or [], "labels": labels or []} -%}
+
+
+        <link href="https://cdn.jsdelivr.net/npm/chartist@1.5.0/dist/index.min.css" rel="stylesheet">
+        <script type="module">
+            import { BarChart, LineChart, PieChart }  from 'https://cdn.jsdelivr.net/npm/chartist@1.5.0/+esm'
+            new {{ type | capitalize }}Chart("#{{ id }}", {{ payload | tojson }})
+        </script>
+
+        <div>
+            <div {{ ui.util.attrs(kwargs) }} id="{{ id }}"></div>
+            <div>{{ content }}</div>
+        </div>
+    {%- else -%}
+        <div>{{ _("No data provided") }}</div>
+    {%- endif %}
+{%- endmacro %}
+
+{%- macro table(content, striped, bordered, condensed, hover, caption) -%}
+    <table {{ ui.util.attrs(kwargs) }}
+        class="table {{ 'table-bordered' if bordered }} {{ 'table-striped' if striped }} {{ 'table-sm' if condensed }} {{ 'table-hover' if hover }}"
+    >
+        {%- if caption -%}
+            <caption>{{ caption }}</caption>
+        {%- endif %}
+        {{ content }}
+    </table>
+{%- endmacro %}

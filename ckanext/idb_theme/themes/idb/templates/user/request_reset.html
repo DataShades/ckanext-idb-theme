@@ -1,0 +1,37 @@
+{% extends "user/login.html" %}
+
+{% block subtitle -%}
+    {{ ui.subtitle_item(_('Reset your password')) }}
+    {{- super() }}
+{%- endblock %}
+
+{% block page_heading %}{{ _('Reset your password') }}{% endblock %}
+
+{% block breadcrumb_content -%}
+    {{ ui.breadcrumb(_('Password Reset'), href=h.url_for('user.request_reset'), active=true) }}
+{%- endblock %}
+
+{% block form %}
+    {%- call ui.util.call(ui.form, method="POST") -%}
+        {{ ui.input(name="user", id="field-username", label=_('Email or username')) }}
+        {% if g.recaptcha_publickey %}
+            {% snippet "user/snippets/recaptcha.html", public_key=g.recaptcha_publickey %}
+        {% endif %}
+
+        {%- call ui.util.call(ui.form_actions) -%}
+            {% block form_button %}
+                {{ ui.button(_("Request Reset"), type="submit", attrs={"name": "reset"}) }}
+            {% endblock form_button %}
+        {%- endcall %}
+    {%- endcall %}
+{% endblock form %}
+
+{% block primary_content_inner %}
+    {% block help %}
+        {% block help_inner %}
+            <p>{% trans %}Enter your email address or username into the box and we
+                will send you an email with a link to enter a new password.
+            {% endtrans %}</p>
+        {% endblock help_inner %}
+    {% endblock help %}
+{% endblock primary_content_inner %}

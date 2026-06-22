@@ -1,0 +1,13 @@
+{#
+Builds a file upload for input
+
+Example
+{% import 'macros/form.html' as form %}
+{{ form.image_upload(data, errors, is_upload_enabled=true) }}
+
+#}
+{% macro image_upload(data, errors, field_url='image_url', field_upload='image_upload', field_clear='clear_upload',
+                    is_url=false, is_upload=false, is_upload_enabled=false, placeholder=false,
+                    url_label='', upload_label='', field_name='image_url')  %}
+    {{ ui.image_upload(data, errors, field_url, field_upload, field_clear, is_url, is_upload, is_upload_enabled, placeholder, url_label, upload_label, field_name) }}
+{% endmacro %}

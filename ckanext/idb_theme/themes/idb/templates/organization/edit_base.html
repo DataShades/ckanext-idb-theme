@@ -1,0 +1,32 @@
+{% extends "page.html" %}
+{% set dataset_type = h.default_package_type() %}
+{% set organization = group_dict %}
+
+{% block subtitle -%}
+    {{ ui.subtitle_item(group_dict.display_name) if group_dict }}
+    {{- ui.subtitle_item(h.humanize_entity_type('organization', group_type, 'page title') or _('Organizations')) }}
+    {{- super() }}
+{%- endblock %}
+
+{% block breadcrumb_content -%}
+    {{ ui.breadcrumb(h.humanize_entity_type('organization', group_type, 'breadcrumb') or _('Organizations'), href=h.url_for(group_type+'.index')) }}
+    {%- block breadcrumb_content_inner -%}{% endblock %}
+{%- endblock %}
+
+{% block content_action -%}
+    {{ ui.content_action(_('View'), href=h.url_for(group_type+'.read', id=organization.name), icon="eye", style="secondary") if organization and h.check_access('organization_update', {'id': organization.id})}}
+{%- endblock %}
+
+{% block content_primary_nav -%}
+    {{ ui.content_nav_item(_('Edit'), href=h.url_for(group_type + '.edit', id=group_dict.name), icon='pencil', active=request.endpoint==group_type + '.edit') }}
+    {{- ui.content_nav_item(h.humanize_entity_type('package', dataset_type, 'content tab') or _('Datasets'), href=h.url_for(group_type + '.bulk_process', id=group_dict.name), icon='sitemap', active=request.endpoint==group_type + '.bulk_process') }}
+    {{- ui.content_nav_item(_('Members'), href=h.url_for(group_type + '.manage_members', id=group_dict.name), icon='users', active=request.endpoint==group_type + '.manage_members') }}
+{%- endblock %}
+
+{% block secondary_content %}
+    {% if organization %}
+        {% snippet 'organization/snippets/info.html', organization=organization %}
+    {% else %}
+        {{ super() }}
+    {% endif %}
+{% endblock %}

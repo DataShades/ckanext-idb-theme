@@ -1,0 +1,45 @@
+{% extends "user/edit_base.html" %}
+
+{% set user = current_user %}
+{% set org_type = h.default_group_type('organization') %}
+{% set group_type = h.default_group_type('group') %}
+{% set dataset_type = h.default_package_type() %}
+
+{% block content_action -%}
+    {{ ui.content_action(_('Profile settings'), href=h.url_for('user.edit', id=user.name), icon="cog", style="secondary") }}
+{%- endblock %}
+
+{% block breadcrumb_content -%}
+    {{ ui.breadcrumb(_('Dashboard'), href=h.url_for('dashboard.datasets'), active=true) }}
+{%- endblock %}
+
+{% block secondary_content %}
+    {%- call ui.util.call(ui.sidebar_nav) -%}
+        {% block dashboard_nav_links -%}
+            {{ ui.sidebar_nav_item(ui.icon('sitemap') ~ (h.humanize_entity_type('package', dataset_type, 'my label') or _('My Datasets')), href=h.url_for('dashboard.datasets'), active=request.endpoint=='dashboard.datasets') }}
+            {{ ui.sidebar_nav_item(ui.icon('building') ~ (h.humanize_entity_type('organization', org_type, 'my label') or _('My Organizations')), href=h.url_for('dashboard.organizations'), active=request.endpoint=='dashboard.organizations') }}
+            {{ ui.sidebar_nav_item(ui.icon('users') ~ (h.humanize_entity_type('group', group_type, 'my label') or _('My Groups')), href=h.url_for('dashboard.groups'), active=request.endpoint=='dashboard.groups') }}
+        {%- endblock dashboard_nav_links %}
+    {%- endcall %}
+{% endblock secondary_content %}
+
+{% block primary %}
+    <div class="primary col-md-8 col-lg-9 col-xs-12" role="main">
+        <article class="module">
+            <div class="module-content">
+                <div class="dashboard-container row">
+                    <div class="col-md-8">
+                        {% block page_heading %}{% endblock %}
+                    </div>
+                    {% if self.page_primary_action() | trim %}
+                        {%- call ui.util.call(ui.page_action_wrapper, variant="dashboard") -%}
+                            {% block page_primary_action -%}{% endblock %}
+                        {%- endcall %}
+                    {% endif %}
+                </div>
+                {% block primary_content_inner %}
+                {% endblock %}
+            </div>
+        </article>
+    </div>
+{% endblock %}

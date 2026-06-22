@@ -1,0 +1,38 @@
+{%- macro group(content, group) -%}
+    {%- do kwargs -%}
+    {%- include "macros/idb/snippets/group.html" -%}
+{%- endmacro %}
+
+{%- macro organization(content, organization) -%}
+    {%- do kwargs -%}
+    {%- include "macros/idb/snippets/organization.html" -%}
+{%- endmacro %}
+
+{%- macro package(content, package) -%}
+    {%- do kwargs -%}
+    {%- include "macros/idb/snippets/package.html" -%}
+{%- endmacro %}
+
+{%- macro resource(content, resource, package) -%}
+    {%- do kwargs -%}
+    {%- include "macros/idb/snippets/resource.html" -%}
+{%- endmacro %}
+
+{%- macro user(content, user) -%}
+    {%- do kwargs -%}
+    {%- include "macros/idb/snippets/user.html" -%}
+{%- endmacro %}
+
+{%- macro facet(content, key, value, count, active) -%}
+    {% set href = h.remove_url_param(key, value) if active and key else h.add_url_param(new_params={key: value}) %}
+    {% set truncated = content|truncate(22) %}
+    <li class="nav-item {% if active %}active{% endif %}">
+        <a {{ ui.util.attrs(kwargs) }} href="{{ href }}" aria-label="{{ _('Search datasets by {name}: {label}').format(name=key, label=truncated) }}" {% if content != truncated %} data-bs-title="{{ content }}" data-bs-toggle="tooltip" {% endif %}>
+            <span class="item-label">{{ truncated }}</span>
+            <span class="item-count-span">
+                <span class="item-count badge">{{ count }}</span>
+                <span class="item-state"></span>
+            </span>
+        </a>
+    </li>
+{%- endmacro %}

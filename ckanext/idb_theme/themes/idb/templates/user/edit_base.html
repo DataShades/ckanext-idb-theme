@@ -1,0 +1,15 @@
+{% extends "page.html" %}
+
+{% block subtitle -%}
+    {{ ui.subtitle_item(user_dict.display_name) if user_dict }}
+    {{- ui.subtitle_item(_('Users')) }}
+    {{- super() }}
+{% endblock %}
+
+{% block primary_content %}
+  <article class="module">
+    <div class="module-content">
+      {% block primary_content_inner %}{% endblock %}
+    </div>
+  </article>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'package/base.html' %}
+
+{% block breadcrumb_content_selected -%}{% endblock %}
+
+{% block breadcrumb_content -%}
+    {{ super() }}
+    {{- ui.breadcrumb(_('Edit'), h.url_for(pkg.type ~ '.edit', id=pkg.name), active=true) if pkg }}
+{%- endblock %}
+
+{% block content_action -%}
+    {{ ui.content_action(h.humanize_entity_type('package', pkg.type, 'view label') or _('View dataset'), href=h.url_for(pkg.type ~ '.read', id=pkg.name), icon="eye", style="secondary") }}
+{%- endblock %}
+
+{% block content_primary_nav -%}
+    {{ ui.content_nav_item(_('Edit metadata'), href=h.url_for(pkg.type ~ '.edit', id=pkg.name), icon='pencil', active=request.endpoint==pkg.type ~ '.edit') }}
+    {{- ui.content_nav_item(_('Reorder resources'), href=h.url_for(pkg.type ~ '.resources', id=pkg.name), icon='bars', active=request.endpoint==pkg.type ~ '.resources') }}
+    {{- ui.content_nav_item( _('Collaborators'), href=h.url_for(pkg.type ~ '.collaborators_read', id=pkg.name), icon='users', active=request.endpoint==pkg.type ~ '.collaborators_read') if h.check_config_permission('allow_dataset_collaborators') and h.check_access('package_collaborator_create', {'id': pkg_dict.id}) }}
+{%- endblock %}
+
+{% block secondary_content %}
+    {% snippet 'package/snippets/info.html', pkg=pkg, hide_follow_button=true %}
+    {% snippet 'package/snippets/resources.html', pkg=pkg %}
+{% endblock %}

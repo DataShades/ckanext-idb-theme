@@ -1,0 +1,41 @@
+{% extends "user/login.html" %}
+
+{% block subtitle -%}
+    {{ ui.subtitle_item(_('Reset Your Password')) }}
+    {{- super() }}
+{%- endblock %}
+
+{% block page_heading %}{{ _('Reset Your Password') }}{% endblock %}
+
+{% block breadcrumb_content -%}
+    {{ ui.breadcrumb(_('Password Reset'), href="", active=true) }}
+{%- endblock %}
+
+{% block form %}
+    {%- call ui.util.call(ui.form, method="POST") -%}
+        {{ ui.form_errors(error_summary) }}
+        {% if user_dict['state'] == 'pending' %}
+            <p>{{ _('You can also change username. It can not be modified later.') }}</p>
+            {{ ui.input(name="name", id="field-name", icon='user', label=_("Username"), value=user_dict["name"], attrs={'autocomplete': 'off'}) }}
+        {% endif %}
+
+        {{ ui.input(name="password1", id="field-password", label=_("Password"), icon='fingerprint', type="password", attrs={'autocomplete': 'off'}) }}
+        {{ ui.input(name="password2", id="field-confirm-password", label=_("Confirm"), icon='fingerprint', type="password", attrs={'autocomplete': 'no'}) }}
+
+        {%- call ui.util.call(ui.form_actions) -%}
+            {% block form_button %}
+                {{ ui.button(_("Update Password"), type="submit", attrs={"name": "save"}) }}
+            {% endblock form_button %}
+        {%- endcall %}
+    {%- endcall %}
+
+{% endblock form %}
+
+{% block primary_content_inner %}
+    {% block help %}
+        {% block help_inner %}
+            <h2 class="h5">{{ _('How does this work?') }}</h2>
+            <p>{% trans %}Simply enter a new password and we'll update your account{% endtrans %}</p>
+        {% endblock help_inner %}
+    {% endblock help %}
+{% endblock primary_content_inner %}

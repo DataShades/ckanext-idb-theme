@@ -1,0 +1,84 @@
+{% set dataset_type = h.default_package_type() %}
+
+{% block header_wrapper %}
+    {% block header_account %}
+
+        {% if current_user.is_authenticated %}
+            {%- call ui.util.call(ui.account) -%}
+                {% block header_account_container_content %}
+                    <div class="account avatar authed" data-module="me" data-me="{{ current_user.id }}">
+                        {%- call ui.util.call(ui.account_nav) -%}
+                            {% block header_account_logged %}
+
+                                {% block header_account_profile %}
+                                    {%- call ui.util.call(ui.account_nav_item, href=h.url_for('user.read', id=current_user.name), attrs={"class": "image", "aria-label": _('View profile')}) -%}
+                                        {%- call ui.util.call(ui.tooltip, tooltip=_('View profile')) -%}
+                                            {{ h.user_image(current_user.name, size=22) }}
+                                            <span class="username">{{ current_user.display_name }}</span>
+                                        {%- endcall %}
+                                    {%- endcall %}
+                                {%- endblock %}
+
+                                {%- if current_user.sysadmin -%}
+                                    {%- call ui.util.call(ui.account_nav_item, href=h.url_for('admin.index'), aria={"label": _('Sysadmin settings')}) -%}
+                                        {%- call ui.util.call(ui.tooltip, tooltip=_('Sysadmin settings')) -%}
+                                            {{ ui.icon("gavel", aria={"hidden": "true"}) }}
+                                            <span class="text">{{ _('Admin') }}</span>
+                                        {%- endcall %}
+                                    {%- endcall %}
+                                {%- endif %}
+
+                                {%- block header_dashboard -%}
+                                    {%- call ui.util.call(ui.account_nav_item, href=h.url_for('dashboard.datasets'), aria={"label": _('View dashboard')}) -%}
+                                        {%- call ui.util.call(ui.tooltip, tooltip=_('View dashboard')) -%}
+                                            {{ ui.icon("tachometer", aria={"hidden": "true"}) }}
+                                            <span class="text">{{ _('Dashboard') }}</span>
+                                        {%- endcall %}
+                                    {%- endcall %}
+                                {%- endblock %}
+
+                                {%- block header_account_log_out_link -%}
+                                    <li>
+                                        {%- call ui.util.call(ui.form, method="POST", action=h.url_for('user.logout')) -%}
+                                            {{ ui.tooltip(ui.button(ui.icon("sign-out", aria={"hidden": "true"}), type="submit"), tooltip=_('Log out')) }}
+                                        {%- endcall %}
+                                    </li>
+                                {%- endblock %}
+                            {%- endblock %}
+                        {%- endcall %}
+
+                    </div>
+                {% endblock %}
+            {%- endcall %}
+        {% endif %}
+    {% endblock %}
+
+    {%- call ui.util.call(ui.header, logo=g.site_logo, title=g.site_title, subtitle=g.site_description) -%}
+        {% block header_site_navigation %}
+            {%- call ui.util.call(ui.main_nav) -%}
+                {% block header_site_navigation_tabs %}
+                    {% set org_type = h.default_group_type('organization') %}
+                    {% set group_type = h.default_group_type('group') %}
+
+                    {{ ui.main_nav_item(h.humanize_entity_type('package', dataset_type, 'main nav') or _('Datasets'), href=h.url_for(dataset_type ~ '.search'), active=(request.endpoint or "").startswith((dataset_type, dataset_type + '_resource'))) }}
+                    {{ ui.main_nav_item(h.humanize_entity_type('organization', org_type, 'main nav') or _('Organizations'), href=h.url_for(org_type ~ '.index'), active=(request.endpoint or "").startswith(org_type)) }}
+                    {{ ui.main_nav_item(h.humanize_entity_type('group', group_type, 'main nav') or _('Groups'), href=h.url_for(group_type ~ '.index'), active=(request.endpoint or "").startswith(group_type)) }}
+                    {{ ui.main_nav_item(_('About'), href=h.url_for('home.about'), active=request.endpoint=="home.about") }}
+
+                {% endblock %}
+            {%- endcall %}
+        {% endblock %}
+
+        {% if not current_user.is_authenticated %}
+            {% block header_account_notlogged %}
+
+                <div class="col-md-2 gap-2 login">
+                    {{ ui.button(_('Login') ~ ui.icon("sign-in"), href=h.url_for('user.login')) }}
+                    {{ ui.button(_('Register') ~ ui.icon("id-card"), href=h.url_for('user.register')) if h.check_access('user_create') }}
+                </div>
+            {% endblock %}
+        {% endif %}
+
+    {%- endcall %}
+
+{% endblock %}

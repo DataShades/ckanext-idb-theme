@@ -1,0 +1,11 @@
+{#
+Outputs the "* Required field" message for the bottom of formss
+
+Example
+{% import 'macros/form.html' as form %}
+{{ form.required_message() }}
+
+#}
+{% macro required_message() %}
+    {{ ui.form_annotation() }}
+{% endmacro %}

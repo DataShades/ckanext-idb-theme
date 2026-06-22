@@ -1,0 +1,79 @@
+{% set dataset_type = h.default_package_type() %}
+{% set org_type = h.default_group_type('organization') %}
+{% set group_type = h.default_group_type('group') %}
+
+{%- call ui.util.call(ui.footer) -%}
+    {%- call ui.util.call(ui.footer_main) -%}
+        {%- call ui.util.call(ui.grid) -%}
+            {% block footer_content %}
+                {%- call ui.util.call(ui.row) -%}
+                    {%- call ui.util.call(ui.column, span={"md": 6}) -%}
+                        <p class="footer-description col-md-8">
+                            {{ ui.image(h.url_for_static("images/idb-logo-white.svg"), alt=_('IDB logo'), attrs={"class": "ckan-footer-logo"}) }}
+                            {{ _('The open-source data management system that powers data portals worldwide.') }}
+                        </p>
+                    {%- endcall %}
+
+                    {%- call ui.util.call(ui.column, span={"md": 6}) -%}
+                        <div class="footer-links row">
+                            {% block footer_nav %}
+                                <div class="col-md-6">
+                                    {%- call ui.util.call(ui.nav) -%}
+                                        {% block footer_links %}
+                                            {{ ui.nav_item(_('Home'), h.url_for('home.index')) }}
+                                            {{ ui.nav_item(h.humanize_entity_type('package', dataset_type, 'footer nav') or _('Datasets'), h.url_for(dataset_type ~ '.search')) }}
+                                            {{ ui.nav_item(h.humanize_entity_type('organization', org_type, 'footer nav') or _('Organizations'), h.url_for(org_type ~ '.index')) }}
+
+                                            {{ ui.nav_item(h.humanize_entity_type('group', group_type, 'footer nav') or _('Groups'), h.url_for(group_type ~ '.index')) }}
+                                            {{ ui.nav_item(_('About'), h.url_for('home.about')) }}
+                                        {% endblock %}
+
+                                    {%- endcall %}
+                                </div>
+                                <div class="col-md-6">
+                                    {%- call ui.util.call(ui.nav) -%}
+                                        {% block footer_links_ckan %}
+                                            {% set api_url = 'https://docs.ckan.org/en/{0}/api/'.format(g.ckan_doc_version) %}
+                                            {{ ui.nav_item(_('CKAN API'), href=api_url, blank=true) }}
+                                            {{ ui.nav_item(_('CKAN Association'), href="https://www.ckan.org", blank=true) }}
+                                            {%- call ui.util.call(ui.link, href="https://www.opendefinition.org/od/", blank=true, attrs={"class": "open-data"}) -%}
+                                                {% trans %}<span class="prefix">Open</span><span class="suffix">Data</span>{% endtrans %}
+                                            {%- endcall %}
+                                        {% endblock %}
+
+                                    {%- endcall %}
+                                </div>
+
+                            {% endblock %}
+                        </div>
+                    {%- endcall %}
+                {%- endcall %}
+            {% endblock %}
+        {%- endcall %}
+
+    {%- endcall %}
+
+    {%- call ui.util.call(ui.footer_secondary) -%}
+        {%- call ui.util.call(ui.grid) -%}
+            {%- call ui.util.call(ui.row) -%}
+                {%- call ui.util.call(ui.column, span={"md": 9}) -%}
+                    <div class="attribution">
+                        {%- block footer_attribution -%}
+                            <p><strong>
+                                {%- set ckan_link = ui.link(_("CKAN"), href="http://ckan.org", blank=true) -%}
+                                {{ _("Powered by {ckan_link}").format(ckan_link=ckan_link) -}}
+                            </strong></p>
+                        {%- endblock -%}
+                    </div>
+                {%- endcall %}
+
+                {%- call ui.util.call(ui.column, span={"md": 3}) -%}
+                    {% block footer_lang %}
+                        {{ ui.language_selector() }}
+                    {% endblock %}
+                {%- endcall %}
+            {%- endcall %}
+        {%- endcall %}
+    {%- endcall %}
+
+{%- endcall %}

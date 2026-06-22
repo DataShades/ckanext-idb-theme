@@ -1,0 +1,16 @@
+{% extends "admin/base.html" %}
+
+{% block subtitle -%}
+    {{ ui.subtitle_item(_("Confirm Reset")) }}
+    {{- super() }}
+{%- endblock %}
+
+{% block primary_content_inner %}
+    <p>{{ _('Are you sure you want to reset the config?') }}</p>
+    {%- call ui.util.call(ui.form, method="POST", action=h.url_for('admin.reset_config')) -%}
+        {%- call ui.util.call(ui.form_actions) -%}
+            {{ ui.button(_('Cancel'), style="danger", type="submit", attrs={"name": "cancel"}) }}
+            {{ ui.button(_('Confirm Delete'), type="submit", attrs={"name": "delete"}) }}
+        {%- endcall %}
+    {%- endcall %}
+{% endblock %}

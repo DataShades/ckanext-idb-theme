@@ -1,0 +1,87 @@
+
+{%- macro accordion_wrapper(content) -%}
+    <div {{ ui.util.attrs(kwargs, {"class": "accordion"}) }}>{{ content }}</div>
+{%- endmacro %}
+
+{%- macro account_nav(content) -%}{{ ui.nav(content, **kwargs) }}{%- endmacro %}
+
+{%- macro breadcrumb_wrapper(content) -%}
+    <ol {{ ui.util.attrs(kwargs, {"class": "breadcrumb"}) }}>
+        {{ content }}
+    </ol>
+{%- endmacro %}
+
+{%- macro content_action_wrapper(content) -%}
+    <div {{ ui.util.attrs(kwargs, {"class": "content_action gap-1 mb-md-3"}) }}>
+        {{- content -}}
+    </div>
+{%- endmacro %}
+
+{%- macro content_nav(content) -%}
+    <ul {{ ui.util.attrs(kwargs, {"class": "nav nav-pills"}) }}>
+        {{ content }}
+    </ul>
+{%- endmacro %}
+
+{%- macro footer_main_nav(content) -%}
+    <ul {{ ui.util.attrs(kwargs, {"class": "list-unstyled"}) }}>
+        {{ content }}
+    </ul>
+{%- endmacro %}
+
+{%- macro footer_secondary_nav(content) -%}
+    <ul {{ ui.util.attrs(kwargs, {"class": "list-unstyled"}) }}>
+        {{ content }}
+    </ul>
+{%- endmacro %}
+
+{%- macro main_nav(content) -%}
+    <ul {{ ui.util.attrs(kwargs, {"class": "navbar-nav mb-2 mb-lg-0 col-md-10"}) }}>
+        {{ content }}
+    </ul>
+{%- endmacro %}
+
+{%- macro nav(content) -%}
+    {{ ui.list(content, **kwargs) }}
+{%- endmacro %}
+
+{%- macro page_action_wrapper(content, variant) -%}
+    {%- set classes = "mb-3 mb-md-0 ms-3" -%}
+    {%- if variant == "dashboard" -%}
+        {%- set classes = " col-md-4" -%}
+    {%- endif %}
+
+    <div {{ ui.util.attrs(kwargs, {"class": "page_primary_action " ~  classes}) }}>
+        {{- content -}}
+    </div>
+{%- endmacro %}
+
+{%- macro tab_wrapper(content) -%}
+    <nav {{ ui.util.attrs(kwargs, {"class": "nav nav-tabs"}) }} role="tablist">{{ content }}</nav>
+{%- endmacro %}
+
+{%- macro sidebar_nav(content, title) -%}
+    <section class="module">
+        <div class="module-group">
+            {{ ui.heading(title, level=2, attrs={"class": "module-heading bg-primary text-bg-primary"}) if title }}
+
+            <ul {{ ui.util.attrs(kwargs, {"class": "nav nav-options flex-column"}) }}>
+                {{ content }}
+            </ul>
+        </div>
+    </section>
+{%- endmacro %}
+
+{%- macro pagination_wrapper(content) -%}
+    <div {{ ui.util.attrs(kwargs, {"class": "pagination-wrapper"}) }}>
+        <ul class="pagination justify-content-center">
+            {{- content -}}
+        </ul>
+    </div>
+{%- endmacro %}
+
+{%- macro tab_pane_wrapper(content) -%}
+    <div {{ ui.util.attrs(kwargs) }} class="tab-content">
+        {{ content }}
+    </div>
+{%- endmacro %}

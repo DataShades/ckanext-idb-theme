@@ -1,0 +1,25 @@
+{% extends "user/dashboard.html" %}
+
+{% set group_type = h.default_group_type('group') %}
+
+{% block page_primary_action -%}
+    {{ ui.page_action(h.humanize_entity_type('group', group_type, 'add link') or _('Add Group'), href=h.url_for(group_type ~ '.new'), icon="plus-square") if h.check_access('group_create') }}
+{%- endblock %}
+
+{% block page_heading %}
+    {{ ui.heading(h.humanize_entity_type('group', group_type, 'my label') or _('My Groups'), attrs={"class": "mt-3 mt-md-0"}, level=1) }}
+{% endblock %}
+
+{% block primary_content_inner %}
+    {% set groups = h.groups_available(am_member=True, include_dataset_count=True, include_member_count=True) %}
+    {% if groups %}
+        <div class="wide">
+            {% snippet "group/snippets/group_list.html", groups=groups, show_capacity=True %}
+        </div>
+    {% else %}
+        {%- call ui.util.call(ui.empty) -%}
+            {{ h.humanize_entity_type('group', group_type, 'you not member') or _('You are not a member of any groups.') }}
+            {{ ui.link(_('Create one now?'), href=h.url_for(group_type ~ '.new')) if h.check_access('group_create')}}
+        {%- endcall %}
+    {% endif %}
+{% endblock %}

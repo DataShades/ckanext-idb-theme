@@ -1,0 +1,13 @@
+{% set organizations = h.get_featured_organizations(count=6) %}
+
+{{ ui.heading(_("Organizations"), level=2) }}
+
+<ul class="featured-groups">
+    {% for organization in organizations %}
+        {{ ui.organization(organization=organization) }}
+    {% endfor %}
+</ul>
+
+<div>
+    {{ ui.button(_('View all organizations'), style="primary-outline", href=h.url_for('organization.index')) }}
+</div>

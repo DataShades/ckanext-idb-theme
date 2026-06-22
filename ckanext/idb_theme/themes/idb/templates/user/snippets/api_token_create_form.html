@@ -1,0 +1,34 @@
+{%- set hx_attrs = {"post": h.url_for('user.api_tokens', id=user.id ), "swap": "outerHTML"} -%}
+
+{%- if created -%}
+    {%- do hx_attrs.update({"hx-on:htmx:after-settle": "document.getElementById('token-" ~ created.id ~ "').scrollIntoView(false)"}) -%}
+{%- endif %}
+
+{%- call ui.util.call(ui.form, method="POST", hx=hx_attrs, attrs={"autocomplete": "off", "class": "mb-3"}) -%}
+    {%- block base_fields -%}
+        {{ ui.input(name="name", label=_("Name"), required=true, value=data.name, errors=errors.name) }}
+    {%- endblock base_fields %}
+
+    {%- block form_actions -%}
+        {{ ui.button(_('Create API Token'), type="submit") }}
+    {%- endblock form_actions %}
+
+{%- endcall %}
+
+{% if created %}
+    <template>
+        <tbody hx-swap-oob="afterbegin:#api-tokens-table tbody">
+            <tr id="token-{{ created.id }}">
+                <td colspan="3">
+                    {{ ui.checkbox(name="token", value=created.id, id=ui.util.id(), label=ui.util.tag(created.name, "code"), on={"change": "$('#revoke-tokens-button').attr('disabled', !$('[name=token]:checked').length)"}) }}
+
+                    {{- _("API Token created: <code style=\"word-break:break-all;\">"
+               "{token}</code> {copy}<br>"
+               "Make sure to copy it now, "
+               "you won't be able to see it again!").format(
+               token=created.token, copy=ui.button(ui.icon("copy"), style="secondary", size="sm", data={"module": "copy-into-buffer", "module-copy-value": created.token})) }}
+                </td>
+            </tr>
+        </tbody>
+    </template>
+{% endif %}

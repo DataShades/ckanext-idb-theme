@@ -1,0 +1,11 @@
+{% set groups = h.get_featured_groups(count=6) %}
+{{ ui.heading(_("Groups"), level=2) }}
+
+<ul class="featured-groups">
+    {% for group in groups %}
+        {{ ui.group(group=group) }}
+    {% endfor %}
+</ul>
+<div>
+    {{ ui.button(_('View all groups'), style="primary-outline", href=h.url_for('group.index')) }}
+</div>

@@ -1,0 +1,17 @@
+{#
+Renders an info box with a description. This will usually be used with in a
+call block when creating an input element.
+
+text    - The text to include in the box.
+
+Example
+
+{% import 'macros/form.html' as form %}
+{% call form.input('name') %}
+{{ form.info(_('My useful help text')) }}
+{% endcall %}
+
+#}
+{% macro info(text='', inline=false, classes=[]) -%}
+    {{ ui.field_info(text) if text }}
+{%- endmacro %}

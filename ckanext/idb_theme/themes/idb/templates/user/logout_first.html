@@ -1,0 +1,20 @@
+{% extends "user/login.html" %}
+
+{% set logout_url = h.url_for('user.logout') %}
+
+{% block actions %}{% endblock %}
+
+{% block form %}
+    {{ ui.alert(_("You're already logged in as {user}.").format(user=current_user.name), style="danger") }}
+
+    {{ ui.input(name='login', label=_('Username'), id='field-login', icon='user', attrs={"disabled": "disabled"}) }}
+    {{ ui.input(name='password', label=_('Password'), id='field-password', icon='fingerprint', type="password", attrs={"disabled": "disabled"}) }}
+    {{ ui.checkbox(name='remember', label=_('Remember me'), id='field-remember', checked=true, attrs={"disabled": "disabled"}) }}
+
+    {{ ui.form_actions(ui.button(_('Log in'), type="submit", attrs={"disabled": ""})) }}
+{% endblock %}
+
+{% block primary_content_inner %}
+    <p>{{ _("You need to log out before you can log in with another account.") }}</p>
+    {{ ui.button(_("Log out now"), href=logout_url, style="secondary") }}
+{% endblock %}

@@ -1,0 +1,20 @@
+{
+    "exclude": ["node_modules"],
+    "include": [
+        "assets/src/main.ts"
+    ],
+    "compilerOptions": {
+        "module": "preserve",
+        "target": "es2020",
+        "types": ["bootstrap", "node"],
+        "sourceMap": false,
+
+        "noUncheckedIndexedAccess": true,
+        "exactOptionalPropertyTypes": true,
+        "strict": true,
+        "verbatimModuleSyntax": true,
+        "isolatedModules": true,
+        "moduleDetection": "force",
+        "skipLibCheck": false
+    }
+}

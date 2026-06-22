@@ -1,0 +1,44 @@
+## styles
+styles:
+  # filters: cssrewrite
+  output: base/%(version)s_main.css
+  contents: css/main.css
+
+styles-rtl:
+  # filters: cssrewrite
+  output: base/%(version)s_main-rtl.css
+  contents: css/main-rtl.css
+
+## scripts
+
+scripts:
+  filters: rjsmin
+  output: base/%(version)s_ckan.js
+  extra:
+    preload:
+      - vendor/bootstrap
+      - base/main
+  contents:
+    - javascript/init_tooltip.js
+    - javascript/modules/autocomplete.js
+    - javascript/modules/basic-form.js
+    - javascript/modules/confirm-action.js
+    - javascript/modules/copy-into-buffer.js
+    - javascript/modules/custom-fields.js
+    - javascript/modules/data-viewer.js
+    - javascript/modules/dataset-visibility.js
+    - javascript/modules/image-upload.js
+    - javascript/modules/metadata-button.js
+    - javascript/modules/popover.js
+    - javascript/modules/resource-form.js
+    - javascript/modules/resource-reorder.js
+    - javascript/modules/resource-upload-field.js
+    - javascript/modules/resource-view-embed.js
+    - javascript/modules/resource-view-filters-form.js
+    - javascript/modules/resource-view-filters.js
+    - javascript/modules/resource-view-reorder.js
+    - javascript/modules/select-switch.js
+    - javascript/modules/slug-preview.js
+    - javascript/modules/table-selectable-rows.js
+    - javascript/modules/table-toggle-more.js
+    - javascript/ui.js

@@ -1,0 +1,11 @@
+{% if url %}
+    {%- do kwargs.setdefault("attrs", {}).setdefault("rel", "dc:rights") -%}
+    {{ ui.link(content, href=url, **kwargs) }}
+
+{% elif content %}
+    <span {{ ui.util.attrs(kwargs) }} property="dc:rights">{{ content }}</span>
+
+{% else %}
+    <span {{ ui.util.attrs(kwargs) }}>{{ _('No License Provided') }}</span>
+
+{% endif %}
