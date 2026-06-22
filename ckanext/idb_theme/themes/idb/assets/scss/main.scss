@@ -1,2 +1,51 @@
+:root {
+    // color //////////////////////////////////////////////////////////////////
+    --idb-color-primary: #004E70;
+    --idb-color-primary-dark: #002536;
+    --idb-color-primary-light: #DBEDF8;
+    --idb-color-accent:  #206B82;
+    --idb-color-secondary-container: #02384E;
+    --idb-color-surface: #F2F1F1;
+    --idb-color-on-surface: #3C3B3B;
+    --idb-color-on-surface-muted: #696969;
+    --idb-color-border-n-variant95: #D3D2D1;
+    --idb-color-success: #2E7D32;
+    --idb-color-error: #C62828;
+    --idb-color-warning: #8A6D00;
+
+    // font ///////////////////////////////////////////////////////////////////
+    --idb-font-family: "Open Sans";
+    --idb-font-weight: 400;
+    --idb-font-size-title: 2.25rem;  // Display Small SemiBold
+    --idb-line-height-title: 2.75rem;
+    --idb-font-size-heading: 2rem;  // Headline Large SemiBold
+    --idb-line-height-heading: 2.5rem;
+    --idb-font-size-subtitle: 1.5rem; // Headline Small
+    --idb-line-height-subtitle: 2rem;
+    --idb-font-size-text: 1rem; // Body Large
+    --idb-line-height-text: 1.5rem;
+    --idb-font-size-label: 0.75rem; // Label Medium
+    --idb-line-height-label: 1rem;
+
+
+    // space //////////////////////////////////////////////////////////////////
+    --idb-space-xs: 8px;
+    --idb-space-sm: 16px;
+    --idb-space-md: 24px;
+    --idb-space-lg: 32px;
+    --idb-space-xl: 48px;
+    --idb-space-xxl: 64px;
+
+    // border /////////////////////////////////////////////////////////////////
+    --idb-border-color: var(--idb-color-border-n-variant95);
+    --idb-border-radius: 8px;
+    --idb-border-radius-sm: 4px;
+
+    // accordion //////////////////////////////////////////////////////////////
+    --idb-accordion-button-color: var(--idb-color-primary-dark);
+    --idb-accordion-open-button-color: var(--idb-color-primary-dark);
+}
+
+
 @import "bootstrap";
 @import "ckan";

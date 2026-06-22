@@ -1,18 +1,21 @@
 from __future__ import annotations
+
 from collections.abc import Iterable
 
-import ckan.plugins as plugins
+from typing_extensions import override
+
 import ckan.plugins.toolkit as tk
-from ckanext.theming.interfaces import ITheme
+from ckan import plugins as p
 
 from ckanext.theming.base import BaseTheme
-from typing_extensions import override
+from ckanext.theming.interfaces import ITheme
+
 from .themes.idb.theme import make_theme
 
-class IdbThemePlugin(ITheme, plugins.SingletonPlugin):
 
+@tk.blanket.helpers
+@tk.blanket.config_declarations
+class IdbThemePlugin(ITheme, p.SingletonPlugin):
     @override
     def register_themes(self) -> Iterable[BaseTheme]:
-        return [
-            make_theme()
-        ]
+        return [make_theme()]

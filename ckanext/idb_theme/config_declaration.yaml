@@ -1,0 +1,11 @@
+version: 1
+groups:
+  - annotation: ckanext-idb-theme
+    options:
+      - key: theme.idb.collapsed_facets
+        type: list
+        default:
+          - res_format
+          - license
+        description: |
+          List of facet fields to be collapsed by default on the search results page.

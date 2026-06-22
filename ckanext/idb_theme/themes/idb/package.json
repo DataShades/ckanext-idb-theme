@@ -4,7 +4,7 @@
         "build-scripts": "vite build",
         "typecheck-scripts": "tsc --noEmit",
         "watch-styles": "sass -Inode_modules  -w assets/scss/main.scss assets/css/main.css --embed-source-map",
-        "compile-styles": "sass -Inode_modules assets/scss/main.scss assets/css/main.css --no-source-map; sass assets/scss/main-rtl.scss assets/css/main-rtl.css --no-source-map"
+        "compile-styles": "sass -Inode_modules assets/scss/main.scss assets/css/main.css --no-source-map; sass -Inode_modules assets/scss/main-rtl.scss assets/css/main-rtl.css --no-source-map"
     },
     "dependencies": {
         "@types/bootstrap": "^5.2.10",

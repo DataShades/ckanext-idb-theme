@@ -858,3 +858,85 @@ select[data-module="autocomplete"] {
 .select2-dropdown-open .select2-choice {
     background-color: white !important;
 }
+
+
+
+
+// IDB customization //////////////////////////////////////////////////////////
+.form-control {
+    &.ts-wrapper {
+        padding: 0;
+        border: unset;
+
+        &.disabled .ts-control {
+            background-color: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+            opacity: 1;
+
+            * {
+                cursor: not-allowed !important;
+            }
+        }
+    }
+}
+
+:is(#dataset-edit, #resource-edit, .dataset-form, [data-module~="resource-form"])
+    .form-group:not(.form-check):has(> .form-text, > .error-inline) {
+    display: flex;
+    flex-direction: column;
+
+    > .form-label {
+        order: 1;
+    }
+
+    > .form-text {
+        order: 2;
+    }
+
+    > .error-inline {
+        order: 3;
+    }
+
+    > :not(.form-label, .error-inline, .form-text) {
+        order: 4;
+    }
+}
+
+:is(#dataset-edit, #resource-edit, .dataset-form, [data-module~="resource-form"])
+    .form-group
+    .controls:has(> .form-text, > .error-block, > .error-inline) {
+    display: flex;
+    flex-direction: column;
+
+    > .form-text {
+        order: -2;
+    }
+
+    > .error-block,
+    > .error-inline {
+        order: -1;
+    }
+}
+
+:is(#dataset-edit, #resource-edit, .dataset-form, [data-module~="resource-form"])
+    .multilingual-field-group:has(> .multilingual-field-error) {
+    display: flex;
+    flex-direction: column;
+
+    > .multilingual-field {
+        order: 1;
+    }
+
+    > .form-text {
+        order: 2;
+    }
+
+    > .multilingual-field-error {
+        order: 3;
+    }
+
+    > :not(.multilingual-field, .multilingual-field-error, .form-text) {
+        order: 4;
+    }
+}
