@@ -2,5 +2,6 @@ include README.rst
 include LICENSE
 include requirements.txt
 recursive-include ckanext/idb_theme *.html *.json *.js *.less *.css *.mo *.yml
+recursive-include ckanext/idb_theme/themes/idb/public *.*
 recursive-include ckanext/idb_theme/migration *.ini *.py *.mako
 recursive-include ckanext/idb_theme/public *.*

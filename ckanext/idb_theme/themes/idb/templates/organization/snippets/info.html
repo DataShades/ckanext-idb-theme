@@ -22,10 +22,10 @@ organization page or not.
                             <div class="image">
                                 {% if image_link %}
                                     <a href="{{ url }}">
-                                        <img src="{{ organization.image_display_url or h.url_for_static('/base/images/placeholder-organization.svg') }}" width="200" alt="{{ organization.name }}" />
+                                        <img src="{{ organization.image_display_url or h.url_for_static('images/placeholder-organization.svg') }}" width="200" alt="{{ organization.name }}" />
                                     </a>
                                 {% else %}
-                                    <img src="{{ organization.image_display_url or h.url_for_static('/base/images/placeholder-organization.svg') }}" width="200" alt="{{ organization.name }}" />
+                                    <img src="{{ organization.image_display_url or h.url_for_static('images/placeholder-organization.svg') }}" width="200" alt="{{ organization.name }}" />
                                 {% endif %}
                             </div>
                         {% endblock %}
