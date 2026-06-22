@@ -50,3 +50,7 @@ def idb_theme_get_group_count(type: str = 'group') -> dict[str, int]:
         raise ValueError(f'Invalid group type: {type}')  # noqa: TRY003
     return q.count()
 
+
+def idb_theme_show_followers_count(num_followers: int) -> bool:
+    """Check whether the sidebar follower count should be displayed."""
+    return num_followers > 0 or not config.hide_empty_followers()

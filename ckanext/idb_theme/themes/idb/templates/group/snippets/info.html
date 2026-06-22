@@ -36,10 +36,12 @@
                         {% block nums %}
                             {% set num_followers = h.follow_count('group', group.id) %}
                             <div class="nums">
-                                <dl>
-                                    <dt>{{ _('Followers') }}</dt>
-                                    <dd>{{ h.SI_number_span(num_followers) }}</dd>
-                                </dl>
+                                {% if h.idb_theme_show_followers_count(num_followers) %}
+                                    <dl>
+                                        <dt>{{ _('Followers') }}</dt>
+                                        <dd>{{ h.SI_number_span(num_followers) }}</dd>
+                                    </dl>
+                                {% endif %}
                                 <dl>
                                     <dt>{{ h.humanize_entity_type('package', dataset_type, 'facet label') or _('Datasets') }}</dt>
                                     <dd>{{ h.SI_number_span(group.package_count) }}</dd>

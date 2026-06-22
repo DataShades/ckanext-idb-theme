@@ -9,3 +9,9 @@ groups:
           - license
         description: |
           List of facet fields to be collapsed by default on the search results page.
+
+      - key: theme.idb.hide_empty_followers
+        type: bool
+        default: true
+        description: |
+          Hide follower counters in sidebar summaries when the count is zero.
