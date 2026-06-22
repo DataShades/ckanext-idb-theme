@@ -14064,6 +14064,19 @@ td.diff_header {
   margin-top: 1rem;
 }
 
+.idb-summary-card .module-image {
+  aspect-ratio: 1/1;
+  overflow: hidden;
+}
+
+.idb-summary-card .module-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
 .toolbar::after {
   display: block;
   clear: both;
@@ -14105,16 +14118,16 @@ td.diff_header {
   content: "/";
 }
 
-.toolbar .breadcrumb .breadcrumb-ellipsis {
+.toolbar .breadcrumb .idb-breadcrumb-ellipsis {
   display: none;
   color: var(--idb-color-on-surface-muted);
 }
 
 @media (max-width: 991.98px) {
-  .toolbar .breadcrumb .breadcrumb-ellipsis:nth-last-child(n+4) {
+  .toolbar .breadcrumb .idb-breadcrumb-ellipsis:nth-last-child(n+4) {
     display: list-item;
   }
-  .toolbar .breadcrumb .breadcrumb-ellipsis:nth-last-child(n+4) ~ li:not(:last-child) {
+  .toolbar .breadcrumb .idb-breadcrumb-ellipsis:nth-last-child(n+4) ~ li:not(:last-child) {
     display: none;
   }
 }
@@ -15517,9 +15530,10 @@ footer .ckan-footer-logo {
 
 .btn-primary {
   color: #fff;
+  background: var(--idb-color-primary);
 }
 .btn-primary:hover {
-  background-color: #02384E;
+  background-color: var(--idb-color-primary-dark);
 }
 
 .btn-secondary {

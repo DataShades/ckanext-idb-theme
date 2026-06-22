@@ -15573,9 +15573,10 @@ footer .ckan-footer-logo {
 
 .btn-primary {
   color: #fff;
+  background: var(--idb-color-primary);
 }
 .btn-primary:hover {
-  background-color: #02384E;
+  background-color: var(--idb-color-primary-dark);
 }
 
 .btn-secondary {

@@ -20,8 +20,9 @@
 
 .btn-primary {
     color: $white;
+    background: var(--idb-color-primary);
     &:hover {
-        background-color: $brand-700;
+        background-color: var(--idb-color-primary-dark);
     }
 }
 

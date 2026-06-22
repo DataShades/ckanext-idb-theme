@@ -15,7 +15,7 @@ Example:
 {% set url_action = pkg.type ~ ('_resource.edit' if url_is_edit and can_edit else '_resource.read') %}
 {% set url = url or h.url_for(url_action, id=pkg.name, resource_id=res.id) %}
 
-<li class="resource-item" data-id="{{ res.id }}">
+<li class="resource-item d-flex flex-column" data-id="{{ res.id }}">
     <div>
         {% block resource_item_title %}
             {% set name_or_id = res.name or res.id %}
@@ -37,10 +37,10 @@ Example:
 
     {% block resource_item_explore %}
         {% if not url_is_edit %}
-            {%- call ui.util.call(ui.dropdown, title=ui.icon("share") ~ _('Explore')) -%}
+            <div class="d-flex flex-wrap flex-row gap-1">
                 {% block resource_item_explore_links %}
                     {% block explore_view %}
-                        {%- call ui.util.call(ui.dropdown_item, href=url) -%}
+                        {%- call ui.util.call(ui.button, href=url, size="sm") -%}
                             {% if res.has_views %}
                                 {{ ui.icon("chart-bar") }}
                                 {{ _('Preview') }}
@@ -52,7 +52,7 @@ Example:
                     {% endblock explore_view %}
 
                     {% if res.url and h.is_url(res.url) %}
-                        {%- call ui.util.call(ui.dropdown_item, href=res.url, blank=true, class="dropdown-item resource-url-analytics") -%}
+                        {%- call ui.util.call(ui.button, href=res.url, blank=true, size="sm", _extra_class="resource-url-analytics") -%}
                             {% if res.has_views or res.url_type == 'upload' %}
                                 {{ ui.icon("arrow-circle-down") }}
                                 {{ _('Download') }}
@@ -64,12 +64,18 @@ Example:
                     {% endif %}
 
                     {% if can_edit %}
-                        {{ ui.dropdown_item(ui.icon("pencil") ~' '~ _('Edit resource'), href=h.url_for(pkg.type ~ '_resource.edit', id=pkg.name, resource_id=res.id)) }}
-                        {% block resource_item_explore_inner scoped %}{% endblock %}
-                        {{ ui.dropdown_item(ui.icon("chart-bar") ~' '~ _('Views'), href=h.url_for(pkg.type ~ '_resource.views', id=pkg.name, resource_id=res.id)) }}
+                        {% block resource_item_explore_inner scoped %}
+                            {% if res.datastore_active and h.plugin_loaded("datastore") %}
+                                {{ ui.button(_('Data Dictionary'), icon="code", size="sm", href=h.url_for('datastore.dictionary', id=pkg.name, resource_id=res.id)) }}
+                            {% endif %}
+
+                        {% endblock %}
+                        {% if h.plugin_loaded("xloader") and h.is_resource_supported_by_xloader(res) %}
+                            {{ ui.button(_('DataStore'), size="sm", icon="cloud-upload", href=h.url_for('xloader.resource_data', id=pkg.name, resource_id=res.id)) }}
+                        {% endif %}
                     {% endif %}
                 {% endblock %}
-            {%- endcall %}
+            </div>
         {% endif %}
     {% endblock %}
 </li>
