@@ -57,9 +57,9 @@
                                 {% if error_message %}
                                     <div class="alert alert-danger">{{ error_message }}</div>
                                 {% elif am_following %}
-                                    {{ ui.button(ui.icon("circle-minus", style="solid") ~ _("Unfollow"), style="danger", hx={"target": "#group-info", "post": h.url_for('group.unfollow', id=group.id)}) }}
+                                    {{ ui.button(ui.icon("circle-minus", style="solid") ~ _("Unfollow"), style="danger", hx={"target": "#group-info", "post": h.url_for('idb_theme.group_unfollow', id=group.id)}) }}
                                 {% else %}
-                                    {{ ui.button(ui.icon("circle-plus", style="solid") ~ _("Follow"), style="success", hx={"target": "#group-info", "post": h.url_for('group.follow', id=group.id)}) }}
+                                    {{ ui.button(ui.icon("circle-plus", style="solid") ~ _("Follow"), style="success", hx={"target": "#group-info", "post": h.url_for('idb_theme.group_follow', id=group.id)}) }}
                                 {%- endif -%}
 
                             {% endif %}

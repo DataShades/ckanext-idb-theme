@@ -76,9 +76,9 @@ organization page or not.
                                 {% if error_message %}
                                     <div class="alert alert-danger">{{ error_message }}</div>
                                 {% elif am_following %}
-                                    {{ ui.button(ui.icon("circle-minus", style="solid") ~ _("Unfollow"), style="danger", hx={"target": "#organization-info", "post": h.url_for('organization.unfollow', id=organization.id)}) }}
+                                    {{ ui.button(ui.icon("circle-minus", style="solid") ~ _("Unfollow"), style="danger", hx={"target": "#organization-info", "post": h.url_for('idb_theme.organization_unfollow', id=organization.id)}) }}
                                 {% else %}
-                                    {{ ui.button(ui.icon("circle-plus", style="solid") ~ _("Follow"), style="success", hx={"target": "#organization-info", "post": h.url_for('organization.follow', id=organization.id)}) }}
+                                    {{ ui.button(ui.icon("circle-plus", style="solid") ~ _("Follow"), style="success", hx={"target": "#organization-info", "post": h.url_for('idb_theme.organization_follow', id=organization.id)}) }}
 
                                 {% endif %}
                             {% endif %}

@@ -14,6 +14,7 @@ from .themes.idb.theme import make_theme
 
 
 @tk.blanket.helpers
+@tk.blanket.blueprints
 @tk.blanket.config_declarations
 class IdbThemePlugin(ITheme, p.SingletonPlugin):
     @override
