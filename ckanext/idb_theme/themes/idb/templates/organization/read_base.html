@@ -14,7 +14,7 @@
 {%- endblock %}
 
 {% block content_action -%}
-    {{ ui.content_action(h.humanize_entity_type('package', dataset_type, 'add link') or _("Add Dataset"), href=h.url_for(dataset_type ~ '.new', owner_org=group_dict.id), icon="plus-square") if h.check_access('package_create') }}
+    {{ ui.content_action(h.humanize_entity_type('package', dataset_type, 'add link') or _("Add Dataset"), href=h.url_for(dataset_type ~ '.new', owner_org=group_dict.id), icon="plus-square") if h.check_access('package_create', {'owner_org': group_dict.id}) }}
     {{- ui.content_action(_('Manage'), href=h.url_for(group_type+'.edit', id=group_dict.name), icon="wrench", style="secondary") if h.check_access('organization_update', {'id': group_dict.id}) }}
 {%- endblock %}
 
