@@ -140,6 +140,13 @@
         {% if res %}
             <section class="module">
                 {% block resource_additional_information_inner %}
+                    {% if h.plugin_loaded("datastore") and res.datastore_active %}
+                        {% block resource_data_dictionary %}
+                            {% with ddict=h.datastore_dictionary(res.id) %}
+                                {% include 'datastore/snippets/dictionary_view.html' %}
+                            {% endwith %}
+                        {% endblock %}
+                    {% endif %}
                     <div class="module-content">
                         {{ ui.heading(_('Additional Information'), level=2) }}
                         {%- call ui.util.call(ui.table, striped=true, bordered=true, data={"module": "table-toggle-more"}) -%}
