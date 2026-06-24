@@ -45,3 +45,35 @@
     object-fit: cover;
     object-position: center;
 }
+
+.iadb-iar-organization-search {
+    position: relative;
+
+    &:has(.idb-organization-search-loading.htmx-request) #publisher-tree {
+        filter: blur(2px);
+        opacity: 0.45;
+        pointer-events: none;
+    }
+
+    #publisher-tree {
+        transition: filter 0.15s ease-in-out, opacity 0.15s ease-in-out;
+    }
+
+    .hierarchy-tree-top li a,
+    .hierarchy-tree li a {
+        color: $link-color;
+    }
+
+    .hierarchy-tree-top li a:hover,
+    .hierarchy-tree li a:hover {
+        color: $link-hover-color;
+    }
+
+    .hierarchy-tree-top li.highlighted > a,
+    .hierarchy-tree-top li.highlighted > div.node-item a,
+    .hierarchy-tree li.highlighted > a,
+    .hierarchy-tree li.highlighted > div.node-item a {
+        color: $link-color;
+        text-shadow: none;
+    }
+}

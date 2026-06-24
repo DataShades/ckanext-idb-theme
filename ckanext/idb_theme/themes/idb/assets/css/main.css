@@ -14071,6 +14071,27 @@ td.diff_header {
   cursor: pointer;
 }
 
+.idb-organization-search-loading {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid #d0d5dd;
+  border-radius: 0.375rem;
+  background-color: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  color: #2f4b91;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.idb-organization-search-loading.htmx-request {
+  display: flex;
+}
+
 .groups-list {
   display: grid;
   grid-auto-flow: row;
@@ -14118,6 +14139,33 @@ td.diff_header {
   height: 100%;
   object-fit: cover;
   object-position: center;
+}
+
+.iadb-iar-organization-search {
+  position: relative;
+}
+.iadb-iar-organization-search:has(.idb-organization-search-loading.htmx-request) #publisher-tree {
+  filter: blur(2px);
+  opacity: 0.45;
+  pointer-events: none;
+}
+.iadb-iar-organization-search #publisher-tree {
+  transition: filter 0.15s ease-in-out, opacity 0.15s ease-in-out;
+}
+.iadb-iar-organization-search .hierarchy-tree-top li a,
+.iadb-iar-organization-search .hierarchy-tree li a {
+  color: #24506B;
+}
+.iadb-iar-organization-search .hierarchy-tree-top li a:hover,
+.iadb-iar-organization-search .hierarchy-tree li a:hover {
+  color: rgb(28.8, 64, 85.6);
+}
+.iadb-iar-organization-search .hierarchy-tree-top li.highlighted > a,
+.iadb-iar-organization-search .hierarchy-tree-top li.highlighted > div.node-item a,
+.iadb-iar-organization-search .hierarchy-tree li.highlighted > a,
+.iadb-iar-organization-search .hierarchy-tree li.highlighted > div.node-item a {
+  color: #24506B;
+  text-shadow: none;
 }
 
 .toolbar::after {

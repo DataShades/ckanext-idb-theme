@@ -128,3 +128,25 @@
         }
     }
 }
+
+.idb-organization-search-loading {
+    position: absolute;
+    z-index: 1;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+    align-items: center;
+    gap: $spacer * 0.5;
+    padding: $spacer * 0.5 $spacer;
+    border: 1px solid $border-color;
+    border-radius: $border-radius;
+    background-color: rgba($white, 0.95);
+    box-shadow: $box-shadow-sm;
+    color: $brand-500;
+    font-weight: 600;
+    white-space: nowrap;
+
+    &.htmx-request {
+        display: flex;
+    }
+}
