@@ -28,8 +28,8 @@
                             <td>
                                 {{ ui.checkbox(name="token", value=token.id, id=ui.util.id(), label=ui.util.tag(token.name, "code"), on={"change": "$('#revoke-tokens-button').attr('disabled', !$('[name=token]:checked').length)"}) }}
                             </td>
-                            <td>{{ ui.datetime(value=token.created_at, with_hours=true) }}</td>
-                            <td>{{ ui.datetime(value=token.last_access, with_hours=true, empty=_('Never')) }}</td>
+                            <td>{{ ui.datetime(token.created_at, with_hours=true) }}</td>
+                            <td>{{ ui.datetime(token.last_access, with_hours=true, empty=_('Never')) }}</td>
                         {% endblock token_cells %}
                     </tr>
                 {%- endfor -%}
