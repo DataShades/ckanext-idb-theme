@@ -5,7 +5,7 @@ extras is a list of tuples of the form (key, value)
 #}
 {% if extras %}
     {{ ui.heading(_('Additional Info'), level=3) }}
-    {%- call ui.util.call(ui.table, striped=true, bordered=true, condensed=true) -%}
+    {%- call ui.util.call(ui.table, striped=true, bordered=true, condensed=true, data={"module": "additional-info-linkify"}) -%}
         <thead>
             <tr>
                 <th scope="col">{{ _('Field') }}</th>
