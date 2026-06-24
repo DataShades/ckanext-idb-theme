@@ -20,6 +20,7 @@ scripts:
       - base/main
   contents:
     - javascript/init_tooltip.js
+    - javascript/modules/additional-info-linkify.js
     - javascript/modules/autocomplete.js
     - javascript/modules/basic-form.js
     - javascript/modules/confirm-action.js
