@@ -94,11 +94,13 @@
 
 {% block secondary_content %}
     {{ super() }}
+    {% set entity_type = h.humanize_entity_type('group', group_type, 'default label') or _('group') %}
+    {% set entity_type_plural = h.humanize_entity_type('group', group_type, 'facet label') or _('groups') %}
     {%- call ui.util.call(ui.sidebar_section, title=_('What are roles?'), icon="info-circle") -%}
-        {% trans %}
-        <p><strong>Admin:</strong> Can edit group information, as well as
-            manage organization members.</p>
-        <p><strong>Member:</strong> Can add/remove datasets from groups</p>
+        {% trans entity_type=entity_type, entity_type_plural=entity_type_plural %}
+        <p><strong>Admin:</strong> Can edit {{ entity_type }} information, as well as
+            manage {{ entity_type }} members.</p>
+        <p><strong>Member:</strong> Can add/remove datasets from {{ entity_type_plural }}</p>
           {% endtrans %}
     {%- endcall %}
 {% endblock %}

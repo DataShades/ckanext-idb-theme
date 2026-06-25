@@ -1,6 +1,8 @@
 {% set organizations = h.get_featured_organizations(count=6) %}
+{% set org_type = h.default_group_type('organization') %}
+{% set org_type_plural = h.humanize_entity_type('organization', org_type, 'facet label') or _('Organizations') %}
 
-{{ ui.heading(_("Organizations"), level=2) }}
+{{ ui.heading(org_type_plural, level=2) }}
 
 <ul class="featured-groups">
     {% for organization in organizations %}
@@ -9,5 +11,5 @@
 </ul>
 
 <div>
-    {{ ui.button(_('View all organizations'), style="primary-outline", href=h.url_for('organization.index')) }}
+    {{ ui.button(_('View all {entity_type}').format(entity_type=org_type_plural), style="primary-outline", href=h.url_for('organization.index')) }}
 </div>

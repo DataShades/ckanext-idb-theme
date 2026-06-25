@@ -9,10 +9,13 @@ Example:
 
 #}
 
-{%- call ui.util.call(ui.sidebar_section, icon="info-circle", title=_('What are Organizations?')) -%}
-    {% trans %}
-    CKAN Organizations are used to create, manage and publish collections
-    of datasets. Users can have different roles within an Organization,
+{% set entity_type = h.humanize_entity_type('organization', group_type, 'default label') or _('Organization') %}
+{% set entity_type_plural = h.humanize_entity_type('organization', group_type, 'facet label') or _('Organizations') %}
+
+{%- call ui.util.call(ui.sidebar_section, icon="info-circle", title=_('What are {entity_type}?').format(entity_type=entity_type_plural)) -%}
+    {% trans entity_type=entity_type, entity_type_plural=entity_type_plural %}
+    {{ entity_type_plural }} are used to create, manage and publish datasets.
+    Users can have different roles within each {{ entity_type }},
     depending on their level of authorisation to create, edit and publish.
         {% endtrans %}
 {%- endcall %}

@@ -88,7 +88,8 @@
                 {%- endcall %}
 
             {% else %}
-                {{ ui.empty(_('This organization has no datasets associated to it')) }}
+                {% set entity_type = h.humanize_entity_type('organization', group_type, 'default label') or _('organization') %}
+                {{ ui.empty(_('This {entity_type} has no datasets associated to it').format(entity_type=entity_type)) }}
             {% endif %}
         {% endblock %}
     </div>

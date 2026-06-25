@@ -2,9 +2,11 @@
 {% import 'macros/form.html' as form %}
 
 {% set default_group_type = h.default_group_type('group') %}
+{% set entity_type = h.humanize_entity_type('group', default_group_type, 'default label') or _('group') %}
+{% set entity_type_plural = h.humanize_entity_type('group', default_group_type, 'page title') or _('Groups') %}
 
 {% block primary_content_inner %}
-    {{ ui.heading(h.humanize_entity_type('group', default_group_type, 'page title') or _('Groups'), level=1) }}
+    {{ ui.heading(entity_type_plural, level=1) }}
 
     {% if group_dropdown %}
         {%- call ui.util.call(ui.form, method="POST", attrs={"class": "add-to-group"}) -%}
@@ -14,7 +16,7 @@
                 {% endfor %}
             </select>
 
-            {{ ui.button(_('Add to group'), type="submit", aria={"label": _('Associate this group with this dataset')}) }}
+            {{ ui.button(_('Add to {entity_type}').format(entity_type=entity_type), type="submit", aria={"label": _('Associate this {entity_type} with this dataset').format(entity_type=entity_type)}) }}
         {%- endcall %}
 
     {% endif %}

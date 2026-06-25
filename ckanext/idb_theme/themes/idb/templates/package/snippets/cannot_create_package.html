@@ -1,4 +1,7 @@
 {% extends "package/base_form_page.html" %}
+{% set organization_type = h.default_group_type('organization') %}
+{% set entity_type = h.humanize_entity_type('organization', organization_type, 'default label') or _('organization') %}
+{% set entity_type_plural = h.humanize_entity_type('organization', organization_type, 'facet label') or _('organizations') %}
 
 {% block primary_content %}
 
@@ -8,12 +11,12 @@
         <div class="module-content">
             {% block primary_content_inner %}
                 {% if h.check_access('organization_create') %}
-                    {{ ui.alert(_('Before you can create a dataset you need to create an organization.'), style="warning") }}
-                    {{ ui.button(_('Create a new organization'), href=h.url_for('organization.new')) }}
+                    {{ ui.alert(_('Before you can create a dataset you need to create an {entity_type}.').format(entity_type=entity_type), style="warning") }}
+                    {{ ui.button(_('Create a new {entity_type}').format(entity_type=entity_type), href=h.url_for('organization.new')) }}
                 {% else %}
                     {%- call ui.util.call(ui.alert, style="danger") -%}
-                        <p>{{ _('There are no organizations to which you can assign this dataset.') }}</p>
-                        <p>{{ _('Ask a system administrator to create an organization before you can continue.') }}</p>
+                        <p>{{ _('There are no {entity_type} to which you can assign this dataset.').format(entity_type=entity_type_plural) }}</p>
+                        <p>{{ _('Ask a system administrator to create an {entity_type} before you can continue.').format(entity_type=entity_type) }}</p>
                     {%- endcall %}
                 {% endif %}
             {% endblock %}

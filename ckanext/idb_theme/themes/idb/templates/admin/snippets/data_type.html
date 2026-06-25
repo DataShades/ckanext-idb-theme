@@ -9,11 +9,13 @@
     {%- set icon = "sitemap" -%}
 
 {% elif ent_type == 'organization' %}
-    {%- set title = _('Deleted organizations') -%}
+    {%- set entity_type = h.humanize_entity_type('organization', ent_type, 'facet label') or _('organizations') -%}
+    {%- set title = _('Deleted {entity_type}').format(entity_type=entity_type) -%}
     {%- set icon = "building" -%}
 
 {% elif ent_type == 'group' %}
-    {%- set title = _('Deleted groups') -%}
+    {%- set entity_type = h.humanize_entity_type('group', ent_type, 'facet label') or _('groups') -%}
+    {%- set title = _('Deleted {entity_type}').format(entity_type=entity_type) -%}
     {%- set icon = "users" -%}
 
 {% endif %}

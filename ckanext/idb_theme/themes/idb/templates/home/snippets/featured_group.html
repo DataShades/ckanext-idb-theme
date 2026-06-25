@@ -1,5 +1,7 @@
 {% set groups = h.get_featured_groups(count=6) %}
-{{ ui.heading(_("Groups"), level=2) }}
+{% set group_type = h.default_group_type('group') %}
+{% set group_type_plural = h.humanize_entity_type('group', group_type, 'facet label') or _('Groups') %}
+{{ ui.heading(group_type_plural, level=2) }}
 
 <ul class="featured-groups">
     {% for group in groups %}
@@ -7,5 +9,5 @@
     {% endfor %}
 </ul>
 <div>
-    {{ ui.button(_('View all groups'), style="primary-outline", href=h.url_for('group.index')) }}
+    {{ ui.button(_('View all {entity_type}').format(entity_type=group_type_plural), style="primary-outline", href=h.url_for('group.index')) }}
 </div>

@@ -11,6 +11,9 @@ Example:
 {% snippet 'snippets/search_result_text.html', query=query, count=count, type='dataset' %}
 
 #}
+{% set type_singular = type %}
+{% set type_plural = type %}
+
 {% if type == 'dataset' %}
     {% set text_query = ungettext('{number} dataset found for "{query}"', '{number} datasets found for "{query}"', count) %}
     {% set text_query_none = _('No datasets found for "{query}"') %}
@@ -18,16 +21,20 @@ Example:
     {% set text_no_query_none = _('No datasets found') %}
 
 {% elif type == 'group' %}
-    {% set text_query = ungettext('{number} group found for "{query}"', '{number} groups found for "{query}"', count) %}
-    {% set text_query_none = _('No groups found for "{query}"') %}
-    {% set text_no_query = ungettext('{number} group found', '{number} groups found', count) %}
-    {% set text_no_query_none = _('No groups found') %}
+    {% set type_singular = h.humanize_entity_type('group', type, 'default label') or _('group') %}
+    {% set type_plural = h.humanize_entity_type('group', type, 'facet label') or _('groups') %}
+    {% set text_query = ungettext('{number} {type_singular} found for "{query}"', '{number} {type_plural} found for "{query}"', count) %}
+    {% set text_query_none = _('No {type_plural} found for "{query}"') %}
+    {% set text_no_query = ungettext('{number} {type_singular} found', '{number} {type_plural} found', count) %}
+    {% set text_no_query_none = _('No {type_plural} found') %}
 
 {% elif type == 'organization' %}
-    {% set text_query = ungettext('{number} organization found for "{query}"', '{number} organizations found for "{query}"', count) %}
-    {% set text_query_none = _('No organizations found for "{query}"') %}
-    {% set text_no_query = ungettext('{number} organization found', '{number} organizations found', count) %}
-    {% set text_no_query_none = _('No organizations found') %}
+    {% set type_singular = h.humanize_entity_type('organization', type, 'default label') or _('organization') %}
+    {% set type_plural = h.humanize_entity_type('organization', type, 'facet label') or _('organizations') %}
+    {% set text_query = ungettext('{number} {type_singular} found for "{query}"', '{number} {type_plural} found for "{query}"', count) %}
+    {% set text_query_none = _('No {type_plural} found for "{query}"') %}
+    {% set text_no_query = ungettext('{number} {type_singular} found', '{number} {type_plural} found', count) %}
+    {% set text_no_query_none = _('No {type_plural} found') %}
 
 {% else %}
     {% set text_query_singular = '{number} ' + type + ' found for "{query}"' %}
@@ -45,14 +52,14 @@ Example:
 
 {% if query %}
     {%- if count -%}
-        {{ text_query.format(number=h.localised_number(count), query=query, type=type) }}
+        {{ text_query.format(number=h.localised_number(count), query=query, type=type, type_singular=type_singular, type_plural=type_plural) }}
     {%- else -%}
-        {{ text_query_none.format(query=query, type=type) }}
+        {{ text_query_none.format(query=query, type=type, type_singular=type_singular, type_plural=type_plural) }}
     {%- endif -%}
 {%- else -%}
     {%- if count -%}
-        {{ text_no_query.format(number=h.localised_number(count), type=type) }}
+        {{ text_no_query.format(number=h.localised_number(count), type=type, type_singular=type_singular, type_plural=type_plural) }}
     {%- else -%}
-        {{ text_no_query_none.format(type=type) }}
+        {{ text_no_query_none.format(type=type, type_singular=type_singular, type_plural=type_plural) }}
     {%- endif -%}
 {%- endif -%}

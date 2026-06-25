@@ -16,6 +16,9 @@ def idb_theme_default_collapsed(facet_name: str):
 
 def idb_theme_info_graph() -> dict[str, Any]:
     """Get the info graph metrics for the homepage."""
+    org_type = tk.h.default_group_type('organization')
+    group_type = tk.h.default_group_type('group')
+
     return {
         'metrics': [
             {
@@ -24,7 +27,7 @@ def idb_theme_info_graph() -> dict[str, Any]:
             },
             {
                 'value': idb_theme_get_group_count(type='organization'),
-                'label': _('Organizations'),
+                'label': tk.h.humanize_entity_type('organization', org_type, 'facet label') or _('Organizations'),
             },
             {
                 'value': '18+',
@@ -32,7 +35,9 @@ def idb_theme_info_graph() -> dict[str, Any]:
             },
             {
                 'value': idb_theme_get_group_count(),
-                'label': _('Thematic groups'),
+                'label': _('Thematic {entity_type}').format(
+                    entity_type=tk.h.humanize_entity_type('group', group_type, 'facet label') or _('Groups')
+                ),
             },
         ],
     }

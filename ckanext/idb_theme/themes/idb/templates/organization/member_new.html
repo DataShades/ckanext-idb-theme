@@ -98,13 +98,14 @@
 
 {% block secondary_content %}
     {{ super() }}
+    {% set entity_type = h.humanize_entity_type('organization', group_type, 'default label') or _('organization') %}
     {%- call ui.util.call(ui.sidebar_section, title=_('What are roles?'), icon="info-circle") -%}
-        {% trans %}
+        {% trans entity_type=entity_type %}
         <p><strong>Admin:</strong> Can add/edit and delete datasets, as well as
-            manage organization members.</p>
+            manage {{ entity_type }} members.</p>
         <p><strong>Editor:</strong> Can add and edit datasets, but not manage
-            organization members.</p>
-        <p><strong>Member:</strong> Can view the organization's private
+            {{ entity_type }} members.</p>
+        <p><strong>Member:</strong> Can view the {{ entity_type }}'s private
             datasets, but not add new datasets.</p>
         {% endtrans %}
     {%- endcall %}

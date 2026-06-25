@@ -9,8 +9,10 @@ Example:
 
 #}
 
-{%- call ui.util.call(ui.sidebar_section, icon="info-circle", title=_('What are Groups?')) -%}
-    {% trans %}You can use CKAN Groups to create and manage collections of datasets.
+{% set entity_type_plural = h.humanize_entity_type('group', group_type, 'facet label') or _('Groups') %}
+
+{%- call ui.util.call(ui.sidebar_section, icon="info-circle", title=_('What are {entity_type}?').format(entity_type=entity_type_plural)) -%}
+    {% trans entity_type_plural=entity_type_plural %}You can use {{ entity_type_plural }} to create and manage collections of datasets.
     This could be to catalogue datasets for a particular project or team,
     or on a particular theme, or as a very simple way to help people find
     and search your own published datasets.{% endtrans %}

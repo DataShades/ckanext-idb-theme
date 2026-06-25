@@ -18,7 +18,9 @@
 {% block primary_content_inner %}
     {% block help %}
         {% block help_inner %}
-            <p>{{ _("Create datasets, groups and other exciting things") }}</p>
+            {% set group_type = h.default_group_type('group') %}
+            {% set entity_type_plural = h.humanize_entity_type('group', group_type, 'facet label') or _('groups') %}
+            <p>{{ _("Create datasets, {entity_type} and other exciting things").format(entity_type=entity_type_plural) }}</p>
         {% endblock %}
     {% endblock %}
 {% endblock %}

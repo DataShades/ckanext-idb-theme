@@ -26,6 +26,8 @@
 {% endblock %}
 
 {% block secondary_content %}
-    {{ ui.sidebar_section(_("Purge deleted datasets, organizations or groups forever and irreversibly."), icon="info-circle", title=_("Trash")) }}
+    {% set org_type = h.humanize_entity_type('organization', h.default_group_type('organization'), 'facet label') or _('organizations') %}
+    {% set group_type = h.humanize_entity_type('group', h.default_group_type('group'), 'facet label') or _('groups') %}
+    {{ ui.sidebar_section(_("Purge deleted datasets, {org_type} or {group_type} forever and irreversibly.").format(org_type=org_type, group_type=group_type), icon="info-circle", title=_("Trash")) }}
 
 {% endblock %}

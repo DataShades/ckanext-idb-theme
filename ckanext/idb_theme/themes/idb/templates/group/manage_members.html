@@ -16,6 +16,7 @@
 {%- endblock %}
 
 {% block primary_content_inner %}
+    {% set entity_type = h.humanize_entity_type('group', group_type, 'default label') or _('group') %}
     <h1 class="page-heading">{{ _('Members') }}</h1>
     {{ ui.heading(_('{0} members'.format(members|length)), level=2) }}
 
@@ -38,10 +39,10 @@
                         {%- set modal_id = ui.util.id() -%}
 
                         {%- call ui.util.call(ui.button_group) -%}
-                            {{ ui.button(ui.tooltip(ui.icon("wrench"), tooltip=_('Edit role')), style="secondary", size="sm", href=h.url_for(group_type + '.member_new', id=group_dict.id, user=user_id), aria={"label": _('Edit role'), "description": _('Edit the role of the user within the group')}) }}
+                            {{ ui.button(ui.tooltip(ui.icon("wrench"), tooltip=_('Edit role')), style="secondary", size="sm", href=h.url_for(group_type + '.member_new', id=group_dict.id, user=user_id), aria={"label": _('Edit role'), "description": _('Edit the role of the user within the {entity_type}').format(entity_type=entity_type)}) }}
 
 
-                            {{ ui.modal_handle(ui.tooltip(ui.icon("times"), tooltip=_('Delete member')), style="danger", size="sm", id=modal_id, aria={"description": _('Delete this member from the group'), "label": _('Delete member')}) }}
+                            {{ ui.modal_handle(ui.tooltip(ui.icon("times"), tooltip=_('Delete member')), style="danger", size="sm", id=modal_id, aria={"description": _('Delete this member from the {entity_type}').format(entity_type=entity_type), "label": _('Delete member')}) }}
 
                         {%- endcall %}
 

@@ -14,7 +14,8 @@
         <section class="module">
             <div class="module-content">
                 {%- block form -%}
-                    <p>{{ _('Are you sure you want to delete organization - {name}?').format(name=group_dict.name) }}</p>
+                    {% set entity_type = h.humanize_entity_type('organization', group_type, 'default label') or _('organization') %}
+                    <p>{{ _('Are you sure you want to delete {entity_type} - {name}?').format(entity_type=entity_type, name=group_dict.name) }}</p>
                     <p class="form-actions">
                         {%- call ui.util.call(ui.form, method="POST", action=h.url_for(group_type + '.delete', id=group_dict.id)) -%}
                             {{ ui.button(_('Cancel'), style="danger", type="submit", attrs={"name": "cancel"}) }}

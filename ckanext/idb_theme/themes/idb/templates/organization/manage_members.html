@@ -18,6 +18,7 @@
 {%- endblock %}
 
 {% block primary_content_inner %}
+    {% set entity_type = h.humanize_entity_type('organization', group_type, 'default label') or _('organization') %}
     {% set count = members|length %}
     {% set members_count = ungettext('{count} member', '{count} members', count).format(count=count) %}
     {% set can_create_members = h.check_access('organization_member_create', {'id': organization.id}) %}
@@ -48,12 +49,12 @@
 
                             {%- call ui.util.call(ui.button_group) -%}
                                 {% if can_create_members %}
-                                    {{ ui.button(ui.tooltip(ui.icon("wrench"), tooltip=_('Edit role')), style="secondary", size="sm", href=h.url_for(group_type + '.member_new', id=group_dict.id, user=user_id), aria={"label": _('Edit role'), "description": _('Edit the role of the user within the organization')}) }}
+                                    {{ ui.button(ui.tooltip(ui.icon("wrench"), tooltip=_('Edit role')), style="secondary", size="sm", href=h.url_for(group_type + '.member_new', id=group_dict.id, user=user_id), aria={"label": _('Edit role'), "description": _('Edit the role of the user within the {entity_type}').format(entity_type=entity_type)}) }}
 
                                 {% endif %}
 
                                 {% if can_delete_members %}
-                                    {{ ui.modal_handle(ui.tooltip(ui.icon("times"), tooltip=_('Delete member')), style="danger", size="sm", id=modal_id, aria={"description": _('Delete this member from the organization'), "label": _('Delete member')}) }}
+                                    {{ ui.modal_handle(ui.tooltip(ui.icon("times"), tooltip=_('Delete member')), style="danger", size="sm", id=modal_id, aria={"description": _('Delete this member from the {entity_type}').format(entity_type=entity_type), "label": _('Delete member')}) }}
                                 {% endif %}
                             {%- endcall %}
 
