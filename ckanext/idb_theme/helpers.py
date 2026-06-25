@@ -59,3 +59,8 @@ def idb_theme_show_followers_count(num_followers: int) -> bool:
 def idb_theme_home_title() -> str:
     """Return the configured browser title for the portal homepage."""
     return config.home_title()
+
+
+def idb_theme_hide_user_image_upload() -> bool:
+    """Check whether user image upload controls should be hidden."""
+    return config.hide_user_image_upload()

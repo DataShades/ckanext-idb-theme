@@ -20,3 +20,9 @@ groups:
         default: ""
         description: |
           Browser title for the portal homepage.
+
+      - key: theme.idb.hide_user_image_upload
+        type: bool
+        default: false
+        description: |
+          Hide user image upload controls from the user edit form.

@@ -5,6 +5,7 @@ import ckan.plugins.toolkit as tk
 COLLAPSED_FACETS = "theme.idb.collapsed_facets"
 HIDE_EMPTY_FOLLOWERS = "theme.idb.hide_empty_followers"
 HOME_TITLE = "theme.idb.home_title"
+HIDE_USER_IMAGE_UPLOAD = "theme.idb.hide_user_image_upload"
 
 
 def collapsed_facets() -> list[str]:
@@ -20,3 +21,8 @@ def hide_empty_followers() -> bool:
 def home_title() -> str:
     """Browser title for the portal homepage."""
     return tk.config.get(HOME_TITLE) or tk.config["ckan.site_title"]
+
+
+def hide_user_image_upload() -> bool:
+    """Hide user image upload controls from the user edit form."""
+    return tk.config[HIDE_USER_IMAGE_UPLOAD]
