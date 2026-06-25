@@ -61,8 +61,8 @@
                     {% set group_type = h.default_group_type('group') %}
 
                     {{ ui.main_nav_item(h.humanize_entity_type('package', dataset_type, 'main nav') or _('Datasets'), href=h.url_for(dataset_type ~ '.search'), active=(request.endpoint or "").startswith((dataset_type, dataset_type + '_resource'))) }}
-                    {{ ui.main_nav_item(h.humanize_entity_type('organization', org_type, 'main nav') or _('Organizations'), href=h.url_for(org_type ~ '.index'), active=(request.endpoint or "").startswith(org_type)) }}
                     {{ ui.main_nav_item(h.humanize_entity_type('group', group_type, 'main nav') or _('Groups'), href=h.url_for(group_type ~ '.index'), active=(request.endpoint or "").startswith(group_type)) }}
+                    {{ ui.main_nav_item(h.humanize_entity_type('organization', org_type, 'main nav') or _('Organizations'), href=h.url_for(org_type ~ '.index'), active=(request.endpoint or "").startswith(org_type)) }}
                     {{ ui.main_nav_item(_('About'), href=h.url_for('home.about'), active=request.endpoint=="home.about") }}
 
                 {% endblock %}
