@@ -40,7 +40,9 @@
 
 
 {%- macro search_active_filters(active_filters, facet_titles, facets, use_htmx) -%}
-    {%- if active_filters -%}
+    {%- set temporal_start = request.args.get('ext_temporal_start', '') -%}
+    {%- set temporal_end = request.args.get('ext_temporal_end', '') -%}
+    {%- if active_filters or temporal_start or temporal_end -%}
         <p {{ ui.util.attrs(kwargs, {"class": "filter-list"}) }}>
             {%- for key, values in active_filters|groupby(0) -%}
                 {% set items = facets[key]['items'] if facets and key in facets else [] %}
@@ -57,6 +59,25 @@
                     </span>
                 {% endfor %}
             {%- endfor %}
+            {%- if temporal_start or temporal_end -%}
+                <span class="facet">{{ facet_titles.get('temporal_coverage', _('Year range')) }}:</span>
+                <span class="filtered pill">
+                    {{ ui.hidden_input(name='ext_temporal_start', value=temporal_start) if temporal_start }}
+                    {{ ui.hidden_input(name='ext_temporal_end', value=temporal_end) if temporal_end }}
+                    {%- if temporal_start and temporal_end -%}
+                        {{ temporal_start }} - {{ temporal_end }}
+                    {%- elif temporal_start -%}
+                        {{ _('From {date}').format(date=temporal_start) }}
+                    {%- else -%}
+                        {{ _('To {date}').format(date=temporal_end) }}
+                    {%- endif -%}
+                    {%- call ui.util.call(ui.tooltip, tooltip=_('Remove')) -%}
+                        <a href="{{ h.remove_url_param(['ext_temporal_start', 'ext_temporal_end']) }}" class="remove" aria-label="{{ _('Remove applied filter: {value}').format(value=facet_titles.get('temporal_coverage', _('Year range'))) }}" hx-boost="{{ 'true' if use_htmx else 'false' }}">
+                            {{- ui.icon('times') -}}
+                        </a>
+                    {%- endcall %}
+                </span>
+            {%- endif -%}
         </p>
     {%- endif %}
 {%- endmacro %}

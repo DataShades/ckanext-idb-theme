@@ -7,13 +7,49 @@
                 {%- set items = h.get_facet_items_dict(facet, search_facets) -%}
                 {%- set collapsed = not h.currently_active_facet(facet) and h.idb_theme_default_collapsed(facet) -%}
 
-                {%- call ui.util.call(ui.facet_section, title=facet_titles[facet], items=items, key=facet, collapsed=collapsed, has_more=h.has_more_facets(facet, search_facets, limit=items|length)) -%}
-                    {%- call ui.util.call(ui.facet_list, hx={"boost": "true"} if use_htmx else {}) -%}
-                        {%- for item in items -%}
-                            {{ ui.facet(item.display_name, key=facet, value=item.name, count=item.count, active=item.active) }}
-                        {%- endfor %}
+                {%- if facet == "temporal_coverage" -%}
+                    {%- set temporal_start = request.args.get('ext_temporal_start', '') -%}
+                    {%- set temporal_end = request.args.get('ext_temporal_end', '') -%}
+                    {%- set collapsed = not (temporal_start or temporal_end) and h.idb_theme_default_collapsed(facet) -%}
+                    <section class="module module-narrow module-shallow accordion">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="module-heading accordion-button {{ 'collapsed' if collapsed }}"
+                                        type="button" data-bs-toggle="collapse" data-bs-target="#{{ ui.util.id(facet_titles[facet]) }}">
+                                    <i class="filter-svg fa-solid fa-filter"></i>
+                                    {{ facet_titles[facet] }}
+                                </button>
+                            </h2>
+                            <div id="{{ ui.util.id(facet_titles[facet]) }}" class="module-content accordion-collapse {{ 'collapse' if collapsed else 'show' }}">
+                                <form method="get" action="{{ h.url_for('dataset.search') }}"{% if use_htmx %} hx-boost="true"{% endif %}>
+                                    {%- for name, value in request.args.items(multi=True) -%}
+                                        {%- if name not in ['page', 'ext_temporal_start', 'ext_temporal_end'] -%}
+                                            <input type="hidden" name="{{ name }}" value="{{ value }}">
+                                        {%- endif -%}
+                                    {%- endfor -%}
+
+                                    <div class="form-group">
+                                        <label class="form-label" for="field-ext-temporal-start">{{ _('From') }}</label>
+                                        <input class="form-control" id="field-ext-temporal-start" name="ext_temporal_start" type="date" value="{{ temporal_start }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label" for="field-ext-temporal-end">{{ _('To') }}</label>
+                                        <input class="form-control" id="field-ext-temporal-end" name="ext_temporal_end" type="date" value="{{ temporal_end }}">
+                                    </div>
+                                    {{ ui.button(_('Apply'), type='submit', style='primary', size='sm') }}
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+                {%- else -%}
+                    {%- call ui.util.call(ui.facet_section, title=facet_titles[facet], items=items, key=facet, collapsed=collapsed, has_more=h.has_more_facets(facet, search_facets, limit=items|length)) -%}
+                        {%- call ui.util.call(ui.facet_list, hx={"boost": "true"} if use_htmx else {}) -%}
+                            {%- for item in items -%}
+                                {{ ui.facet(item.display_name, key=facet, value=item.name, count=item.count, active=item.active) }}
+                            {%- endfor %}
+                        {%- endcall %}
                     {%- endcall %}
-                {%- endcall %}
+                {%- endif -%}
             {%- endfor %}
         {%- endblock facet_list %}
     </div>
