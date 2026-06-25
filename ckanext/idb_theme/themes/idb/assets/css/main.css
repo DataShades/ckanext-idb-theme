@@ -14911,7 +14911,7 @@ footer a {
   color: #fff;
 }
 footer .site-footer {
-  background: #02384E;
+  background: linear-gradient(90deg, #004E70 0%, #206B82 100%);
   color: #fff;
   padding: 2rem 0;
 }
