@@ -2,11 +2,17 @@
 styles:
   # filters: cssrewrite
   output: base/%(version)s_main.css
+  extra:
+    preload:
+      - vendor/fontawesome
   contents: css/main.css
 
 styles-rtl:
   # filters: cssrewrite
   output: base/%(version)s_main-rtl.css
+  extra:
+    preload:
+      - vendor/fontawesome
   contents: css/main-rtl.css
 
 ## scripts

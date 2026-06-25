@@ -4,6 +4,14 @@
   }
 }
 
+body.dt-view {
+  #dtprv_filter {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.5rem;
+  }
+}
+
 .resource-view-filters {
   margin-bottom: 1em;
   .resource-view-filter {

@@ -11,9 +11,11 @@
 
 <li data-id="{{ view.id }}">
     {% set tab_class = "nav-link active" if is_selected else "nav-link" %}
+    {% set view_icon = h.resource_view_icon(view) %}
+    {% set icon_class = "fab" if view_icon == "windows" else "fa" %}
 
     <a class="{{ tab_class }} view-item view-item-{{ view.view_type }}" href="{{ url }}" data-id="{{ view.id }}">
-        <i class="fa icon fa-{{ h.resource_view_icon(view) }}"></i>
+        <i class="{{ icon_class }} icon fa-{{ view_icon }}"></i>
         {{ view.title }}
     </a>
 </li>
