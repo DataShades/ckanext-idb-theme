@@ -69,3 +69,38 @@ def idb_theme_home_title() -> str:
 def idb_theme_hide_user_image_upload() -> bool:
     """Check whether user image upload controls should be hidden."""
     return config.hide_user_image_upload()
+
+
+def idb_theme_portal_text(section: str, lang: str | None = None) -> dict[str, Any]:
+    """Return generic fallback copy for theme-level text blocks."""
+    texts = {
+        "organization": {
+            "title": tk.h.humanize_entity_type("organization", "organization", "facet label") or _("Organizations"),
+            "paragraphs": [
+                _("Organizations are used to create, manage and publish datasets."),
+            ],
+        },
+        "collection": {
+            "title": tk.h.humanize_entity_type("group", "group", "facet label") or _("Groups"),
+            "paragraphs": [
+                _("Groups are used to create and manage collections of datasets."),
+            ],
+        },
+        "home": {
+            "title": _("Welcome to CKAN"),
+            "paragraphs": [
+                _(
+                    "This is a nice introductory paragraph about CKAN or the site in general. "
+                    "We don't have any copy to go here yet but soon we will"
+                ),
+            ],
+        },
+        "about": {
+            "title": _("About"),
+            "paragraphs": [
+                _("CKAN is the world's leading open-source data portal platform."),
+            ],
+        },
+    }
+
+    return texts[section]

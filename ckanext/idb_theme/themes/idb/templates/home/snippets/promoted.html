@@ -1,12 +1,13 @@
 {% set intro = g.site_intro_text %}
+{% set home_text = h.idb_theme_portal_text('home') %}
 
 <div class="">
     {% if intro %}
         {{ h.render_markdown(intro) }}
     {% else %}
-        {{ ui.heading(_("Welcome to CKAN"), level=1, attrs={"class": "fs-36"}) }}
+        {{ ui.heading(home_text.title, level=1, attrs={"class": "fs-36"}) }}
         <p class="opacity-75 fs-16">
-            {{ _("This is a nice introductory paragraph about CKAN or the site in general. We don't have any copy to go here yet but soon we will") }}
+            {{ home_text.paragraphs[0] }}
         </p>
     {% endif %}
 </div>

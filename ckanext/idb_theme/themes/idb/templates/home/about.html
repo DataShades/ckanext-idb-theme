@@ -13,7 +13,7 @@
     <article class="module" role="main">
         <div class="module-content primary">
             <h1 class="page-heading">
-                {% block page_heading %}{{ _('About') }}{% endblock %}
+                {% block page_heading %}{{ h.idb_theme_portal_text('about').title }}{% endblock %}
             </h1>
             {% block about %}
                 {% if g.site_about %}
