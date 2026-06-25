@@ -54,3 +54,8 @@ def idb_theme_get_group_count(type: str = 'group') -> dict[str, int]:
 def idb_theme_show_followers_count(num_followers: int) -> bool:
     """Check whether the sidebar follower count should be displayed."""
     return num_followers > 0 or not config.hide_empty_followers()
+
+
+def idb_theme_home_title() -> str:
+    """Return the configured browser title for the portal homepage."""
+    return config.home_title()

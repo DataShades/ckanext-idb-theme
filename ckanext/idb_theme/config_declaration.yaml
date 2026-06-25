@@ -15,3 +15,8 @@ groups:
         default: true
         description: |
           Hide follower counters in sidebar summaries when the count is zero.
+
+      - key: theme.idb.home_title
+        default: ""
+        description: |
+          Browser title for the portal homepage.

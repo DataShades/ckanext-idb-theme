@@ -1,9 +1,6 @@
 {% extends "page.html" %}
 
-{% block subtitle -%}
-    {{ ui.subtitle_item(_("Welcome")) }}
-    {{- super() }}
-{%- endblock %}
+{% block title %}{{ h.idb_theme_home_title() }}{% endblock %}
 
 {% block maintag %}{% endblock %}
 {% block toolbar %}{% endblock %}
