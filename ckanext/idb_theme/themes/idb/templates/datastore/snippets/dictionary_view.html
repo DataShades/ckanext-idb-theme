@@ -1,0 +1,5 @@
+{% ckan_extends %}
+
+{% block dictionary_field_type scoped %}
+  {{ field.get('info', {}).get('type_override') or field.type }}
+{% endblock %}
