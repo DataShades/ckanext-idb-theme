@@ -24,6 +24,7 @@
 {% block content_primary_nav -%}
     {{ ui.content_nav_item(_('Dataset'), href=h.url_for(dataset_type ~ '.read', id=pkg.name), icon='sitemap', active=request.endpoint==dataset_type ~ '.read') }}
     {{- ui.content_nav_item(h.humanize_entity_type('group', default_group_type, 'content tab') or _('Groups'), href=h.url_for(dataset_type ~ '.groups', id=pkg.name), icon='users', active=request.endpoint==dataset_type ~ '.groups') }}
+    {{- ui.content_nav_item(_('Activity Stream'), href=h.url_for('activity.package_activity', id=pkg.id if is_activity_archive else pkg.name), icon='clock', active=request.endpoint == 'activity.package_activity') if h.plugin_loaded('activity') }}
 {%- endblock %}
 
 {% block secondary_content %}
