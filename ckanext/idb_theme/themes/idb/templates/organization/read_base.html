@@ -20,7 +20,7 @@
 
 {% block content_primary_nav -%}
     {{ ui.content_nav_item(h.humanize_entity_type('package', dataset_type, 'content tab') or _('Datasets'), href=h.url_for(group_type + '.read', id=group_dict.name), icon='sitemap', active=request.endpoint == group_type ~ ".read") }}
-    {{- ui.content_nav_item(_('Members'), href=h.url_for(group_type + '.members', id=group_dict.name), icon='users', active=request.endpoint == group_type ~ ".members") }}
+    {{- ui.content_nav_item(_('Members'), href=h.url_for(group_type + '.members', id=group_dict.name), icon='users', active=request.endpoint == group_type ~ ".members") if h.check_access('member_list', {'id': group_dict.id, 'object_type': 'user'}) and h.check_access('group_show', {'id': group_dict.id, 'object_type': 'user'}) }}
     {{- ui.content_nav_item(_('About'), href=h.url_for(group_type + '.about', id=group_dict.name), icon='info-circle', active=request.endpoint == group_type ~ ".about") }}
 {%- endblock %}
 
