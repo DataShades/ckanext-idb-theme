@@ -72,9 +72,10 @@ def idb_theme_hide_user_image_upload() -> bool:
 def idb_theme_download_count(pkg: dict[str, Any]) -> int:
     """Return the number of dataset downloads.
 
-    TODO: IADBXCIGB-152. Mocked until the download counter is implemented.
+    The counter is provided by the ``iadb_iar_tracking`` plugin. Datasets
+    without downloads show 0.
     """
-    return 123
+    return pkg.get("num_downloads") or 0
 
 
 def idb_theme_highlights_sort_options() -> list[dict[str, str]]:
@@ -94,8 +95,7 @@ def idb_theme_highlights(sort: str | None = None) -> dict[str, Any]:
     """
     sorts = {
         "data": "temporal_end desc, temporal_start desc, metadata_modified desc",
-        # TODO: IADBXCIGB-152. Sort by the download counter once it is implemented.
-        "downloads": "metadata_modified desc",
+        "downloads": "downloads_sort desc, metadata_modified desc",
         "created": "metadata_created desc",
         "modified": "metadata_modified desc",
     }
@@ -104,10 +104,17 @@ def idb_theme_highlights(sort: str | None = None) -> dict[str, Any]:
         sort = "modified"
 
     result = tk.get_action("package_search")({}, {"rows": 30, "sort": sorts[sort]})
+    packages = result["results"]
+
+    # The indexed download counter is refreshed in batches, so it may lag
+    # behind the live counters shown on the cards. Re-sort by the live ones;
+    # the stable sort keeps the index order for ties.
+    if sort == "downloads":
+        packages.sort(key=lambda pkg: pkg.get("num_downloads") or 0, reverse=True)
 
     return {
         "sort": sort,
-        "packages": result["results"],
+        "packages": packages,
     }
 
 
