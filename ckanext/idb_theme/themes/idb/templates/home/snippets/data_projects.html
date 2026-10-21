@@ -1,0 +1,47 @@
+{#
+Data Projects section: the most downloaded groups with a cover image.
+The section is hidden when there are no groups.
+
+Example:
+
+{% snippet 'home/snippets/data_projects.html' %}
+
+#}
+{% set data_projects = h.idb_theme_data_projects() %}
+
+{% if data_projects.total %}
+    <section class="home-section home-data-projects" aria-labelledby="data-projects-title">
+        <div class="container">
+            <div class="home-section-header">
+                {{ ui.heading(_("Data Projects"), level=2, attrs={"id": "data-projects-title"}) }}
+                <p class="home-section-description">{{ _("Data Projects are related datasets based on a shared initiative, project, methodology, or area of analysis.") }}</p>
+            </div>
+
+            {% if data_projects.projects %}
+                <ul class="home-data-projects-grid list-unstyled">
+                    {% for project in data_projects.projects %}
+                        <li>
+                            <a class="home-data-project-card" href="{{ project.url }}">
+                                <img class="home-data-project-image" src="{{ project.image }}" alt="" loading="lazy">
+                                <span class="home-data-project-body">
+                                    <span class="home-data-project-title">{{ project.title }}</span>
+                                    {% if project.description %}
+                                        <span class="home-data-project-description">{{ h.markdown_extract(project.description, extract_length=300) }}</span>
+                                    {% endif %}
+                                    <span class="home-data-project-count">{{ ungettext("{num} dataset", "{num} datasets", project.datasets).format(num=project.datasets) }}</span>
+                                </span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <div class="home-section-footer">
+                <a class="btn home-section-more" href="{{ data_projects.url }}">
+                    {{ ungettext("View all {num} Data Project", "View all {num} Data Projects", data_projects.total).format(num=data_projects.total) }}
+                    {{ ui.icon("external-link", aria={"hidden": "true"}) }}
+                </a>
+            </div>
+        </div>
+    </section>
+{% endif %}

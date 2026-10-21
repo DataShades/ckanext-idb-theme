@@ -1,3 +1,21 @@
+// White outline pill button of the homepage sections.
+@mixin home-pill-button {
+    --bs-btn-padding-x: 0.9375rem;
+    --bs-btn-padding-y: 0.3125rem;
+    --bs-btn-color: var(--idb-color-button-stroke-text);
+    --bs-btn-bg: var(--idb-color-on-primary);
+    --bs-btn-border-color: var(--idb-color-button-stroke-text);
+    --bs-btn-hover-color: var(--idb-color-button-stroke-text);
+    --bs-btn-hover-bg: var(--idb-color-primary-light);
+    --bs-btn-hover-border-color: var(--idb-color-button-stroke-text);
+    --bs-btn-active-color: var(--idb-color-button-stroke-text);
+    --bs-btn-active-bg: var(--idb-color-primary-light);
+    --bs-btn-active-border-color: var(--idb-color-button-stroke-text);
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    border-radius: var(--idb-border-radius-lg);
+}
+
 .homepage {
     overflow: hidden;
     h2 {
@@ -80,23 +98,12 @@
 
     // `.btn` styles of _buttons.scss load later and would override the radius and padding
     &-search-submit.btn {
+        @include home-pill-button;
         --bs-btn-padding-x: 1.125rem;
         --bs-btn-padding-y: 0.3125rem;
-        --bs-btn-color: var(--idb-color-button-stroke-text);
-        --bs-btn-bg: var(--idb-color-on-primary);
-        --bs-btn-border-color: var(--idb-color-button-stroke-text);
-        --bs-btn-hover-color: var(--idb-color-button-stroke-text);
-        --bs-btn-hover-bg: var(--idb-color-primary-light);
-        --bs-btn-hover-border-color: var(--idb-color-button-stroke-text);
-        --bs-btn-active-color: var(--idb-color-button-stroke-text);
-        --bs-btn-active-bg: var(--idb-color-primary-light);
-        --bs-btn-active-border-color: var(--idb-color-button-stroke-text);
         margin-left: auto;
-        font-family: "Inter", sans-serif;
         font-size: var(--idb-font-size-text);
         line-height: var(--idb-line-height-text);
-        font-weight: 600;
-        border-radius: var(--idb-border-radius-lg);
     }
 
     &-metrics {
@@ -169,6 +176,10 @@
 }
 
 // Explore Highlights: dataset carousel with a sort dropdown
+.homepage .module-feeds.home-highlights {
+    background: $white;
+}
+
 .explore-highlights {
     h2 {
         color: var(--idb-color-primary-20);
@@ -259,5 +270,238 @@
             grid-auto-rows: auto;
             gap: var(--idb-space-sm);
         }
+    }
+}
+
+// Data Projects, Explore by Themes: titled card grids with a "View all" button
+.home-section {
+    padding: 100px 0;
+
+    &-header {
+        margin-bottom: var(--idb-space-lg);
+
+        h2 {
+            color: var(--idb-color-primary-20);
+            font-size: 1.75rem;
+            line-height: 2.25rem;
+            margin-bottom: var(--idb-space-xs);
+        }
+    }
+
+    &-description {
+        color: var(--idb-color-text-default);
+        font-size: var(--idb-font-size-text);
+        line-height: var(--idb-line-height-text);
+        margin-bottom: 0;
+    }
+
+    &-footer {
+        display: flex;
+        justify-content: center;
+        margin-top: var(--idb-space-lg);
+    }
+}
+
+// `.btn` styles of _buttons.scss load later and would override the radius and padding
+.home-section-more.btn {
+    @include home-pill-button;
+    --bs-btn-padding-x: var(--idb-space-md);
+    --bs-btn-padding-y: var(--idb-space-xs);
+    --bs-btn-border-width: 1px;
+    gap: 12px;
+    font-size: var(--idb-font-size-text);
+    line-height: var(--idb-line-height-text);
+}
+
+.home-data-projects {
+    background: var(--idb-color-border-n-variant95);
+
+    &-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: var(--idb-space-sm) var(--idb-space-sm);
+        margin: 0;
+    }
+}
+
+.home-data-project {
+    &-card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden;
+        background: var(--idb-color-on-primary);
+        border-radius: var(--idb-border-radius);
+        color: var(--idb-color-on-surface);
+        text-decoration: none;
+        transition: box-shadow .15s ease-in-out;
+
+        &:hover,
+        &:focus-visible {
+            color: var(--idb-color-on-surface);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+            .home-data-project-title {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    &-image {
+        width: 100%;
+        aspect-ratio: 2 / 1;
+        object-fit: cover;
+    }
+
+    &-body {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        gap: var(--idb-space-xs);
+        padding: var(--idb-space-md);
+    }
+
+    &-title {
+        color: var(--idb-color-primary-20);
+        font-size: var(--idb-font-size-text);
+        line-height: var(--idb-line-height-text);
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    &-description {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        overflow: hidden;
+        color: #535354;
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+    }
+
+    &-count {
+        margin-top: auto;
+        padding-top: var(--idb-space-xs);
+        color: var(--idb-color-button-stroke-text);
+        font-size: var(--idb-font-size-text);
+        line-height: var(--idb-line-height-text);
+    }
+}
+
+.home-themes {
+    background: var(--idb-color-neutral-99);
+
+    &-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: var(--idb-space-md) var(--idb-space-md);
+        margin: 0;
+    }
+}
+
+.home-theme {
+    &-card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        padding: var(--idb-space-sm);
+        background: var(--idb-color-on-primary);
+        border-radius: var(--idb-border-radius-sm);
+        text-decoration: none;
+        transition: box-shadow .15s ease-in-out;
+
+        &:hover,
+        &:focus-visible {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+            .home-theme-name {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    &-icon {
+        display: flex;
+        align-items: center;
+        width: 1.75rem;
+        height: 1.75rem;
+        margin-bottom: 20px;
+        color: #196E8C;
+
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+    }
+
+    &-name {
+        margin-bottom: var(--idb-space-xs);
+        color: var(--idb-color-primary-20);
+        font-size: 1.125rem;
+        line-height: 1.5rem;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    &-count {
+        color: var(--idb-color-button-stroke-text);
+        font-size: var(--idb-font-size-text);
+        line-height: var(--idb-line-height-text);
+    }
+}
+
+// Explore by Countries: full width banner, the image URL comes from the
+// template as `--home-countries-image`.
+.home-countries {
+    background:
+        linear-gradient(238.38deg, rgba(0, 126, 182, 0.6) 32.81%, rgba(0, 55, 80, 0.6) 98.26%),
+        linear-gradient(0deg, rgba(0, 59, 84, 0.4), rgba(0, 59, 84, 0.4)),
+        var(--home-countries-image) center calc(50% + 10px) / cover no-repeat,
+        var(--idb-color-secondary-container);
+    padding: var(--idb-space-lg) 0;
+
+    &-content {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--idb-space-sm) var(--idb-space-lg);
+    }
+
+    h2 {
+        color: var(--idb-color-on-primary);
+        font-size: 1.75rem;
+        line-height: 2.25rem;
+        margin-bottom: var(--idb-space-xs);
+    }
+
+    &-description {
+        font-size: var(--idb-font-size-text);
+        line-height: var(--idb-line-height-text);
+        margin-bottom: 0;
+    }
+}
+
+@include media-breakpoint-down(lg) {
+    .home-data-projects-grid,
+    .home-themes-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@include media-breakpoint-down(md) {
+    .home-section {
+        padding: var(--idb-space-xl) 0;
+    }
+
+    .home-themes-grid {
+        gap: var(--idb-space-sm);
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .home-data-projects-grid {
+        grid-template-columns: minmax(0, 1fr);
     }
 }
