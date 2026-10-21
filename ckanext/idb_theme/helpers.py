@@ -11,6 +11,7 @@ from . import config
 INFO_GRAPH_COUNTRY_FACET = "vocab_iadb_iar_spatial_coverage"
 INFO_GRAPH_GOV_TIER_FACET = "vocab_iadb_iar_gov_tier"
 INFO_GRAPH_INSTITUTIONAL_TIER = "Institutional"
+HOME_THEME_FACET = "vocab_iadb_iar_theme"
 
 
 def idb_theme_default_collapsed(facet_name: str):
@@ -143,6 +144,170 @@ def idb_theme_highlights(sort: str | None = None) -> dict[str, Any]:
     }
 
 
+def idb_theme_data_projects(limit: int = 4) -> dict[str, Any]:
+    """Get the most downloaded Data Projects for the homepage.
+
+    Only projects with a cover image are shown. Projects that contain
+    institutional datasets are preferred; when there are not enough of them,
+    other projects with a cover image fill the free places. The chosen
+    projects are sorted by downloads, highest first.
+    """
+    group_type = tk.h.default_group_type("group")
+    stats = _group_stats()
+
+    def downloads(name: str) -> int:
+        return stats.get(name, {}).get("downloads", 0)
+
+    names = [
+        name
+        for (name,) in model.Session.query(model.Group.name)
+        .filter(model.Group.type == group_type)
+        .filter(model.Group.state == "active")
+        .filter(model.Group.is_organization == False)  # noqa: E712
+        .filter(model.Group.image_url.isnot(None))
+        .filter(model.Group.image_url != "")
+    ]
+    names.sort(key=downloads, reverse=True)
+
+    chosen = [name for name in names if stats.get(name, {}).get("institutional")][:limit]
+    chosen += [name for name in names if name not in chosen][: limit - len(chosen)]
+    chosen.sort(key=downloads, reverse=True)
+
+    projects = []
+    for name in chosen:
+        try:
+            group = tk.get_action("group_show")(
+                {},
+                {
+                    "id": name,
+                    "include_datasets": False,
+                    "include_dataset_count": False,
+                    "include_extras": False,
+                    "include_users": False,
+                    "include_groups": False,
+                    "include_tags": False,
+                    "include_followers": False,
+                },
+            )
+        except (tk.ObjectNotFound, tk.NotAuthorized):
+            continue
+
+        projects.append(
+            {
+                "title": group["display_name"],
+                "description": group.get("description") or "",
+                "image": group.get("image_display_url"),
+                "datasets": stats.get(name, {}).get("datasets", 0),
+                "url": tk.h.url_for(f"{group_type}.read", id=group["name"]),
+            }
+        )
+
+    return {
+        "total": idb_theme_get_group_count(),
+        "projects": projects,
+        "url": tk.h.url_for(f"{group_type}.index"),
+    }
+
+
+def _group_stats() -> dict[str, dict[str, int]]:
+    """Count the datasets, institutional datasets and downloads of every group.
+
+    Only datasets the current user can see are counted.
+    """
+    stats: dict[str, dict[str, int]] = {}
+    rows = tk.config.get("ckan.search.rows_max")
+    start = 0
+
+    while True:
+        result = tk.get_action("package_search")(
+            {"user": tk.current_user.name},
+            {
+                "fq": "groups:[* TO *]",
+                "fl": ["id", "groups", INFO_GRAPH_GOV_TIER_FACET],
+                "rows": rows,
+                "start": start,
+                "include_private": tk.config.get("ckan.search.default_include_private"),
+            },
+        )
+
+        for pkg in result["results"]:
+            institutional = INFO_GRAPH_INSTITUTIONAL_TIER in (pkg.get(INFO_GRAPH_GOV_TIER_FACET) or [])
+            for name in pkg.get("groups") or []:
+                group = stats.setdefault(name, {"datasets": 0, "institutional": 0, "downloads": 0})
+                group["datasets"] += 1
+                group["institutional"] += institutional
+                group["downloads"] += idb_theme_download_count(pkg)
+
+        start += rows
+        if start >= result["count"]:
+            return stats
+
+
+def idb_theme_explore_themes(limit: int = 8) -> dict[str, Any]:
+    """Get the themes with the most datasets for the homepage.
+
+    Only datasets the current user can see are counted.
+    """
+    dataset_type = tk.h.default_package_type()
+    lang = tk.h.lang()
+
+    result = tk.get_action("package_search")(
+        {"user": tk.current_user.name},
+        {
+            "rows": 0,
+            "facet.field": [HOME_THEME_FACET],
+            "facet.limit": -1,
+            "include_private": tk.config.get("ckan.search.default_include_private"),
+        },
+    )
+    items = result.get("search_facets", {}).get(HOME_THEME_FACET, {}).get("items", [])
+    items = sorted(items, key=lambda item: (-item["count"], item["name"]))
+
+    # the facet holds English labels: find the vocabulary choices by them, to
+    # show the label in the current language and the icon named by the choice ID
+    choices = {
+        tk.h.scheming_language_text(choice.get("label", choice["value"]), "en"): choice
+        for choice in _field_choices(dataset_type, "theme")
+    }
+    items = [item for item in items if item["name"] in choices]
+
+    return {
+        "total": len(items),
+        "themes": [
+            {
+                "id": choices[item["name"]]["value"],
+                "name": tk.h.scheming_language_text(choices[item["name"]].get("label", item["name"]), lang),
+                "count": item["count"],
+                "url": tk.h.url_for(f"{dataset_type}.search", **{HOME_THEME_FACET: item["name"]}),
+            }
+            for item in items[:limit]
+        ],
+        # TODO: link the Themes page once it is implemented.
+        "url": tk.h.url_for(f"{dataset_type}.search"),
+    }
+
+
+def idb_theme_explore_countries() -> dict[str, Any]:
+    """Get the number of countries covered by the datasets the user can see."""
+    dataset_type = tk.h.default_package_type()
+
+    result = tk.get_action("package_search")(
+        {"user": tk.current_user.name},
+        {
+            "rows": 0,
+            "facet.field": [INFO_GRAPH_COUNTRY_FACET],
+            "facet.limit": -1,
+            "include_private": tk.config.get("ckan.search.default_include_private"),
+        },
+    )
+
+    return {
+        "total": len(result.get("search_facets", {}).get(INFO_GRAPH_COUNTRY_FACET, {}).get("items", [])),
+        # TODO: link the Countries page once it is implemented.
+        "url": tk.h.url_for(f"{dataset_type}.search"),
+    }
+
+
 def idb_theme_dataset_card(pkg: dict[str, Any]) -> dict[str, Any]:
     """Collect the values displayed on the dataset card."""
     lang = tk.h.lang()
@@ -182,16 +347,22 @@ def _vocab_labels(pkg: dict[str, Any], field_name: str, lang: str) -> list[str]:
     if not value:
         return []
 
-    choices = []
-    schema = tk.h.scheming_get_dataset_schema(pkg.get("type") or "dataset")
-
-    if schema:
-        field = tk.h.scheming_field_by_name(schema["dataset_fields"], field_name)
-        if field:
-            choices = tk.h.scheming_field_choices(field) or []
-
+    choices = _field_choices(pkg.get("type") or "dataset", field_name)
     labels = {c["value"]: c.get("label", c["value"]) for c in choices}
     return [tk.h.scheming_language_text(labels.get(v, v), lang) for v in value]
+
+
+def _field_choices(dataset_type: str, field_name: str) -> list[dict[str, Any]]:
+    """Get the choices of a dataset schema field."""
+    schema = tk.h.scheming_get_dataset_schema(dataset_type)
+    if not schema:
+        return []
+
+    field = tk.h.scheming_field_by_name(schema["dataset_fields"], field_name)
+    if not field:
+        return []
+
+    return tk.h.scheming_field_choices(field) or []
 
 
 def _year(value: Any) -> str:

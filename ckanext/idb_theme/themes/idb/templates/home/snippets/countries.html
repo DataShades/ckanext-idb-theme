@@ -1,0 +1,25 @@
+{#
+Explore by Countries section: a banner with the number of covered countries.
+
+Example:
+
+{% snippet 'home/snippets/countries.html' %}
+
+#}
+{% set explore_countries = h.idb_theme_explore_countries() %}
+
+<section class="home-countries text-white" aria-labelledby="countries-title" style="--home-countries-image: url('{{ h.url_for_static('/images/explore-by-countries.webp') }}')">
+    <div class="container">
+        <div class="home-countries-content">
+            <div>
+                {{ ui.heading(_("Explore by Countries"), level=2, attrs={"id": "countries-title"}) }}
+                <p class="home-countries-description">
+                    {{ _("Browse data across Multiple Countries in the region.") }}
+                    {{ _("Our data cover more than {num} countries.").format(num=explore_countries.total) }}
+                </p>
+            </div>
+
+            <a class="btn home-section-more" href="{{ explore_countries.url }}">{{ _("Explore all Countries") }}</a>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,43 @@
+{#
+Explore by Themes section: the themes with the most datasets.
+
+Example:
+
+{% snippet 'home/snippets/themes.html' %}
+
+#}
+{% set explore_themes = h.idb_theme_explore_themes() %}
+
+<section class="home-section home-themes" aria-labelledby="themes-title">
+    <div class="container">
+        <div class="home-section-header">
+            {{ ui.heading(_("Explore by Themes"), level=2, attrs={"id": "themes-title"}) }}
+            <p class="home-section-description">{{ _("Browse data by key thematic areas.") }}</p>
+        </div>
+
+        {% if explore_themes.themes %}
+            <ul class="home-themes-grid list-unstyled">
+                {% for theme in explore_themes.themes %}
+                    <li>
+                        <a class="home-theme-card" href="{{ theme.url }}">
+                            <span class="home-theme-icon" aria-hidden="true">
+                                {% snippet "svg/themes/" ~ theme.id ~ ".svg" %}
+                            </span>
+                            <span class="home-theme-name">{{ theme.name }}</span>
+                            <span class="home-theme-count">{{ ungettext("{num} dataset", "{num} datasets", theme.count).format(num=theme.count) }}</span>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <div class="home-section-footer">
+                <a class="btn home-section-more" href="{{ explore_themes.url }}">
+                    {{ ungettext("View all {num} Theme", "View all {num} Themes", explore_themes.total).format(num=explore_themes.total) }}
+                    {{ ui.icon("external-link", aria={"hidden": "true"}) }}
+                </a>
+            </div>
+        {% else %}
+            {{ ui.empty(_("There are no themes to show yet.")) }}
+        {% endif %}
+    </div>
+</section>
