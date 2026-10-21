@@ -3,22 +3,39 @@ Displays a single of dataset.
 
 package        - A package to display.
 item_class     - The class name to use on the list item.
-hide_resources - If true hides the resources (default: false).
+variant        - Card variant: "full" (default, Datasets page) or "short" (Home page, highlights).
 
 Example:
 
-{% snippet 'snippets/package_item.html', package=c.datasets[0] %}
+{% snippet 'snippets/package_item.html', package=c.datasets[0], variant="short" %}
 
 #}
 {% set title = package.title or package.name %}
 {% set notes = h.markdown_extract(package.notes, extract_length=180) %}
+{% set is_full = variant != "short" %}
+{% set card = h.idb_theme_dataset_card(package) %}
+
+{% macro chip(style, icon=none, svg=none, hide_label=false) -%}
+    <li class="badge border bg-{{ style }}-subtle border-{{ style }}-subtle text-{{ style }}-emphasis d-inline-flex align-items-center gap-1" {{ ui.util.attrs(kwargs) }}>
+        {%- if svg %}{% snippet "svg/" ~ svg ~ ".svg" %}{% elif icon %}{{ ui.icon(icon, aria={"hidden": "true"}) }}{% endif -%}
+        <span {% if hide_label %}class="visually-hidden"{% endif %}>{{ caller() }}</span>
+    </li>
+{%- endmacro %}
+
+{% macro meta(svg, label, value, hide_label=false) -%}
+    <li>
+        {% snippet "svg/" ~ svg ~ ".svg" %}
+        <span {% if hide_label %}class="visually-hidden"{% endif %}>{{ label }}:</span>
+        {{ value }}
+    </li>
+{%- endmacro %}
 
 {% block package_item %}
-    <li class="{{ item_class or 'dataset-item' }}">
+    <li class="{{ item_class or 'dataset-item' }} dataset-item--{{ 'full' if is_full else 'short' }} card">
         {% block content %}
-            <div class="dataset-content">
+            <div class="dataset-content card-body w-100">
                 {% block heading %}
-                    <h3 class="dataset-heading">
+                    <h3 class="dataset-heading fw-semibold">
 
                         {% block heading_title %}
                             {%- with title=title | truncate(80) -%}
@@ -28,9 +45,7 @@ Example:
 
                         {% block heading_private %}
                             {% if package.private %}
-                                <span class="dataset-private badge bg-dust-red pull-right">
-                                    {{ _('Private') }}
-                                </span>
+                                {{ ui.badge(_('Private'), style="primary")}}
                             {% endif %}
                         {% endblock %}
 
@@ -46,33 +61,75 @@ Example:
                     </h3>
                 {% endblock %}
 
-                {% if package.organization %}
-                    {% set organization = package.organization %}
-                    {{ ui.link(organization.title, href=h.url_for(organization.type ~ '.read', id=organization.name), attrs={"class": "dataset-organization"}) }}
-                {% endif %}
+                {% block chips %}
+                    <ul class="dataset-chips list-unstyled d-flex flex-wrap gap-2 mb-4">
+                        {% if is_full %}
+                            {% for theme in card.themes %}
+                                {% call chip("info") %}{{ theme }}{% endcall %}
+                            {% endfor %}
+                        {% endif %}
+
+                        {% if card.units %}
+                            {% call chip("secondary") %}{{ card.units | join(", ") }}{% endcall %}
+                        {% endif %}
+
+                        {% if card.countries %}
+                            {% call chip("success", icon="earth-americas", title=card.countries | join(", ")) %}
+                                {%- if card.countries | length <= 2 -%}
+                                    {{ card.countries | join(" & ") }}
+                                {%- else -%}
+                                    {{ _("{country} & {count} more").format(country=card.countries[0], count=card.countries | length - 1) }}
+                                {%- endif -%}
+                            {% endcall %}
+                        {% endif %}
+
+                        {% if card.coverage %}
+                            {% call chip("info", svg="calendar") %}{{ card.coverage | join(" - ") }} ({{ _("Coverage") }}){% endcall %}
+                        {% endif %}
+
+                        {% if card.governance %}
+                            {% call chip("info", svg="governance", title=card.governance, hide_label=not is_full) %}{{ card.governance }}{% endcall %}
+                        {% endif %}
+                    </ul>
+                {% endblock %}
 
                 {% block notes %}
                     {% if notes %}
-                        <p>{{ notes|urlize }}</p>
+                        <p class="dataset-notes {{ 'mb-4' if is_full and card.tags else 'mb-0' }}">{{ notes }}</p>
                     {% else %}
                         {{ ui.empty(h.humanize_entity_type('package', package.type, 'no description') or _("There is no description for this dataset")) }}
                     {% endif %}
                 {% endblock %}
-            </div>
-            {% block resources %}
-                {% if package.resources and not hide_resources %}
-                    {% block resources_outer %}
-                        <ul class="dataset-resources list-unstyled">
-                            {% block resources_inner %}
-                                {% for resource in h.dict_list_reduce(package.resources, 'format') %}
-                                    <li>
-                                        <span class="badge badge-default" data-format="{{ resource.lower() }}">{{ resource }}</span>
-                                    </li>
-                                {% endfor %}
-                            {% endblock %}
+
+                {% block tags %}
+                    {% if is_full and card.tags %}
+                        <ul class="dataset-tags list-unstyled d-flex flex-wrap gap-2 mb-0" data-module="idb-tag-overflow">
+                            {% for tag in card.tags %}
+                                <li class="badge bg-secondary-subtle text-secondary-emphasis">{{ tag }}</li>
+                            {% endfor %}
+                            <li class="badge bg-secondary-subtle text-secondary-emphasis d-none" data-overflow-counter></li>
                         </ul>
-                    {% endblock %}
-                {% endif %}
+                    {% endif %}
+                {% endblock %}
+            </div>
+
+            {% block meta %}
+                <ul class="dataset-meta card-footer list-unstyled d-flex flex-wrap column-gap-4 row-gap-2 mb-0 small fw-semibold">
+                    {{ meta("upload", _("Published"), card.published, hide_label=not is_full) }}
+                    {{ meta("time-right", _("Last updated"), card.modified) }}
+                    {% if is_full %}
+                        {% if card.coverage %}
+                            {{ meta("calendar", _("Data Coverage"), card.coverage | join(" – ")) }}
+                        {% endif %}
+                        {% if card.formats %}
+                            {{ meta("format", _("Format"), card.formats | join(", ")) }}
+                        {% endif %}
+                    {% endif %}
+                    <li>
+                        {% snippet "svg/download.svg" %}
+                        {{ ungettext("{number} download", "{number} downloads", card.downloads).format(number=h.localised_number(card.downloads)) }}
+                    </li>
+                </ul>
             {% endblock %}
         {% endblock %}
     </li>

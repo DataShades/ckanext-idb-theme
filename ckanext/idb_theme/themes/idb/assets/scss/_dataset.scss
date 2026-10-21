@@ -1,28 +1,100 @@
+// Dataset card. Layout comes from Bootstrap's .card and utility classes,
+// here we only tune component variables and what utilities can't express.
 .dataset-item {
-    border-bottom: 1px solid $genericBorderColor;
-    padding: 16px 0;
-    background-color: $white;
-    margin-bottom: 0;
-    border-radius: 4px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    align-self: stretch;
+    --bs-card-spacer-y: var(--idb-space-sm);
+    --bs-card-spacer-x: var(--idb-space-sm);
+    --bs-card-cap-padding-y: .875rem;
+    --bs-card-cap-padding-x: var(--bs-card-spacer-x);
+    --bs-card-cap-bg: var(--idb-color-surface-variant);
     width: 100%;
+    overflow-wrap: anywhere;
+
+    @include media-breakpoint-up(md) {
+        --bs-card-spacer-y: var(--idb-space-md);
+        --bs-card-spacer-x: var(--idb-space-lg);
+    }
+
+    .badge {
+        --bs-badge-font-size: #{$font-size-sm};
+        --bs-badge-padding-y: #{$spacer * .375};
+        --bs-badge-padding-x: #{$spacer * .75};
+        --bs-badge-border-radius: var(--bs-border-radius-sm);
+        line-height: $line-height-sm;
+        white-space: normal;
+        text-align: start;
+    }
+
+    .card-footer {
+        border-top: 2px solid var(--idb-color-secondary-70);
+
+        svg {
+            color: var(--idb-color-neutral-60);
+        }
+    }
 }
+
+.dataset-notes {
+    color: var(--idb-color-neutral-20);
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+}
+
+// chip palette: info, neutral (secondary) and success
+.dataset-chips,
+.dataset-tags {
+    --bs-info-bg-subtle: #F0F4F7;
+    --bs-info-border-subtle: #B6CFDE;
+    --bs-info-text-emphasis: #004E70;
+    --bs-secondary-bg-subtle: #F3F3F3;
+    --bs-secondary-border-subtle: #CBCACA;
+    --bs-secondary-text-emphasis: #413F3F;
+    --bs-success-bg-subtle: #EFF5F1;
+    --bs-success-border-subtle: #B0D5BC;
+    --bs-success-text-emphasis: #004F26;
+}
+
+.dataset-chips .badge {
+    min-height: 2rem;
+}
+
+.dataset-tags .badge {
+    --bs-badge-font-size: var(--idb-font-size-label);
+    --bs-badge-padding-y: .25rem;
+    line-height: var(--idb-line-height-label);
+}
+
 .dataset-heading {
-    margin-bottom: 0;
-    font-weight: 500;
+    margin-bottom: .875rem;
+    font-size: 1.375rem;
+    line-height: 1.75rem;
+
+    a {
+        color: var(--idb-color-primary-20);
+    }
 }
 
-.dataset-organization {
-    color: #667085;
-    font-weight: 500;
-}
+// short card: text is 2px smaller than in the full one, title is 4px smaller
+.dataset-item--short {
+    .dataset-heading {
+        font-size: 1.125rem;
+        line-height: 1.5rem;
+    }
 
-@include media-breakpoint-down(sm){
-    .dataset-item {
-        word-wrap: break-word;
+    .dataset-chips .badge {
+        --bs-badge-font-size: .75rem;
+        --bs-badge-padding-y: .125rem;
+        min-height: 1.5rem;
+    }
+
+    .dataset-notes {
+        font-size: .875rem;
+    }
+
+    .card-footer {
+        font-size: .75rem;
     }
 }
 
@@ -41,18 +113,6 @@
     &.pull-right {
         margin-right: 0;
     }
-}
-
-.dataset-resources {
-    margin-top: 8px;
-}
-
-.dataset-resources li {
-    display: inline;
-}
-
-.dataset-content {
-    width: 100%;
 }
 
 // Resource List

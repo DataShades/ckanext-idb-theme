@@ -16,43 +16,41 @@ def idb_theme_default_collapsed(facet_name: str):
 
 def idb_theme_info_graph() -> dict[str, Any]:
     """Get the info graph metrics for the homepage."""
-    org_type = tk.h.default_group_type('organization')
-    group_type = tk.h.default_group_type('group')
+    org_type = tk.h.default_group_type("organization")
+    group_type = tk.h.default_group_type("group")
 
     return {
-        'metrics': [
+        "metrics": [
             {
-                'value': tk.h.get_dataset_count(),
-                'label': _('Available datasets'),
+                "value": tk.h.get_dataset_count(),
+                "label": _("Available datasets"),
             },
             {
-                'value': idb_theme_get_group_count(type='organization'),
-                'label': tk.h.humanize_entity_type('organization', org_type, 'facet label') or _('Organizations'),
+                "value": idb_theme_get_group_count(type="organization"),
+                "label": tk.h.humanize_entity_type("organization", org_type, "facet label") or _("Organizations"),
             },
             {
-                'value': '18+',
-                'label': _('Countries covered'),
+                "value": "18+",
+                "label": _("Countries covered"),
             },
             {
-                'value': idb_theme_get_group_count(),
-                'label': _('Thematic {entity_type}').format(
-                    entity_type=tk.h.humanize_entity_type('group', group_type, 'facet label') or _('Groups')
+                "value": idb_theme_get_group_count(),
+                "label": _("Thematic {entity_type}").format(
+                    entity_type=tk.h.humanize_entity_type("group", group_type, "facet label") or _("Groups")
                 ),
             },
         ],
     }
 
 
-def idb_theme_get_group_count(type: str = 'group') -> dict[str, int]:
-    q = model.Session.query(model.Group)\
-        .filter(model.Group.type == type)\
-        .filter(model.Group.state == 'active')
-    if type == 'organization':
+def idb_theme_get_group_count(type: str = "group") -> dict[str, int]:
+    q = model.Session.query(model.Group).filter(model.Group.type == type).filter(model.Group.state == "active")
+    if type == "organization":
         q = q.filter(model.Group.is_organization == True)
-    elif type == 'group':
+    elif type == "group":
         q = q.filter(model.Group.is_organization == False)
     else:
-        raise ValueError(f'Invalid group type: {type}')  # noqa: TRY003
+        raise ValueError(f"Invalid group type: {type}")  # noqa: TRY003
     return q.count()
 
 
@@ -69,6 +67,75 @@ def idb_theme_home_title() -> str:
 def idb_theme_hide_user_image_upload() -> bool:
     """Check whether user image upload controls should be hidden."""
     return config.hide_user_image_upload()
+
+
+def idb_theme_download_count(pkg: dict[str, Any]) -> int:
+    """Return the number of dataset downloads.
+
+    TODO: IADBXCIGB-152. Mocked until the download counter is implemented.
+    """
+    return 123
+
+
+def idb_theme_dataset_card(pkg: dict[str, Any]) -> dict[str, Any]:
+    """Collect the values displayed on the dataset card."""
+    lang = tk.h.lang()
+
+    gov_labels = _vocab_labels(pkg, "gov_tier", lang)
+    tags = _fluent_values(pkg, "tags_translated", lang) or [t["display_name"] for t in pkg.get("tags", [])]
+
+    start, end = _year(pkg.get("temporal_start")), _year(pkg.get("temporal_end"))
+
+    return {
+        "themes": _vocab_labels(pkg, "theme", lang),
+        "units": _vocab_labels(pkg, "unitResponsible", lang),
+        "countries": _vocab_labels(pkg, "spatial_coverage", lang),
+        "coverage": [year for year in dict.fromkeys([start, end]) if year],
+        "governance": gov_labels[0] if gov_labels else None,
+        "tags": tags,
+        "formats": tk.h.dict_list_reduce(pkg.get("resources", []), "format"),
+        "published": _date(pkg.get("metadata_created")),
+        "modified": _date(pkg.get("metadata_modified")),
+        "downloads": idb_theme_download_count(pkg),
+    }
+
+
+def _fluent_values(pkg: dict[str, Any], field_name: str, lang: str) -> list[str]:
+    """Get the list of values of a (fluent) multi-value field."""
+    value = pkg.get(field_name)
+    if isinstance(value, dict):
+        value = value.get(lang) or value.get("en")
+    if isinstance(value, str):
+        value = [v.strip() for v in value.split(",") if v.strip()]
+    return value or []
+
+
+def _vocab_labels(pkg: dict[str, Any], field_name: str, lang: str) -> list[str]:
+    """Resolve the localized labels of a controlled-vocabulary field."""
+    value = _fluent_values(pkg, field_name, lang)
+    if not value:
+        return []
+
+    choices = []
+    schema = tk.h.scheming_get_dataset_schema(pkg.get("type") or "dataset")
+
+    if schema:
+        field = tk.h.scheming_field_by_name(schema["dataset_fields"], field_name)
+        if field:
+            choices = tk.h.scheming_field_choices(field) or []
+
+    labels = {c["value"]: c.get("label", c["value"]) for c in choices}
+    return [tk.h.scheming_language_text(labels.get(v, v), lang) for v in value]
+
+
+def _year(value: Any) -> str:
+    return str(value)[:4] if value else ""
+
+
+def _date(value: str | None) -> str:
+    if not value:
+        return ""
+    return tk.h.localised_nice_date(tk.h.date_str_to_datetime(value), show_date=True, format="d MMM y")
 
 
 def idb_theme_portal_text(section: str, lang: str | None = None) -> dict[str, Any]:

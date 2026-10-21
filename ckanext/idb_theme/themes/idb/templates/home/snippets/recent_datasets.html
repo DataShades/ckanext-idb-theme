@@ -4,7 +4,7 @@
 <div>
     <ul class="recent-packages">
         {% for package in packages %}
-            {{ ui.package(package=package) }}
+            {{ ui.package(package=package, variant="short") }}
         {% endfor %}
     </ul>
 </div>

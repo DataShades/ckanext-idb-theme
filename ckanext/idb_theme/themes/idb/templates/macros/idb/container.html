@@ -220,7 +220,7 @@
 {%- endmacro %}
 
 {%- macro package_list(content) -%}
-    <ul {{ ui.util.attrs(kwargs, {"class": "dataset-list list-unstyled"}) }}>
+    <ul {{ ui.util.attrs(kwargs, {"class": "dataset-list list-unstyled d-flex flex-column gap-3 w-100"}) }}>
         {{ content }}
     </ul>
 {%- endmacro %}
