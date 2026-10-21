@@ -1,63 +1,7 @@
 .homepage {
     overflow: hidden;
-    .hero {
-        padding: 20px;
-        .container{
-            border-radius: 24px;
-            background: linear-gradient(0deg, rgba(3, 13, 56, 0.8), rgba(3, 13, 56, 0.8)), url("#{$imagePath}/hero.png");
-            .row {
-                padding: 64px 32px;
-                align-items: center;
-            }
-        }
-    }
-    .module-promotion {
-        p {
-            color: #93a1e9;
-            font-size: 24px;
-        }
-    }
-    h1 {
-        color: $white;
-        font-size: 60px;
-        font-weight: $font-weight-bold;
-    }
     h2 {
         margin-bottom: 1rem;
-    }
-    .module-search {
-        color: $mastheadTextColor;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: flex-end;
-        gap: 24px;
-        .search-form {
-            border: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-            .search-input {
-                font-size: 16px;
-                color: $black;
-                display: flex;
-                button {
-                    margin-top: -12px;
-                }
-            }
-        }
-        h2 {
-            color: $white;
-            font-size: 96px;
-            text-align: right;
-            display: grid;
-            margin-bottom: 24px;
-            font-weight: 700;
-        }
-        h2 span {
-            color: $white;
-            font-size: 30px;
-            font-weight: 400;
-        }
     }
     .module-feeds {
         padding: 100px 0;
@@ -72,6 +16,154 @@
             column-gap: 12px;
             row-gap: 12px;
             margin-bottom: $spacer-4;
+        }
+    }
+}
+
+// Hero: title, simple search and key numbers over the background image.
+// The image URL comes from the template as `--home-hero-image`.
+.home-hero {
+    --home-hero-overlay: rgba(2, 56, 78, 0.88);
+    background:
+        linear-gradient(90deg, var(--home-hero-overlay) 0%, var(--home-hero-overlay) 55%, rgba(2, 56, 78, 0.6) 100%),
+        var(--home-hero-image) right 18% / cover no-repeat,
+        var(--idb-color-secondary-container);
+    padding: var(--idb-space-xxl) 0 var(--idb-space-xl);
+
+    &-content {
+        max-width: 50.625rem;
+    }
+
+    &-intro {
+        max-width: 43rem;
+        margin-bottom: var(--idb-space-md);
+
+        p {
+            font-size: var(--idb-font-size-label-large);
+            line-height: var(--idb-line-height-label-large);
+            margin-bottom: 0;
+        }
+    }
+
+    &-title {
+        color: var(--idb-color-on-primary);
+        font-size: 2.5rem;
+        line-height: 2.9375rem;
+        font-weight: 700;
+        margin-bottom: 1.25rem;
+    }
+
+    &-search {
+        margin-bottom: var(--idb-space-md);
+    }
+
+    &-search-input {
+        height: 2.75rem;
+        padding: 0 var(--idb-space-sm);
+        font-size: var(--idb-font-size-label-large);
+        color: var(--idb-color-on-surface);
+        border: 1px solid var(--idb-color-button-stroke-border);
+        border-radius: var(--idb-border-radius-sm);
+
+        &::placeholder {
+            color: var(--idb-color-text-placeholder);
+        }
+    }
+
+    &-search-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--idb-space-sm);
+        margin-top: var(--idb-space-sm);
+    }
+
+    // `.btn` styles of _buttons.scss load later and would override the radius and padding
+    &-search-submit.btn {
+        --bs-btn-padding-x: 1.125rem;
+        --bs-btn-padding-y: 0.3125rem;
+        --bs-btn-color: var(--idb-color-button-stroke-text);
+        --bs-btn-bg: var(--idb-color-on-primary);
+        --bs-btn-border-color: var(--idb-color-button-stroke-text);
+        --bs-btn-hover-color: var(--idb-color-button-stroke-text);
+        --bs-btn-hover-bg: var(--idb-color-primary-light);
+        --bs-btn-hover-border-color: var(--idb-color-button-stroke-text);
+        --bs-btn-active-color: var(--idb-color-button-stroke-text);
+        --bs-btn-active-bg: var(--idb-color-primary-light);
+        --bs-btn-active-border-color: var(--idb-color-button-stroke-text);
+        margin-left: auto;
+        font-family: "Inter", sans-serif;
+        font-size: var(--idb-font-size-text);
+        line-height: var(--idb-line-height-text);
+        font-weight: 600;
+        border-radius: var(--idb-border-radius-lg);
+    }
+
+    &-metrics {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        margin: 0;
+    }
+
+    &-metric {
+        display: flex;
+        flex-direction: column;
+        gap: 0.125rem;
+        min-width: 0;
+        padding: var(--idb-space-xs) var(--idb-space-sm);
+
+        & + & {
+            border-left: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    }
+
+    &-metric-value {
+        font-size: var(--idb-font-size-display-small);
+        line-height: var(--idb-line-height-display-small);
+        font-weight: 700;
+    }
+
+    &-metric-label {
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+        font-weight: 600;
+        color: var(--idb-color-on-primary);
+        text-decoration: none;
+
+        &:hover,
+        &:focus-visible {
+            color: var(--idb-color-on-primary);
+            text-decoration: underline;
+        }
+
+        i {
+            margin-left: 0.25rem;
+        }
+    }
+}
+
+@include media-breakpoint-down(md) {
+    .home-hero {
+        --home-hero-overlay: rgba(2, 56, 78, 0.9);
+        background:
+            linear-gradient(var(--home-hero-overlay), var(--home-hero-overlay)),
+            var(--home-hero-image) 75% 15% / cover no-repeat,
+            var(--idb-color-secondary-container);
+        padding: var(--idb-space-xl) 0 var(--idb-space-md);
+
+        &-title {
+            font-size: var(--idb-font-size-heading);
+            line-height: var(--idb-line-height-heading);
+        }
+
+        &-metrics {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            row-gap: var(--idb-space-sm);
+        }
+
+        // two columns: separate the numbers of each row only
+        &-metric:nth-child(odd) {
+            border-left: 0;
         }
     }
 }
@@ -149,35 +241,6 @@
 
 @include media-breakpoint-down(md){
     .homepage {
-        .hero {
-            .container {
-                .row {
-                    padding: 32px 12px;
-                }
-            }
-        }
-        .module-promotion {
-            text-align: center;
-            p {
-                font-size: 16px;
-            }
-        }
-        h1 {
-            font-size: 24px;
-            font-weight: 400;
-        }
-        .module-search {
-            margin-top: $spacer * .5;
-            align-items: normal;
-            h2 {
-                font-size: 36px;
-                text-align: center;
-            }
-            h2 span {
-                font-size: 16px;
-                font-weight: $font-weight-normal;
-            }
-        }
         .module-feeds {
             .featured-groups {
                 grid-template-columns: none;
