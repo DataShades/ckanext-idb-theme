@@ -77,6 +77,40 @@ def idb_theme_download_count(pkg: dict[str, Any]) -> int:
     return 123
 
 
+def idb_theme_highlights_sort_options() -> list[dict[str, str]]:
+    """Return the sort options of the Explore Highlights homepage section."""
+    return [
+        {"value": "data", "label": _("Most recent data")},
+        {"value": "downloads", "label": _("Most downloaded")},
+        {"value": "created", "label": _("Most recently added")},
+        {"value": "modified", "label": _("Most recently updated")},
+    ]
+
+
+def idb_theme_highlights(sort: str | None = None) -> dict[str, Any]:
+    """Get the top datasets of the whole catalog for the Explore Highlights section.
+
+    Unknown sort option names fall back to the default one.
+    """
+    sorts = {
+        "data": "temporal_end desc, temporal_start desc, metadata_modified desc",
+        # TODO: IADBXCIGB-152. Sort by the download counter once it is implemented.
+        "downloads": "metadata_modified desc",
+        "created": "metadata_created desc",
+        "modified": "metadata_modified desc",
+    }
+
+    if sort not in sorts:
+        sort = "modified"
+
+    result = tk.get_action("package_search")({}, {"rows": 30, "sort": sorts[sort]})
+
+    return {
+        "sort": sort,
+        "packages": result["results"],
+    }
+
+
 def idb_theme_dataset_card(pkg: dict[str, Any]) -> dict[str, Any]:
     """Collect the values displayed on the dataset card."""
     lang = tk.h.lang()

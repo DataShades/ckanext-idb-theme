@@ -54,6 +54,12 @@ def _follow_group(id: str, *, is_organization: bool, follow: bool) -> str:
     return tk.render("group/snippets/info.html", extra_vars)
 
 
+@bp.get("/home/highlights")
+def home_highlights() -> str:
+    """Render the Explore Highlights homepage section for the chosen sort."""
+    return tk.render("home/snippets/highlights.html", {"sort": tk.request.args.get("sort")})
+
+
 @bp.post("/group/follow/<id>")
 def group_follow(id: str) -> str:
     return _follow_group(id, is_organization=False, follow=True)

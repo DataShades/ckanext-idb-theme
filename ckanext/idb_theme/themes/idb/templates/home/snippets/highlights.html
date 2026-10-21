@@ -1,0 +1,77 @@
+{#
+Explore Highlights section: top datasets of the whole catalog for the chosen
+sort order, split into carousel pages. Changing the sort reloads the carousel
+from the `idb_theme.home_highlights` endpoint.
+
+sort - The sort option name, see h.idb_theme_highlights_sort_options().
+
+Example:
+
+{% snippet 'home/snippets/highlights.html', sort="created" %}
+
+#}
+{% set highlights = h.idb_theme_highlights(sort) %}
+{% set pages = highlights.packages | batch(6) | list %}
+{% set carousel_id = "highlights-carousel" %}
+
+<section class="explore-highlights col-12" aria-labelledby="highlights-title">
+    <div class="explore-highlights-header d-flex flex-wrap align-items-end justify-content-between column-gap-4 row-gap-3">
+        <div>
+            {{ ui.heading(_("Explore Highlights"), level=2, attrs={"id": "highlights-title"}) }}
+            <p class="explore-highlights-description mb-0">{{ _("Discover datasets by update date, publication date, downloads, and data coverage.") }}</p>
+        </div>
+
+        <div>
+            <label for="highlights-sort" class="visually-hidden">{{ _("Order by") }}</label>
+            <select id="highlights-sort" name="sort" class="form-select"
+                hx-get="{{ h.url_for('idb_theme.home_highlights') }}"
+                hx-trigger="change"
+                hx-target="#highlights-results"
+                hx-select="#{{ carousel_id }}"
+                hx-swap="innerHTML">
+                {% for option in h.idb_theme_highlights_sort_options() %}
+                    <option value="{{ option.value }}"{% if option.value == highlights.sort %} selected{% endif %}>{{ option.label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    {# the wrapper is the swap target: CKAN initializes modules only inside of it #}
+    <div id="highlights-results">
+        <div id="{{ carousel_id }}" class="carousel slide" data-bs-ride="false" data-bs-wrap="false" data-module="idb-highlights-carousel" aria-roledescription="carousel" aria-live="polite">
+            {% if pages %}
+                <div class="carousel-inner">
+                    {% for page in pages %}
+                        <div class="carousel-item{% if loop.first %} active{% endif %}" role="group" aria-roledescription="slide" aria-label="{{ _('Page {page} of {total}').format(page=loop.index, total=loop.length) }}">
+                            <ul class="highlights-grid list-unstyled mb-0">
+                                {% for package in page %}
+                                    {{ ui.package(package=package, variant="short") }}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                {% if pages | length > 1 %}
+                    <div class="highlights-nav d-flex justify-content-center align-items-center gap-4 mt-4">
+                        <button class="highlights-nav-arrow btn" type="button" data-bs-target="#{{ carousel_id }}" data-bs-slide="prev" aria-label="{{ _('Previous page') }}" disabled>
+                            {{ ui.icon("chevron-left", style="solid", aria={"hidden": "true"}) }}
+                        </button>
+
+                        <div class="carousel-indicators position-static m-0">
+                            {% for page in pages %}
+                                <button type="button" data-bs-target="#{{ carousel_id }}" data-bs-slide-to="{{ loop.index0 }}"{% if loop.first %} class="active" aria-current="true"{% endif %} aria-label="{{ _('Page {page}').format(page=loop.index) }}"></button>
+                            {% endfor %}
+                        </div>
+
+                        <button class="highlights-nav-arrow btn" type="button" data-bs-target="#{{ carousel_id }}" data-bs-slide="next" aria-label="{{ _('Next page') }}">
+                            {{ ui.icon("chevron-right", style="solid", aria={"hidden": "true"}) }}
+                        </button>
+                    </div>
+                {% endif %}
+            {% else %}
+                {{ ui.empty(_("There are no datasets to show yet.")) }}
+            {% endif %}
+        </div>
+    </div>
+</section>

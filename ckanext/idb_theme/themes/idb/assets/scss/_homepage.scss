@@ -60,7 +60,7 @@
         }
     }
     .module-feeds {
-        padding: $spacer * 2 0;
+        padding: 100px 0;
         &:nth-of-type(even) {
             background: $layoutBackgroundColor;
         }
@@ -73,19 +73,77 @@
             row-gap: 12px;
             margin-bottom: $spacer-4;
         }
-        .recent-packages {
-            display: grid;
-            grid-auto-flow: row;
-            grid-auto-columns: minmax(0, 1fr);
-            grid-auto-rows: minmax(0, 1fr);
-            grid-template-columns: repeat(2, 1fr);
-            column-gap: 12px;
-            row-gap: 12px;
-            margin-bottom: $spacer-4;
-            list-style: none;
-            padding-left: unset;
+    }
+}
+
+// Explore Highlights: dataset carousel with a sort dropdown
+.explore-highlights {
+    h2 {
+        color: var(--idb-color-primary-20);
+        font-size: 1.75rem;
+        margin-bottom: var(--idb-space-xs);
+    }
+
+    .explore-highlights-header {
+        margin-bottom: 40px;
+    }
+
+    .explore-highlights-description {
+        color: var(--idb-color-text-default);
+    }
+
+    .form-select {
+        min-width: 13rem;
+        font-size: var(--idb-font-size-label-large);
+        color: var(--idb-color-on-surface);
+        border-radius: var(--idb-border-radius-sm);
+    }
+
+    .highlights-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-auto-rows: 1fr;
+        gap: var(--idb-space-lg);
+    }
+
+    .highlights-nav-arrow {
+        --bs-btn-padding-x: 0;
+        --bs-btn-padding-y: 0;
+        --bs-btn-color: var(--idb-color-neutral-60);
+        --bs-btn-border-color: #CBCACA;
+        --bs-btn-hover-color: var(--idb-color-primary);
+        --bs-btn-hover-border-color: var(--idb-color-primary);
+        --bs-btn-active-color: var(--idb-color-primary);
+        --bs-btn-active-border-color: var(--idb-color-primary);
+        --bs-btn-disabled-color: var(--idb-color-neutral-60);
+        --bs-btn-disabled-border-color: #CBCACA;
+        --bs-btn-disabled-opacity: .4;
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    .carousel-indicators {
+        gap: 0;
+
+        [data-bs-target] {
+            // transparent border enlarges the click area around the dot and
+            // makes the 6px gap between neighbouring dots
+            box-sizing: content-box;
+            width: 10px;
+            height: 10px;
+            margin: 0;
+            border: 3px solid transparent;
+            border-radius: 50%;
+            background-clip: padding-box;
+            background-color: #C7C7C9;
+            opacity: 1;
         }
 
+        .active {
+            background-color: var(--idb-color-primary);
+        }
     }
 }
 
@@ -124,13 +182,19 @@
             .featured-groups {
                 grid-template-columns: none;
             }
-            .recent-packages {
-                display: grid;
-                grid-auto-flow: row;
-                grid-template-columns: repeat(1,auto);
-                row-gap: 12px;
-                margin-bottom: $spacer-4;
-            }
+        }
+    }
+
+    .explore-highlights {
+        .explore-highlights-header > div,
+        .form-select {
+            width: 100%;
+        }
+
+        .highlights-grid {
+            grid-template-columns: minmax(0, 1fr);
+            grid-auto-rows: auto;
+            gap: var(--idb-space-sm);
         }
     }
 }

@@ -34,6 +34,7 @@ scripts:
     - javascript/modules/custom-fields.js
     - javascript/modules/data-viewer.js
     - javascript/modules/dataset-visibility.js
+    - javascript/modules/highlights-carousel.js
     - javascript/modules/image-upload.js
     - javascript/modules/metadata-button.js
     - javascript/modules/popover.js
