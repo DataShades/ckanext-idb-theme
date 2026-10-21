@@ -23,7 +23,7 @@ Example:
 {%- endmacro %}
 
 {% macro meta(svg, label, value, hide_label=false) -%}
-    <li>
+    <li {{ ui.util.attrs(kwargs) }}>
         {% snippet "svg/" ~ svg ~ ".svg" %}
         <span {% if hide_label %}class="visually-hidden"{% endif %}>{{ label }}:</span>
         {{ value }}
@@ -122,7 +122,12 @@ Example:
                             {{ meta("calendar", _("Data Coverage"), card.coverage | join(" – ")) }}
                         {% endif %}
                         {% if card.formats %}
-                            {{ meta("format", _("Format"), card.formats | join(", ")) }}
+                            {% set formats_limit = 3 %}
+                            {% set formats = card.formats[:formats_limit] | join(", ") %}
+                            {% if card.formats | length > formats_limit %}
+                                {% set formats = formats ~ " +" ~ (card.formats | length - formats_limit) %}
+                            {% endif %}
+                            {{ meta("format", _("Format"), formats, title=card.formats | join(", ")) }}
                         {% endif %}
                     {% endif %}
                     <li>
