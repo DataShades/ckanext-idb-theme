@@ -12,21 +12,19 @@
         </div>
         {% block primary_content %}
             <div role="main">
-                <div class="main bg-primary-linear text-white">
-                    <div class="container py-5">
-                        {% block promoted %}
-                            {% snippet 'home/snippets/promoted.html' %}
-                        {% endblock %}
-                        <div class="row">
-                            <div class="col-12">
-                                {% block search %}
-                                    {% snippet 'home/snippets/search.html', search_facets=search_facets %}
-                                {% endblock %}
-                            </div>
+                <div class="home-hero text-white" style="--home-hero-image: url('{{ h.url_for_static('/images/home-hero-bg.webp') }}')">
+                    <div class="container">
+                        <div class="home-hero-content">
+                            {% block promoted %}
+                                {% snippet 'home/snippets/promoted.html' %}
+                            {% endblock %}
+                            {% block search %}
+                                {% snippet 'home/snippets/search.html', search_facets=search_facets %}
+                            {% endblock %}
+                            {% block info_graph %}
+                                {% snippet 'home/snippets/info_graph.html' %}
+                            {% endblock %}
                         </div>
-                        {% block info_graph %}
-                            {% snippet 'home/snippets/info_graph.html' %}
-                        {% endblock %}
                     </div>
                 </div>
                 <div class="main module-feeds">

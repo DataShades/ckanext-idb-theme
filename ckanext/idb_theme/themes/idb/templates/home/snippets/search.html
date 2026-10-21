@@ -1,14 +1,21 @@
-{% set placeholder = _('Search datasets') %}
+{#
+Simple search of the homepage hero. Submitting the form opens the dataset
+search page with the results for the term, an empty term shows all datasets.
+
+#}
 {% set dataset_type = h.default_package_type() %}
 
-<div class="mt-2">
-    {%- call ui.util.call(ui.form, action=h.url_for(dataset_type ~ '.search'), attrs={"class": "search-form"}) -%}
-        <div class="input-group">
-            <input aria-label="{% block header_site_search_label %}{{ h.humanize_entity_type('package', dataset_type, 'search placeholder') or _('Search datasets') }}{% endblock %}" id="field-main-search" type="text" class="form-control rounded-0" name="q" value="" autocomplete="off" placeholder="{% block search_placeholder %}{{ placeholder }}{% endblock %}" />
-            <button class="btn btn-light" type="submit" aria-labelledby="search-label">
-                {{ ui.icon("search") }}
-                <span class="visually-hidden" id="search-label">{{ _('Search') }}</span>
-            </button>
-        </div>
-    {%- endcall %}
-</div>
+{%- call ui.util.call(ui.form, action=h.url_for(dataset_type ~ '.search'), attrs={"class": "home-hero-search", "role": "search"}) -%}
+    <label for="field-main-search" class="visually-hidden">{{ h.humanize_entity_type('package', dataset_type, 'search placeholder') or _('Search datasets') }}</label>
+    <input id="field-main-search" type="search" class="form-control home-hero-search-input" name="q" value="" autocomplete="off" placeholder="{% block search_placeholder %}{{ _('Search datasets, projects, countries, topics, themes...') }}{% endblock %}" />
+
+    <div class="home-hero-search-actions">
+        {# TODO: the Advanced search toggle and panel are implemented in a separate task #}
+        {% block advanced_search %}{% endblock %}
+
+        <button class="align-items-baseline btn d-flex home-hero-search-submit" type="submit">
+            {{ _('Search') }}
+            {{ ui.icon("search", aria={"hidden": "true"}) }}
+        </button>
+    </div>
+{%- endcall %}

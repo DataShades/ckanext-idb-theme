@@ -8,6 +8,10 @@ from ckan.common import _
 
 from . import config
 
+INFO_GRAPH_COUNTRY_FACET = "vocab_iadb_iar_spatial_coverage"
+INFO_GRAPH_GOV_TIER_FACET = "vocab_iadb_iar_gov_tier"
+INFO_GRAPH_INSTITUTIONAL_TIER = "Institutional"
+
 
 def idb_theme_default_collapsed(facet_name: str):
     """Check whether the facet with the given name should be collapsed by default."""
@@ -15,29 +19,50 @@ def idb_theme_default_collapsed(facet_name: str):
 
 
 def idb_theme_info_graph() -> dict[str, Any]:
-    """Get the info graph metrics for the homepage."""
-    org_type = tk.h.default_group_type("organization")
+    """Get the key numbers of the homepage hero.
+
+    Every metric has a link to the list page with the matching items.
+    """
+    dataset_type = tk.h.default_package_type()
     group_type = tk.h.default_group_type("group")
+
+    result = tk.get_action("package_search")(
+        {"user": tk.current_user.name},
+        {
+            "rows": 0,
+            "facet.field": [INFO_GRAPH_COUNTRY_FACET, INFO_GRAPH_GOV_TIER_FACET],
+            "facet.limit": -1,
+            "include_private": tk.config.get("ckan.search.default_include_private"),
+        },
+    )
+    facets = result.get("search_facets", {})
+    gov_tiers = {item["name"]: item["count"] for item in facets.get(INFO_GRAPH_GOV_TIER_FACET, {}).get("items", [])}
 
     return {
         "metrics": [
             {
-                "value": tk.h.get_dataset_count(),
-                "label": _("Available datasets"),
+                "value": result["count"],
+                "label": _("Datasets available"),
+                "url": tk.h.url_for(f"{dataset_type}.search"),
             },
             {
-                "value": idb_theme_get_group_count(type="organization"),
-                "label": tk.h.humanize_entity_type("organization", org_type, "facet label") or _("Organizations"),
+                "value": gov_tiers.get(INFO_GRAPH_INSTITUTIONAL_TIER, 0),
+                "label": _("Institutional datasets"),
+                "url": tk.h.url_for(
+                    f"{dataset_type}.search",
+                    **{INFO_GRAPH_GOV_TIER_FACET: INFO_GRAPH_INSTITUTIONAL_TIER},
+                ),
             },
             {
-                "value": "18+",
+                "value": len(facets.get(INFO_GRAPH_COUNTRY_FACET, {}).get("items", [])),
                 "label": _("Countries covered"),
+                # TODO: link the Countries page once it is implemented.
+                "url": tk.h.url_for(f"{dataset_type}.search"),
             },
             {
                 "value": idb_theme_get_group_count(),
-                "label": _("Thematic {entity_type}").format(
-                    entity_type=tk.h.humanize_entity_type("group", group_type, "facet label") or _("Groups")
-                ),
+                "label": _("Data projects"),
+                "url": tk.h.url_for(f"{group_type}.index"),
             },
         ],
     }
@@ -195,11 +220,14 @@ def idb_theme_portal_text(section: str, lang: str | None = None) -> dict[str, An
             ],
         },
         "home": {
-            "title": _("Welcome to CKAN"),
+            "title": _("DataHub"),
             "paragraphs": [
                 _(
-                    "This is a nice introductory paragraph about CKAN or the site in general. "
-                    "We don't have any copy to go here yet but soon we will"
+                    "The DataHub is the IDB's internal catalog for data used in analytical and knowledge work "
+                    "across sectors and countries. It brings together datasets produced through operational "
+                    "activities, technical cooperation, economic studies, and other sector work, as well as "
+                    "external, proprietary, and institutionally acquired data. The catalog helps teams discover "
+                    "available data and understand how it can be accessed."
                 ),
             ],
         },

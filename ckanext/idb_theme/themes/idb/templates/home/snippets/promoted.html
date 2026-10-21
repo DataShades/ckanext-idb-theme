@@ -1,12 +1,12 @@
 {% set intro = g.site_intro_text %}
 {% set home_text = h.idb_theme_portal_text('home') %}
 
-<div class="">
+<div class="home-hero-intro">
     {% if intro %}
         {{ h.render_markdown(intro) }}
     {% else %}
-        {{ ui.heading(home_text.title, level=1, attrs={"class": "fs-36"}) }}
-        <p class="opacity-75 fs-16">
+        {{ ui.heading(home_text.title, level=1, attrs={"class": "home-hero-title"}) }}
+        <p class="home-hero-description">
             {{ home_text.paragraphs[0] }}
         </p>
     {% endif %}

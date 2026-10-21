@@ -19,6 +19,9 @@
     --idb-color-neutral-20: #141414;
     --idb-color-neutral-60: #555353;
     --idb-color-text-default: #232222;
+    --idb-color-text-placeholder: #929090;
+    --idb-color-button-stroke-text: #007EB6;
+    --idb-color-button-stroke-border: #AEAEAD;
 
     // font ///////////////////////////////////////////////////////////////////
     --idb-font-family: "Open Sans";
@@ -51,6 +54,7 @@
     --idb-border-color: var(--idb-color-border-n-variant95);
     --idb-border-radius: 8px;
     --idb-border-radius-sm: 4px;
+    --idb-border-radius-lg: 80px;
 
     // accordion //////////////////////////////////////////////////////////////
     --idb-accordion-button-color: var(--idb-color-primary-dark);
