@@ -1,0 +1,54 @@
+{#
+Pagination of the Datasets page: the "Items per page" dropdown, the range of
+the shown datasets and the first, previous, next and last page buttons.
+
+dataset_type - The dataset type.
+item_count   - The number of found datasets.
+
+Example:
+
+{% snippet 'package/snippets/dataset_pagination.html', dataset_type=dataset_type, item_count=page.item_count %}
+
+#}
+{% set pagination = h.idb_theme_datasets_pagination(item_count) %}
+
+{% macro page_button(url, icon, label) -%}
+    {%- if url -%}
+        <a class="dataset-pagination-button btn" href="{{ url }}" aria-label="{{ label }}" title="{{ label }}" hx-boost="true">
+            {{- ui.icon(icon, style="solid", aria={"hidden": "true"}) -}}
+        </a>
+    {%- else -%}
+        <span class="dataset-pagination-button btn disabled" aria-disabled="true" aria-label="{{ label }}" title="{{ label }}">
+            {{- ui.icon(icon, style="solid", aria={"hidden": "true"}) -}}
+        </span>
+    {%- endif -%}
+{%- endmacro %}
+
+<nav class="dataset-pagination" aria-label="{{ _('Pagination') }}">
+    {%- call ui.util.call(ui.form, action=h.url_for(dataset_type ~ '.search'), attrs={"class": "dataset-pagination-size"}, hx={"boost": "true", "trigger": "change, submit"}) -%}
+        {%- for name, value in request.args.items(multi=True) -%}
+            {%- if name not in [pagination.param, 'page'] -%}
+                <input type="hidden" name="{{ name }}" value="{{ value }}">
+            {%- endif -%}
+        {%- endfor -%}
+
+        <label for="field-per-page">{{ _('Items per page') }}</label>
+        <select id="field-per-page" name="{{ pagination.param }}" class="form-select">
+            {% for option in pagination.per_page_options %}
+                <option value="{{ option }}"{% if option == pagination.per_page %} selected{% endif %}>{{ option }}</option>
+            {% endfor %}
+        </select>
+        <button class="btn btn-secondary js-hide" type="submit">{{ _('Go') }}</button>
+    {%- endcall %}
+
+    <span class="dataset-pagination-range">
+        {{ _('{first} – {last} of {total}').format(first=h.localised_number(pagination.first_item), last=h.localised_number(pagination.last_item), total=h.localised_number(pagination.item_count)) }}
+    </span>
+
+    <div class="dataset-pagination-buttons">
+        {{ page_button(pagination.first_url, "backward-step", _('First page')) }}
+        {{ page_button(pagination.previous_url, "chevron-left", _('Previous page')) }}
+        {{ page_button(pagination.next_url, "chevron-right", _('Next page')) }}
+        {{ page_button(pagination.last_url, "forward-step", _('Last page')) }}
+    </div>
+</nav>

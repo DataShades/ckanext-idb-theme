@@ -94,8 +94,12 @@
 
 </head>
 
-{# Allows custom attributes to be added to the <body> tag #}
-<body{% block bodytag %}{% endblock %}>
+{#
+Allows custom attributes to be added to the <body> tag. The default class
+marks the page by its endpoint, e.g. `page-dataset-search`, for page specific
+styles; call super() to keep it when overriding the block.
+#}
+<body{% block bodytag %}{% if request.endpoint %} class="page-{{ request.endpoint | replace('.', '-') | replace('_', '-') }}"{% endif %}{% endblock %}>
 
     {#
     The page block allows you to add content to the page. Most of the time it is

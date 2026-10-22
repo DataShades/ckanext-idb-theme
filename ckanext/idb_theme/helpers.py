@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import math
 from typing import Any
+
+from flask import has_request_context
 
 import ckan.plugins.toolkit as tk
 from ckan import model
@@ -12,6 +15,21 @@ INFO_GRAPH_COUNTRY_FACET = "vocab_iadb_iar_spatial_coverage"
 INFO_GRAPH_GOV_TIER_FACET = "vocab_iadb_iar_gov_tier"
 INFO_GRAPH_INSTITUTIONAL_TIER = "Institutional"
 HOME_THEME_FACET = "vocab_iadb_iar_theme"
+
+# Sort options of the Explore Highlights section and the Datasets page
+DATASET_SORTS = {
+    "data": "temporal_end desc, temporal_start desc, metadata_modified desc",
+    "downloads": "downloads_sort desc, metadata_modified desc",
+    "created": "metadata_created desc",
+    "modified": "metadata_modified desc",
+}
+DEFAULT_DATASET_SORT = "modified"
+
+# "Items per page" options of the Datasets page, the first one is the default.
+# The parameter starts with "_", so the dataset search view does not treat it
+# as a facet filter.
+DATASETS_PER_PAGE_OPTIONS = [8, 16, 24, 48]
+DATASETS_PER_PAGE_PARAM = "_per_page"
 
 
 def idb_theme_default_collapsed(facet_name: str):
@@ -119,17 +137,10 @@ def idb_theme_highlights(sort: str | None = None) -> dict[str, Any]:
 
     Unknown sort option names fall back to the default one.
     """
-    sorts = {
-        "data": "temporal_end desc, temporal_start desc, metadata_modified desc",
-        "downloads": "downloads_sort desc, metadata_modified desc",
-        "created": "metadata_created desc",
-        "modified": "metadata_modified desc",
-    }
+    if sort not in DATASET_SORTS:
+        sort = DEFAULT_DATASET_SORT
 
-    if sort not in sorts:
-        sort = "modified"
-
-    result = tk.get_action("package_search")({}, {"rows": 30, "sort": sorts[sort]})
+    result = tk.get_action("package_search")({}, {"rows": 30, "sort": DATASET_SORTS[sort]})
     packages = result["results"]
 
     # The indexed download counter is refreshed in batches, so it may lag
@@ -141,6 +152,55 @@ def idb_theme_highlights(sort: str | None = None) -> dict[str, Any]:
     return {
         "sort": sort,
         "packages": packages,
+    }
+
+
+def idb_theme_dataset_sort_options() -> list[dict[str, str]]:
+    """Return the "Order by" options of the Datasets page.
+
+    The values are Solr sort expressions: the dataset search view passes the
+    ``sort`` parameter to ``package_search`` as is.
+    """
+    return [
+        {"value": DATASET_SORTS[option["value"]], "label": option["label"]}
+        for option in idb_theme_highlights_sort_options()
+    ]
+
+
+def idb_theme_datasets_per_page() -> int:
+    """Return the number of datasets per page chosen on the Datasets page.
+
+    Unknown values fall back to the default one.
+    """
+    value = tk.request.args.get(DATASETS_PER_PAGE_PARAM, type=int) if has_request_context() else None
+    return value if value in DATASETS_PER_PAGE_OPTIONS else DATASETS_PER_PAGE_OPTIONS[0]
+
+
+def idb_theme_datasets_pagination(item_count: int) -> dict[str, Any]:
+    """Get the pagination of the Datasets page.
+
+    The page size is chosen by the user, while the ``Page`` object of the
+    dataset search view is built with ``ckan.datasets_per_page``, so the
+    numbers are computed here from the request.
+    """
+    per_page = idb_theme_datasets_per_page()
+    page = tk.h.get_page_number(tk.request.args)
+    last_page = max(math.ceil(item_count / per_page), 1)
+
+    def url(number: int) -> str:
+        return tk.h.add_url_param(new_params={"page": number})
+
+    return {
+        "param": DATASETS_PER_PAGE_PARAM,
+        "per_page": per_page,
+        "per_page_options": DATASETS_PER_PAGE_OPTIONS,
+        "item_count": item_count,
+        "first_item": min((page - 1) * per_page + 1, item_count),
+        "last_item": min(page * per_page, item_count),
+        "first_url": url(1) if page > 1 else None,
+        "previous_url": url(min(page, last_page + 1) - 1) if page > 1 else None,
+        "next_url": url(page + 1) if page < last_page else None,
+        "last_url": url(last_page) if page < last_page else None,
     }
 
 

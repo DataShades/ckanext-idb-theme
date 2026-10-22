@@ -158,11 +158,6 @@
             var(--idb-color-secondary-container);
         padding: var(--idb-space-xl) 0 var(--idb-space-md);
 
-        &-title {
-            font-size: var(--idb-font-size-heading);
-            line-height: var(--idb-line-height-heading);
-        }
-
         &-metrics {
             grid-template-columns: repeat(2, minmax(0, 1fr));
             row-gap: var(--idb-space-sm);

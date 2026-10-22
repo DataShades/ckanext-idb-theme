@@ -1,0 +1,37 @@
+{#
+Results of the Datasets page: the dataset cards and the pagination, or the
+empty state when nothing is found. The section is swapped out of band on htmx
+requests.
+
+dataset_type - The dataset type.
+page         - The page of the search results.
+query_error  - Whether the search failed.
+
+Example:
+
+{% snippet "package/snippets/dataset_search_results.html", dataset_type=dataset_type, page=page, query_error=query_error %}
+
+#}
+<section class="search-results" id="search-results" hx-swap-oob="true" hx-swap="none">
+    {% if page and page.item_count %}
+        {% block package_search_results_list %}
+            {% snippet 'snippets/package_list.html', packages=page.items %}
+        {% endblock %}
+
+        {% block page_pagination %}
+            {% snippet 'package/snippets/dataset_pagination.html', dataset_type=dataset_type, item_count=page.item_count %}
+        {% endblock %}
+    {% elif not query_error %}
+        {% block empty %}
+            <div class="search-empty">
+                <img class="search-empty-image" src="{{ h.url_for_static('/images/no-results.svg') }}" alt="" width="272" height="278">
+                <h3 class="search-empty-title">{{ _('No datasets match your search') }}</h3>
+                <p class="search-empty-text">{{ _("No datasets match your current filters. Try changing your filters to find what you're looking for.") }}</p>
+                <a class="btn search-empty-clear" href="{{ h.url_for(dataset_type ~ '.search') }}" hx-boost="true">
+                    {{ _('Clear all filters') }}
+                    {{ ui.icon('xmark', aria={"hidden": "true"}) }}
+                </a>
+            </div>
+        {% endblock %}
+    {% endif %}
+</section>

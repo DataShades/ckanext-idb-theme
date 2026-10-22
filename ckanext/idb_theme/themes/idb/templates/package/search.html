@@ -9,39 +9,57 @@
     {{ ui.breadcrumb(_(dataset_type.title() + 's'), href=h.url_for('%s.search' % dataset_type), active=true) }}
 {%- endblock %}
 
+{# the breadcrumb is a part of the hero #}
+{% block toolbar %}{% endblock %}
+
+{% block content %}
+    {% block search_hero %}
+        <div class="home-hero search-hero text-white" style="--home-hero-image: url('{{ h.url_for_static('/images/explore-by-countries.webp') }}')">
+            <div class="container">
+                <div class="home-hero-content">
+                    <div class="toolbar" role="navigation" aria-label="{{ _('Breadcrumb') }}">
+                        {{ self.breadcrumb() }}
+                    </div>
+
+                    <h1 class="home-hero-title">{{ h.humanize_entity_type('dataset', dataset_type, 'page title') or _('Datasets') }}</h1>
+
+                    {% snippet "package/snippets/search_hero_form.html",
+                        dataset_type=dataset_type,
+                        fields=fields,
+                        search_facets=search_facets,
+                        facet_titles=facet_titles,
+                        q=q
+                    %}
+                </div>
+            </div>
+        </div>
+    {% endblock %}
+
+    {{ super() }}
+{% endblock %}
+
+{% block pre_primary %}
+    {{ super() }}
+
+    {% snippet "package/snippets/search_results_header.html",
+        dataset_type=dataset_type,
+        q=q,
+        sort_by_selected=sort_by_selected,
+        page=page,
+        query_error=query_error
+    %}
+{% endblock %}
+
 {% block content_action -%}
     {{ ui.content_action(h.humanize_entity_type('package', dataset_type, 'add link') or _("Add Dataset"), href=h.url_for(dataset_type ~ '.new'), icon="plus-square") if h.check_access('package_create') }}
 {%- endblock %}
 
 {% block primary_content %}
-    {% snippet "package/snippets/search_results.html",
-    heading=h.humanize_entity_type('dataset', dataset_type, 'page title') or _('Datasets'),
-    dataset_type=dataset_type,
-    fields_grouped=fields_grouped,
-    search_facets=search_facets,
-    facet_titles=facet_titles,
-    translated_fields=translated_fields,
-    remove_field=remove_field,
-    q=q,
-    sort_by_selected=sort_by_selected,
-    page=page,
-    query_error=query_error,
-    fields=fields
+    {% snippet "package/snippets/dataset_search_results.html",
+        dataset_type=dataset_type,
+        page=page,
+        query_error=query_error
     %}
-
-    {% block package_search_results_api %}
-        <section class="module">
-            <div class="module-content">
-                {% block package_search_results_api_inner %}
-                    <small>
-                        {% set api_link = ui.link(_('API'), href=h.url_for('api.get_api', ver=3)) %}
-                        {% set api_doc_link = ui.link(_('API Docs'), href='https://docs.ckan.org/en/{0}/api/'.format(g.ckan_doc_version)) %}
-                        {% trans %} You can also access this registry using the {{ api_link }} (see {{ api_doc_link}}). {% endtrans %}
-                    </small>
-                {% endblock %}
-            </div>
-        </section>
-    {% endblock %}
 {% endblock %}
 
 
