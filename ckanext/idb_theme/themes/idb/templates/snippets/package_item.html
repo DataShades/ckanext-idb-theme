@@ -23,9 +23,9 @@ Example:
 {%- endmacro %}
 
 {% macro meta(svg, label, value, hide_label=false) -%}
-    <li {{ ui.util.attrs(kwargs) }}>
+    <li {{ ui.util.attrs(kwargs, {"class": "align-items-center d-flex gap-1"}) }}>
         {% snippet "svg/" ~ svg ~ ".svg" %}
-        <span {% if hide_label %}class="visually-hidden"{% endif %}>{{ label }}:</span>
+        {% if label %}<span {% if hide_label %}class="visually-hidden"{% endif %}>{{ label }}:</span>{% endif %}
         {{ value }}
     </li>
 {%- endmacro %}
@@ -130,10 +130,7 @@ Example:
                             {{ meta("format", _("Format"), formats, title=card.formats | join(", ")) }}
                         {% endif %}
                     {% endif %}
-                    <li>
-                        {% snippet "svg/download.svg" %}
-                        {{ ungettext("{number} download", "{number} downloads", card.downloads).format(number=h.localised_number(card.downloads)) }}
-                    </li>
+                    {{ meta("download", none, ungettext("{number} download", "{number} downloads", card.downloads).format(number=h.localised_number(card.downloads))) }}
                 </ul>
             {% endblock %}
         {% endblock %}
