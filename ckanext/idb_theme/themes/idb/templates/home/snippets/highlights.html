@@ -23,7 +23,7 @@ Example:
 
         <div>
             <label for="highlights-sort" class="visually-hidden">{{ _("Order by") }}</label>
-            <select id="highlights-sort" name="sort" class="form-select"
+            <select id="highlights-sort" name="sort" class="form-select" data-module="idb-select"
                 hx-get="{{ h.url_for('idb_theme.home_highlights') }}"
                 hx-trigger="change"
                 hx-target="#highlights-results"

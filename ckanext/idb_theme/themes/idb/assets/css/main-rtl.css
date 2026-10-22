@@ -13472,6 +13472,65 @@ select[data-module=autocomplete] {
   order: 4;
 }
 
+.idb-select {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.idb-select-trigger {
+  border: 1px solid #A6A6A8;
+  overflow: hidden;
+  text-align: start;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.idb-select.idb-select--open .idb-select-trigger {
+  --bs-form-select-bg-img: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23007EB6' d='M7 14l5-5 5 5z'/></svg>");
+  border-color: var(--idb-color-button-stroke-text);
+  box-shadow: inset 0 0 0 1px var(--idb-color-button-stroke-text);
+}
+
+.idb-select-options {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: 1000;
+  min-width: 100%;
+  max-height: 18rem;
+  margin: 0;
+  padding: var(--idb-space-xs) 0;
+  overflow-y: auto;
+  list-style: none;
+  background: var(--idb-color-on-primary);
+  border-radius: var(--idb-border-radius-sm);
+  box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
+  font-size: var(--idb-font-size-text);
+  line-height: var(--idb-line-height-text);
+}
+.idb-select--up .idb-select-options {
+  top: auto;
+  bottom: calc(100% + 4px);
+}
+
+.idb-select-option {
+  display: flex;
+  align-items: center;
+  min-height: 3rem;
+  padding: 0 var(--idb-space-sm);
+  color: #100F0F;
+  background: var(--idb-color-on-primary);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.idb-select-option--active {
+  background: #ECECEC;
+}
+.idb-select-option[aria-selected=true] {
+  color: var(--idb-color-primary);
+  background: #DCE6ED;
+}
+
 .dataset-item {
   --bs-card-spacer-y: var(--idb-space-sm);
   --bs-card-spacer-x: var(--idb-space-sm);
@@ -14761,6 +14820,7 @@ td.diff_header {
     grid-template-columns: none;
   }
   .explore-highlights .explore-highlights-header > div,
+  .explore-highlights .idb-select,
   .explore-highlights .form-select {
     width: 100%;
   }
@@ -15122,11 +15182,15 @@ td.diff_header {
   padding: 0.5rem 3rem 0.5rem 0.75rem;
   font-size: var(--idb-font-size-label-large);
   color: var(--idb-color-on-surface);
-  border-color: var(--idb-color-button-stroke-border);
+  border: 1px solid #A6A6A8;
   border-radius: var(--idb-border-radius-sm);
+  --bs-form-select-bg-img: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23535354' d='M7 10l5 5 5-5z'/></svg>");
+  background-position: right 0.75rem center;
+  background-size: 24px 24px;
 }
 .search-results-sort .form-select:disabled,
 .dataset-pagination-size .form-select:disabled {
+  --bs-form-select-bg-img: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23898989' d='M7 10l5 5 5-5z'/></svg>");
   color: var(--idb-color-text-placeholder);
   background-color: var(--idb-color-neutral-99);
   border-color: var(--idb-color-border-n-variant95);
@@ -15158,7 +15222,6 @@ td.diff_header {
 }
 .dataset-pagination-size .form-select {
   color: var(--idb-color-text-default);
-  border: 1px solid #A6A6A8;
   font-size: var(--idb-font-size-label);
   line-height: var(--idb-line-height-label);
   font-weight: 400;
@@ -15168,6 +15231,10 @@ td.diff_header {
   font-size: var(--idb-font-size-label);
   line-height: var(--idb-line-height-label);
   font-weight: 400;
+}
+.dataset-pagination-size .idb-select-options {
+  font-size: var(--idb-font-size-label);
+  line-height: var(--idb-line-height-label);
 }
 .dataset-pagination-buttons {
   display: flex;
@@ -15198,6 +15265,9 @@ td.diff_header {
   height: 2.5rem;
   border-radius: 50%;
   box-shadow: none;
+}
+.dataset-pagination-icon {
+  fill: currentColor;
 }
 
 .search-empty {
@@ -15261,8 +15331,13 @@ td.diff_header {
   .search-results-sort {
     width: 100%;
   }
-  .search-results-sort .form-select {
+  .search-results-sort .idb-select,
+  .search-results-sort select.form-select {
     flex-grow: 1;
+    min-width: 0;
+  }
+  .search-results-sort .idb-select-trigger {
+    width: 100%;
     min-width: 0;
   }
   .dataset-pagination {

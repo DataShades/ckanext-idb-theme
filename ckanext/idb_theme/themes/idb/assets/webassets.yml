@@ -45,6 +45,7 @@ scripts:
     - javascript/modules/resource-view-filters-form.js
     - javascript/modules/resource-view-filters.js
     - javascript/modules/resource-view-reorder.js
+    - javascript/modules/select.js
     - javascript/modules/select-switch.js
     - javascript/modules/slug-preview.js
     - javascript/modules/tag-overflow.js

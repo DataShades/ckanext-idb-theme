@@ -27,7 +27,7 @@ Example:
         {%- endfor -%}
 
         <label for="field-order-by">{{ _('Order by') }}</label>
-        <select id="field-order-by" name="sort" class="form-select"{% if not count %} disabled{% endif %}>
+        <select id="field-order-by" name="sort" class="form-select" data-module="idb-select"{% if not count %} disabled{% endif %}>
             {% for option in h.idb_theme_dataset_sort_options() %}
                 <option value="{{ option.value }}"{% if option.value == sort_by_selected %} selected{% endif %}>{{ option.label }}</option>
             {% endfor %}

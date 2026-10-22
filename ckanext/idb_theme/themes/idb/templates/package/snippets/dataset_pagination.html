@@ -12,15 +12,21 @@ Example:
 #}
 {% set pagination = h.idb_theme_datasets_pagination(item_count) %}
 
+{% set icons = {
+    "first": "M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z",
+    "previous": "M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z",
+    "next": "M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z",
+    "last": "M5.59 7.41L10.18 12l-4.59 4.59L7 18l6-6-6-6zM16 6h2v12h-2z",
+} %}
+
 {% macro page_button(url, icon, label) -%}
+    {%- set svg -%}
+        <svg class="dataset-pagination-icon" viewBox="0 0 24 24" width="24" height="24" focusable="false" aria-hidden="true"><path d="{{ icons[icon] }}"></path></svg>
+    {%- endset -%}
     {%- if url -%}
-        <a class="dataset-pagination-button btn" href="{{ url }}" aria-label="{{ label }}" title="{{ label }}" hx-boost="true">
-            {{- ui.icon(icon, style="solid", aria={"hidden": "true"}) -}}
-        </a>
+        <a class="dataset-pagination-button btn" href="{{ url }}" aria-label="{{ label }}" title="{{ label }}" hx-boost="true">{{ svg }}</a>
     {%- else -%}
-        <span class="dataset-pagination-button btn disabled" aria-disabled="true" aria-label="{{ label }}" title="{{ label }}">
-            {{- ui.icon(icon, style="solid", aria={"hidden": "true"}) -}}
-        </span>
+        <span class="dataset-pagination-button btn disabled" aria-disabled="true" aria-label="{{ label }}" title="{{ label }}">{{ svg }}</span>
     {%- endif -%}
 {%- endmacro %}
 
@@ -33,7 +39,7 @@ Example:
         {%- endfor -%}
 
         <label for="field-per-page">{{ _('Items per page') }}</label>
-        <select id="field-per-page" name="{{ pagination.param }}" class="form-select">
+        <select id="field-per-page" name="{{ pagination.param }}" class="form-select" data-module="idb-select">
             {% for option in pagination.per_page_options %}
                 <option value="{{ option }}"{% if option == pagination.per_page %} selected{% endif %}>{{ option }}</option>
             {% endfor %}
@@ -46,9 +52,9 @@ Example:
     </span>
 
     <div class="dataset-pagination-buttons">
-        {{ page_button(pagination.first_url, "backward-step", _('First page')) }}
-        {{ page_button(pagination.previous_url, "chevron-left", _('Previous page')) }}
-        {{ page_button(pagination.next_url, "chevron-right", _('Next page')) }}
-        {{ page_button(pagination.last_url, "forward-step", _('Last page')) }}
+        {{ page_button(pagination.first_url, "first", _('First page')) }}
+        {{ page_button(pagination.previous_url, "previous", _('Previous page')) }}
+        {{ page_button(pagination.next_url, "next", _('Next page')) }}
+        {{ page_button(pagination.last_url, "last", _('Last page')) }}
     </div>
 </nav>
