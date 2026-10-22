@@ -1,10 +1,8 @@
 {# required hx-swap-oob included in snippets: #}
-{% snippet "package/snippets/search_hero_form.html",
-  dataset_type=dataset_type,
+{% snippet "package/snippets/search_hero_filters.html",
   fields=fields,
   search_facets=search_facets,
-  facet_titles=facet_titles,
-  q=q
+  facet_titles=facet_titles
 %}
 {% snippet "package/snippets/search_results_header.html",
   dataset_type=dataset_type,

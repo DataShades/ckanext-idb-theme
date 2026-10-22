@@ -1,8 +1,8 @@
 {#
-Search form of the Datasets page hero: the search field, the active filters
-and the Search button. The other search parameters (filters, sort, page size)
-are kept as hidden fields. The form is swapped out of band on htmx requests,
-to keep the active filters in sync with the facets.
+Search form of the Datasets page hero: the search field with the active
+filters or the advanced search, and the Search button. Only the active filters
+are swapped out of band on htmx requests (see search_hero_filters.html): the
+search field and the advanced search keep the state entered by the user.
 
 dataset_type - The dataset type.
 fields       - The list of active facet filters, (name, value) pairs.
@@ -15,71 +15,21 @@ Example:
 {% snippet "package/snippets/search_hero_form.html", dataset_type=dataset_type, fields=fields, search_facets=search_facets, facet_titles=facet_titles, q=q %}
 
 #}
-{%- set temporal_keys = ['ext_temporal_start', 'ext_temporal_end'] -%}
-{%- set temporal_start = request.args.get('ext_temporal_start', '') -%}
-{%- set temporal_end = request.args.get('ext_temporal_end', '') -%}
-{%- set has_filters = fields or temporal_start or temporal_end -%}
+<div id="dataset-search-hero-form" hx-swap="none">
+    {%- call ui.util.call(ui.form, action=h.url_for(dataset_type ~ '.search'), attrs={"class": "home-hero-search search-hero-form", "role": "search", "style": "--advanced-search-drag-icon: url('" ~ h.url_for_static("/images/drag.svg") ~ "')"}, hx={"boost": "true"}) -%}
+        {% set search_input %}
+            <div class="search-hero-box">
+                <label for="field-dataset-search" class="visually-hidden">{{ h.humanize_entity_type('package', dataset_type, 'search placeholder') or _('Search datasets') }}</label>
+                <input id="field-dataset-search" type="search" class="form-control home-hero-search-input" name="q" value="{{ q }}" autocomplete="off" placeholder="{% block search_placeholder %}{{ _('Search datasets by words, projects, countries, topics, themes...') }}{% endblock %}" />
 
-<div id="dataset-search-hero-form" hx-swap-oob="true" hx-swap="none">
-    {%- call ui.util.call(ui.form, action=h.url_for(dataset_type ~ '.search'), attrs={"class": "home-hero-search search-hero-form", "role": "search"}, hx={"boost": "true"}) -%}
-        {%- for name, value in request.args.items(multi=True) -%}
-            {%- if name not in ['q', 'page'] -%}
-                <input type="hidden" name="{{ name }}" value="{{ value }}">
-            {%- endif -%}
-        {%- endfor -%}
+                {% snippet "package/snippets/search_hero_filters.html",
+                    fields=fields,
+                    search_facets=search_facets,
+                    facet_titles=facet_titles
+                %}
+            </div>
+        {% endset %}
 
-        <div class="search-hero-box">
-            <label for="field-dataset-search" class="visually-hidden">{{ h.humanize_entity_type('package', dataset_type, 'search placeholder') or _('Search datasets') }}</label>
-            <input id="field-dataset-search" type="search" class="form-control home-hero-search-input" name="q" value="{{ q }}" autocomplete="off" placeholder="{% block search_placeholder %}{{ _('Search datasets by words, projects, countries, topics, themes...') }}{% endblock %}" />
-
-            {% if has_filters %}
-                <div class="search-hero-filters">
-                    <ul class="search-hero-chips list-unstyled">
-                        {%- for name, value in fields -%}
-                            {%- set items = search_facets[name]['items'] if search_facets and name in search_facets else [] -%}
-                            {%- set label = facet_titles.get(name, name) ~ ': ' ~ h.list_dict_filter(items, 'name', 'display_name', value) -%}
-                            <li class="search-hero-chip">
-                                {{ label }}
-                                <a href="{{ h.remove_url_param(name, value) }}" class="search-hero-chip-remove" aria-label="{{ _('Remove applied filter: {value}').format(value=label) }}" hx-boost="true">
-                                    {{- ui.icon('circle-xmark', aria={"hidden": "true"}) -}}
-                                </a>
-                            </li>
-                        {%- endfor -%}
-
-                        {%- if temporal_start or temporal_end -%}
-                            {%- set title = facet_titles.get('temporal_coverage', _('Year range')) -%}
-                            {%- if temporal_start and temporal_end -%}
-                                {%- set period = temporal_start ~ ' - ' ~ temporal_end -%}
-                            {%- elif temporal_start -%}
-                                {%- set period = _('From {date}').format(date=temporal_start) -%}
-                            {%- else -%}
-                                {%- set period = _('To {date}').format(date=temporal_end) -%}
-                            {%- endif -%}
-                            <li class="search-hero-chip">
-                                {{ title }}: {{ period }}
-                                <a href="{{ h.remove_url_param(temporal_keys) }}" class="search-hero-chip-remove" aria-label="{{ _('Remove applied filter: {value}').format(value=title) }}" hx-boost="true">
-                                    {{- ui.icon('circle-xmark', aria={"hidden": "true"}) -}}
-                                </a>
-                            </li>
-                        {%- endif -%}
-                    </ul>
-
-                    <a href="{{ h.remove_url_param(fields | map(attribute=0) | list + temporal_keys) }}" class="search-hero-clear" hx-boost="true">
-                        {{ _('Clear all') }}
-                        {{ ui.icon('xmark', aria={"hidden": "true"}) }}
-                    </a>
-                </div>
-            {% endif %}
-        </div>
-
-        <div class="home-hero-search-actions">
-            {# TODO: the Advanced search toggle and panel are implemented in a separate task #}
-            {% block advanced_search %}{% endblock %}
-
-            <button class="align-items-baseline btn d-flex home-hero-search-submit" type="submit">
-                {{ _('Search') }}
-                {{ ui.icon("search", aria={"hidden": "true"}) }}
-            </button>
-        </div>
+        {% snippet "snippets/advanced_search_form.html", search_input=search_input %}
     {%- endcall %}
 </div>

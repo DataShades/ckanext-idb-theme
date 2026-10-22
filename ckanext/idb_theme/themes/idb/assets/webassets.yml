@@ -26,6 +26,7 @@ scripts:
       - base/main
   contents:
     - javascript/init_tooltip.js
+    - javascript/htmx-initialized-modules.js
     - javascript/modules/additional-info-linkify.js
     - javascript/modules/autocomplete.js
     - javascript/modules/basic-form.js

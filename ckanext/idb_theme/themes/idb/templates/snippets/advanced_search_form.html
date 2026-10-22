@@ -1,0 +1,59 @@
+{#
+Search field with the Advanced search of the homepage and the Datasets page
+heroes. It extends the form of the `search_tweaks_advanced_search` plugin: the
+Advanced search toggle replaces the simple search field with the composite
+search fields, the Search button submits either of them. Without the plugin,
+only the simple search field and the Search button are rendered. Must be
+rendered inside of a search form.
+
+search_input - The simple search field, shown while the advanced search is off.
+form_config  - The fields of the advanced search (optional, default:
+               `h.idb_theme_advanced_search_config()`).
+
+Example:
+
+{% snippet "snippets/advanced_search_form.html", search_input=search_input %}
+
+#}
+{% set advanced_search = h.plugin_loaded("search_tweaks_advanced_search") %}
+{% extends "advanced_search/search_form.html" if advanced_search else "snippets/simple_search_form.html" %}
+
+{# the Solr query syntax is not offered, the Search button is a part of the toggles row #}
+{% set enable_solr = false %}
+{% set solr_input = "" %}
+{% set search_button = "" %}
+{% if advanced_search %}
+    {% set form_config = form_config|default(h.idb_theme_advanced_search_config()) %}
+{% endif %}
+
+{% block search_options %}
+    {% if advanced_search %}
+        <p class="advanced-search-help">
+            {{ _('Selecting more than one value in the same filter (e.g. two countries) shows datasets matching any of them.') }}
+            <br>
+            {{ _('Combining different filters (e.g. country + format) narrows results to datasets matching all of them.') }}
+        </p>
+    {% endif %}
+
+    <div class="advanced-toggles home-hero-search-actions">
+        {% if advanced_search %}
+            {% block advaned_toggle %}
+                <div class="toggle-item enable-advanced">
+                    <input id="toggle-enable-advanced" class="visually-hidden" type="checkbox" autocomplete="off"{% if enable_advanced %} checked{% endif %}>
+                    <label for="toggle-enable-advanced" class="advanced-search-toggle">
+                        {{ _('Advanced search') }}
+                        {# Material Symbols "manage_search" #}
+                        <svg class="advanced-search-toggle-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+                            <path d="M7 9H2V7h5v2zm0 3H2v2h5v-2zm13.59 7l-3.83-3.83c-.8.52-1.74.83-2.76.83-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5c0 1.02-.31 1.96-.83 2.75L22 17.59 20.59 19zM17 11c0-1.65-1.35-3-3-3s-3 1.35-3 3 1.35 3 3 3 3-1.35 3-3zM2 19h10v-2H2v2z"/>
+                        </svg>
+                    </label>
+                </div>
+            {% endblock advaned_toggle %}
+        {% endif %}
+
+        <button class="align-items-baseline btn d-flex home-hero-search-submit" type="submit">
+            {{ _('Search') }}
+            {{ ui.icon("search", aria={"hidden": "true"}) }}
+        </button>
+    </div>
+{% endblock search_options %}

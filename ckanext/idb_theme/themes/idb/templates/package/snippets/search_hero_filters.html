@@ -1,0 +1,68 @@
+{#
+Active filters of the Datasets page hero search form. The other search
+parameters (filters, sort, page size) are kept as hidden fields; the search
+term and the advanced search fields are the fields of the form. Swapped out of
+band on htmx requests, to keep the active filters in sync with the facets,
+while the rest of the form keeps its state.
+
+fields        - The list of active facet filters, (name, value) pairs.
+search_facets - The search facets of the result, to get the filter labels.
+facet_titles  - The facet titles, by the facet name.
+
+Example:
+
+{% snippet "package/snippets/search_hero_filters.html", fields=fields, search_facets=search_facets, facet_titles=facet_titles %}
+
+#}
+{%- set temporal_keys = ['ext_temporal_start', 'ext_temporal_end'] -%}
+{%- set temporal_start = request.args.get('ext_temporal_start', '') -%}
+{%- set temporal_end = request.args.get('ext_temporal_end', '') -%}
+{%- set has_filters = fields or temporal_start or temporal_end -%}
+{%- set advanced_prefix = h.composite_search_get_prefix() if h.plugin_loaded('composite_search') else none -%}
+
+<div id="dataset-search-hero-filters" hx-swap-oob="true" hx-swap="none">
+    {%- for name, value in request.args.items(multi=True) -%}
+        {%- if name not in ['q', 'page'] and not (advanced_prefix and name.startswith(advanced_prefix)) -%}
+            <input type="hidden" name="{{ name }}" value="{{ value }}">
+        {%- endif -%}
+    {%- endfor -%}
+
+    {% if has_filters %}
+        <div class="search-hero-filters">
+            <ul class="search-hero-chips list-unstyled">
+                {%- for name, value in fields -%}
+                    {%- set items = search_facets[name]['items'] if search_facets and name in search_facets else [] -%}
+                    {%- set label = facet_titles.get(name, name) ~ ': ' ~ h.list_dict_filter(items, 'name', 'display_name', value) -%}
+                    <li class="search-hero-chip">
+                        {{ label }}
+                        <a href="{{ h.remove_url_param(name, value) }}" class="search-hero-chip-remove" aria-label="{{ _('Remove applied filter: {value}').format(value=label) }}" hx-boost="true">
+                            {{- ui.icon('circle-xmark', aria={"hidden": "true"}) -}}
+                        </a>
+                    </li>
+                {%- endfor -%}
+
+                {%- if temporal_start or temporal_end -%}
+                    {%- set title = facet_titles.get('temporal_coverage', _('Year range')) -%}
+                    {%- if temporal_start and temporal_end -%}
+                        {%- set period = temporal_start ~ ' - ' ~ temporal_end -%}
+                    {%- elif temporal_start -%}
+                        {%- set period = _('From {date}').format(date=temporal_start) -%}
+                    {%- else -%}
+                        {%- set period = _('To {date}').format(date=temporal_end) -%}
+                    {%- endif -%}
+                    <li class="search-hero-chip">
+                        {{ title }}: {{ period }}
+                        <a href="{{ h.remove_url_param(temporal_keys) }}" class="search-hero-chip-remove" aria-label="{{ _('Remove applied filter: {value}').format(value=title) }}" hx-boost="true">
+                            {{- ui.icon('circle-xmark', aria={"hidden": "true"}) -}}
+                        </a>
+                    </li>
+                {%- endif -%}
+            </ul>
+
+            <a href="{{ h.remove_url_param(fields | map(attribute=0) | list + temporal_keys) }}" class="search-hero-clear" hx-boost="true">
+                {{ _('Clear all') }}
+                {{ ui.icon('xmark', aria={"hidden": "true"}) }}
+            </a>
+        </div>
+    {% endif %}
+</div>

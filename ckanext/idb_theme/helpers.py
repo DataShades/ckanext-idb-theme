@@ -5,6 +5,7 @@ from typing import Any
 
 from flask import has_request_context
 
+import ckan.plugins as p
 import ckan.plugins.toolkit as tk
 from ckan import model
 from ckan.common import _
@@ -30,6 +31,15 @@ DEFAULT_DATASET_SORT = "modified"
 # as a facet filter.
 DATASETS_PER_PAGE_OPTIONS = [8, 16, 24, 48]
 DATASETS_PER_PAGE_PARAM = "_per_page"
+
+# Solr fields of the advanced search dropdowns. The composite search plugin
+# must treat them as keywords (`ckanext.composite_search.plugin.default.keyword_fields`).
+ADVANCED_SEARCH_ORGANIZATION_FIELD = "organization"
+ADVANCED_SEARCH_FORMAT_FIELD = "res_format"
+ADVANCED_SEARCH_LICENSE_FIELD = "vocab_license"
+ADVANCED_SEARCH_TAGS_FIELD = "extras_tags_translated"
+# the option name has a typo in ckanext-resource-indexer itself
+ADVANCED_SEARCH_ATTACHMENTS_FIELD_OPTION = "ckanext.resoruce_indexer.index_field"
 
 
 def idb_theme_default_collapsed(facet_name: str):
@@ -365,6 +375,94 @@ def idb_theme_explore_countries() -> dict[str, Any]:
         "total": len(result.get("search_facets", {}).get(INFO_GRAPH_COUNTRY_FACET, {}).get("items", [])),
         # TODO: link the Countries page once it is implemented.
         "url": tk.h.url_for(f"{dataset_type}.search"),
+    }
+
+
+def idb_theme_advanced_search_config() -> dict[str, Any]:
+    """Get the field definitions of the advanced search form.
+
+    The keys are the Solr fields searched by the composite search plugin. The
+    options of the dropdowns are the facet values of the datasets the current
+    user can see, so every option matches at least one dataset.
+    """
+    select_fields = [
+        ADVANCED_SEARCH_ORGANIZATION_FIELD,
+        ADVANCED_SEARCH_FORMAT_FIELD,
+        ADVANCED_SEARCH_LICENSE_FIELD,
+    ]
+    result = tk.get_action("package_search")(
+        {"user": tk.current_user.name},
+        {
+            "rows": 0,
+            "facet.field": select_fields,
+            "facet.limit": -1,
+            "include_private": tk.config.get("ckan.search.default_include_private"),
+        },
+    )
+    facets = result.get("search_facets", {})
+
+    def options(field: str) -> list[dict[str, str]]:
+        items = facets.get(field, {}).get("items", [])
+        return [
+            {"value": item["name"], "label": item["display_name"]}
+            for item in sorted(items, key=lambda item: item["display_name"].lower())
+        ]
+
+    term_placeholder = _("Enter a search term")
+    definitions = {
+        "text": {
+            "type": "text",
+            "label": _("Any attribute"),
+            "placeholder": term_placeholder,
+            "default": True,
+        },
+        "title": {
+            "type": "text",
+            "label": _("Dataset title"),
+            "placeholder": term_placeholder,
+        },
+        "notes": {
+            "type": "text",
+            "label": _("Description"),
+            "placeholder": term_placeholder,
+        },
+        ADVANCED_SEARCH_ORGANIZATION_FIELD: {
+            "type": "select",
+            "label": _("Organizational Unit"),
+            "placeholder": _("Select an organizational unit"),
+            "options": options(ADVANCED_SEARCH_ORGANIZATION_FIELD),
+        },
+        ADVANCED_SEARCH_FORMAT_FIELD: {
+            "type": "select",
+            "label": _("Format"),
+            "placeholder": _("Select a format"),
+            "options": options(ADVANCED_SEARCH_FORMAT_FIELD),
+        },
+        ADVANCED_SEARCH_LICENSE_FIELD: {
+            "type": "select",
+            "label": _("Licenses"),
+            "placeholder": _("Select a license"),
+            "options": options(ADVANCED_SEARCH_LICENSE_FIELD),
+        },
+        ADVANCED_SEARCH_TAGS_FIELD: {
+            "type": "text",
+            "label": _("Tags"),
+            "placeholder": term_placeholder,
+        },
+    }
+
+    # the text of the attached documents, extracted by ckanext-resource-indexer
+    attachments_field = tk.config.get(ADVANCED_SEARCH_ATTACHMENTS_FIELD_OPTION)
+    if attachments_field and p.plugin_loaded("resource_indexer"):
+        definitions[attachments_field] = {
+            "type": "text",
+            "label": _("Document attachments"),
+            "placeholder": term_placeholder,
+        }
+
+    return {
+        "definitions": definitions,
+        "order": list(definitions),
     }
 
 
