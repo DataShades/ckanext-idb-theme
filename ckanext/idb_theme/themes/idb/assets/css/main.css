@@ -13660,6 +13660,11 @@ select[data-module=autocomplete] {
   color: var(--idb-color-primary-20);
 }
 
+@media (min-width: 768px) {
+  .dataset-item--short .card-body {
+    padding-top: 20px;
+  }
+}
 .dataset-item--short .dataset-heading {
   font-size: 1.125rem;
   line-height: 1.5rem;
@@ -15005,7 +15010,7 @@ td.diff_header {
 .home-themes-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--idb-space-md) var(--idb-space-md);
+  gap: var(--idb-space-lg);
   margin: 0;
 }
 
@@ -15013,7 +15018,7 @@ td.diff_header {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: var(--idb-space-sm);
+  padding: var(--idb-space-md);
   background: var(--idb-color-on-primary);
   border-radius: var(--idb-border-radius-sm);
   text-decoration: none;

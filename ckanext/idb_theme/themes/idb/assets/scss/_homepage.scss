@@ -391,7 +391,7 @@
     &-grid {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: var(--idb-space-md) var(--idb-space-md);
+        gap: var(--idb-space-lg);
         margin: 0;
     }
 }
@@ -401,7 +401,7 @@
         display: flex;
         flex-direction: column;
         height: 100%;
-        padding: var(--idb-space-sm);
+        padding: var(--idb-space-md);
         background: var(--idb-color-on-primary);
         border-radius: var(--idb-border-radius-sm);
         text-decoration: none;

@@ -78,6 +78,12 @@
 
 // short card: text is 2px smaller than in the full one, title is 4px smaller
 .dataset-item--short {
+    @include media-breakpoint-up(md) {
+        .card-body {
+            padding-top: 20px;
+        }
+    }
+
     .dataset-heading {
         font-size: 1.125rem;
         line-height: 1.5rem;
