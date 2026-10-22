@@ -27,7 +27,7 @@ Example:
                 <img class="search-empty-image" src="{{ h.url_for_static('/images/no-results.svg') }}" alt="" width="272" height="278">
                 <h3 class="search-empty-title">{{ _('No datasets match your search') }}</h3>
                 <p class="search-empty-text">{{ _("No datasets match your current filters. Try changing your filters to find what you're looking for.") }}</p>
-                <a class="btn search-empty-clear" href="{{ h.url_for(dataset_type ~ '.search') }}" hx-boost="true">
+                <a class="align-items-baseline btn d-inline-flex search-empty-clear" href="{{ h.url_for(dataset_type ~ '.search') }}" hx-boost="true">
                     {{ _('Clear all filters') }}
                     {{ ui.icon('xmark', aria={"hidden": "true"}) }}
                 </a>

@@ -30,7 +30,7 @@ Example:
 
         <div class="search-hero-box">
             <label for="field-dataset-search" class="visually-hidden">{{ h.humanize_entity_type('package', dataset_type, 'search placeholder') or _('Search datasets') }}</label>
-            <input id="field-dataset-search" type="search" class="form-control home-hero-search-input" name="q" value="{{ q }}" autocomplete="off" placeholder="{% block search_placeholder %}{{ _('Search datasets by words, projects, countries, topics, themes…') }}{% endblock %}" />
+            <input id="field-dataset-search" type="search" class="form-control home-hero-search-input" name="q" value="{{ q }}" autocomplete="off" placeholder="{% block search_placeholder %}{{ _('Search datasets by words, projects, countries, topics, themes...') }}{% endblock %}" />
 
             {% if has_filters %}
                 <div class="search-hero-filters">
