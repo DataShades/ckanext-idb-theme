@@ -138,7 +138,6 @@
         font-size: var(--idb-font-size-label-large);
         line-height: var(--idb-line-height-label-large);
         font-weight: 600;
-        white-space: nowrap;
         color: var(--idb-color-on-primary);
         text-decoration: none;
 
@@ -151,6 +150,20 @@
         i {
             margin-left: 0.25rem;
         }
+    }
+}
+
+// 80px only fits the 1920 design: narrower screens get less room around the dividers
+@include media-breakpoint-down(xxxl) {
+    .home-hero-metric {
+        padding-inline: var(--idb-space-lg);
+    }
+}
+
+// the 1920 design keeps each label and its icon on one line
+@include media-breakpoint-up(xxxl) {
+    .home-hero-metric-label {
+        white-space: nowrap;
     }
 }
 
