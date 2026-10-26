@@ -80,13 +80,17 @@
 .dataset-item--short {
     @include media-breakpoint-up(md) {
         .card-body {
-            padding-top: 20px;
+            padding-top: var(--idb-space-lg);
         }
     }
 
     .dataset-heading {
         font-size: 1.125rem;
         line-height: 1.5rem;
+    }
+
+    .dataset-chips {
+        margin-bottom: 12px;
     }
 
     .dataset-chips .badge {
@@ -101,6 +105,7 @@
 
     .card-footer {
         font-size: .75rem;
+        color: var(--idb-color-neutral-20);
     }
 }
 

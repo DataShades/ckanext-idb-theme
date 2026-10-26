@@ -62,7 +62,7 @@ Example:
                 {% endblock %}
 
                 {% block chips %}
-                    <ul class="dataset-chips list-unstyled d-flex flex-wrap gap-2 mb-4">
+                    <ul class="dataset-chips list-unstyled d-flex flex-wrap gap-2{{ ' mb-4' if is_full }}">
                         {% if is_full %}
                             {% for theme in card.themes %}
                                 {% call chip("info") %}{{ theme }}{% endcall %}

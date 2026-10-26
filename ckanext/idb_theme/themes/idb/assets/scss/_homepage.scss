@@ -214,10 +214,16 @@
     }
 
     .form-select {
+        --bs-form-select-bg-img: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%23535354' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/></svg>");
         min-width: 13rem;
-        font-size: var(--idb-font-size-label-large);
-        color: var(--idb-color-on-surface);
+        font-size: var(--idb-font-size-text);
+        color: var(--idb-color-text-default);
         border-radius: var(--idb-border-radius-sm);
+    }
+
+    // the extra classes beat the open state of the `idb-select` module
+    .idb-select.idb-select--open .idb-select-trigger {
+        --bs-form-select-bg-img: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%23535354' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 11l6-6 6 6'/></svg>");
     }
 
     .highlights-grid {
@@ -263,7 +269,7 @@
         }
 
         .active {
-            background-color: var(--idb-color-primary);
+            background-color: var(--idb-color-primary-30);
         }
     }
 }
