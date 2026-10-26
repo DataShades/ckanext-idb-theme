@@ -15,8 +15,8 @@ Example:
 
 #}
 {%- set temporal_keys = ['ext_temporal_start', 'ext_temporal_end'] -%}
-{%- set temporal_start = request.args.get('ext_temporal_start', '') -%}
-{%- set temporal_end = request.args.get('ext_temporal_end', '') -%}
+{%- set temporal_start = request.args.get('ext_temporal_start', '')[:4] -%}
+{%- set temporal_end = request.args.get('ext_temporal_end', '')[:4] -%}
 {%- set has_filters = fields or temporal_start or temporal_end -%}
 {%- set advanced_prefix = h.composite_search_get_prefix() if h.plugin_loaded('composite_search') else none -%}
 
@@ -42,13 +42,13 @@ Example:
                 {%- endfor -%}
 
                 {%- if temporal_start or temporal_end -%}
-                    {%- set title = facet_titles.get('temporal_coverage', _('Year range')) -%}
+                    {%- set title = facet_titles.get('temporal_coverage', _('Date Range')) -%}
                     {%- if temporal_start and temporal_end -%}
                         {%- set period = temporal_start ~ ' - ' ~ temporal_end -%}
                     {%- elif temporal_start -%}
-                        {%- set period = _('From {date}').format(date=temporal_start) -%}
+                        {%- set period = _('From {year}').format(year=temporal_start) -%}
                     {%- else -%}
-                        {%- set period = _('To {date}').format(date=temporal_end) -%}
+                        {%- set period = _('To {year}').format(year=temporal_end) -%}
                     {%- endif -%}
                     <li class="search-hero-chip">
                         {{ title }}: {{ period }}

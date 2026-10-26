@@ -1,57 +1,143 @@
-{%- set use_htmx = use_htmx | default(true) -%}
+{#
+Filters panel of the dataset search: a collapsible block per facet. Swapped
+out of band on htmx requests. On mobile, the panel is a full-screen dialog
+opened by the "Filters" button.
 
-<div class="filters" id="search-facets"{% if use_htmx %} hx-swap-oob="true" hx-swap="none"{%- endif %}>
-    <div>
+A filter with selected values is open, the others are collapsed.
+
+The Coverage facet is a switch, the Date Range facet is a pair of year fields
+and the other facets are lists of values. Long lists show the first values and
+a "View all" link, and may have a field that filters the values (see
+`h.idb_theme_facet_details`).
+
+facet_titles  - The facet titles, by the facet name.
+search_facets - The search facets of the result.
+use_htmx      - Whether the filters use htmx requests, true by default.
+
+Example:
+
+{% snippet "package/snippets/search_facets.html", facet_titles=facet_titles, search_facets=search_facets %}
+
+#}
+{%- set use_htmx = use_htmx | default(true) -%}
+{%- set hx_boost = {"boost": "true"} if use_htmx else {} -%}
+{%- set temporal_keys = ['ext_temporal_start', 'ext_temporal_end'] -%}
+{%- set long_list_size = 5 -%}
+
+<div class="filters" id="search-facets" data-module="idb-search-facets"{% if use_htmx %} hx-swap-oob="true" hx-swap="none"{%- endif %}>
+    <div class="filters-panel" role="region" aria-label="{{ _('Filters') }}">
+        <div class="filters-header">
+            <h2 class="filters-title">{{ _('Filters') }}</h2>
+            <button type="button" class="hide-filters filters-close" aria-label="{{ _('Close filters') }}">
+                {{ ui.icon('xmark', aria={"hidden": "true"}) }}
+            </button>
+        </div>
+
         {%- block facet_list -%}
             {%- for facet in facet_titles %}
-                {%- set items = h.get_facet_items_dict(facet, search_facets) -%}
-                {%- set collapsed = not h.currently_active_facet(facet) and h.idb_theme_default_collapsed(facet) -%}
+                {%- set title = facet_titles[facet] -%}
+                {%- set details = h.idb_theme_facet_details(facet) -%}
 
                 {%- if facet == "temporal_coverage" -%}
-                    {%- set temporal_start = request.args.get('ext_temporal_start', '') -%}
-                    {%- set temporal_end = request.args.get('ext_temporal_end', '') -%}
-                    {%- set collapsed = not (temporal_start or temporal_end) and h.idb_theme_default_collapsed(facet) -%}
-                    <section class="module module-narrow module-shallow accordion">
-                        <div class="accordion-item">
-                            <h2 class="accordion-header">
-                                <button class="module-heading accordion-button {{ 'collapsed' if collapsed }}"
-                                        type="button" data-bs-toggle="collapse" data-bs-target="#{{ ui.util.id(facet_titles[facet]) }}">
-                                    <i class="filter-svg fa-solid fa-filter"></i>
-                                    {{ facet_titles[facet] }}
-                                </button>
-                            </h2>
-                            <div id="{{ ui.util.id(facet_titles[facet]) }}" class="module-content accordion-collapse {{ 'collapse' if collapsed else 'show' }}">
-                                <form method="get" action="{{ h.url_for('dataset.search') }}"{% if use_htmx %} hx-boost="true"{% endif %}>
-                                    {%- for name, value in request.args.items(multi=True) -%}
-                                        {%- if name not in ['page', 'ext_temporal_start', 'ext_temporal_end'] -%}
-                                            <input type="hidden" name="{{ name }}" value="{{ value }}">
-                                        {%- endif -%}
-                                    {%- endfor -%}
+                    {#- the values were ISO dates before the filter used years -#}
+                    {%- set temporal_start = request.args.get('ext_temporal_start', '')[:4] -%}
+                    {%- set temporal_end = request.args.get('ext_temporal_end', '')[:4] -%}
 
-                                    <div class="form-group">
-                                        <label class="form-label" for="field-ext-temporal-start">{{ _('From') }}</label>
-                                        <input class="form-control" id="field-ext-temporal-start" name="ext_temporal_start" type="date" value="{{ temporal_start }}">
+                    {%- call ui.util.call(ui.facet_section, title=title, key=facet, tooltip=details.tooltip, selected=1 if temporal_start or temporal_end else 0, collapsed=not (temporal_start or temporal_end)) -%}
+                        {%- call ui.util.call(ui.form, action=request.path, attrs={"class": "facet-date-range"}, hx=dict(hx_boost, trigger="change, submit") if use_htmx else {}) -%}
+                            {%- for name, value in request.args.items(multi=True) -%}
+                                {%- if name not in ['page'] + temporal_keys -%}
+                                    <input type="hidden" name="{{ name }}" value="{{ value }}">
+                                {%- endif -%}
+                            {%- endfor -%}
+
+                            {%- for name, label, value, placeholder in [
+                                ('ext_temporal_start', _('From'), temporal_start, _('e.g. 1990')),
+                                ('ext_temporal_end', _('To'), temporal_end, _('e.g. 2025')),
+                            ] -%}
+                                {%- set field_id = ui.util.id(name, prefix="field-") -%}
+                                <div class="facet-date-field">
+                                    <label class="facet-date-label" for="{{ field_id }}">{{ label }}</label>
+                                    <div class="facet-date-input">
+                                        <input class="form-control" id="{{ field_id }}" name="{{ name }}" type="number"
+                                               inputmode="numeric" min="1000" max="9999" step="1"
+                                               value="{{ value }}" placeholder="{{ placeholder }}">
+                                        <span class="facet-icon facet-icon-calendar" aria-hidden="true"></span>
                                     </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="field-ext-temporal-end">{{ _('To') }}</label>
-                                        <input class="form-control" id="field-ext-temporal-end" name="ext_temporal_end" type="date" value="{{ temporal_end }}">
-                                    </div>
-                                    {{ ui.button(_('Apply'), type='submit', style='primary', size='sm') }}
-                                </form>
-                            </div>
-                        </div>
-                    </section>
-                {%- else -%}
-                    {%- call ui.util.call(ui.facet_section, title=facet_titles[facet], items=items, key=facet, collapsed=collapsed, has_more=h.has_more_facets(facet, search_facets, limit=items|length)) -%}
-                        {%- call ui.util.call(ui.facet_list, hx={"boost": "true"} if use_htmx else {}) -%}
-                            {%- for item in items -%}
-                                {{ ui.facet(item.display_name, key=facet, value=item.name, count=item.count, active=item.active) }}
-                            {%- endfor %}
+                                </div>
+                            {%- endfor -%}
+
+                            <button class="btn btn-secondary btn-sm js-hide" type="submit">{{ _('Apply') }}</button>
                         {%- endcall %}
+                    {%- endcall %}
+
+                {%- elif facet == "vocab_iadb_iar_coverage" -%}
+                    {%- set items = h.get_facet_items_dict(facet, search_facets, limit=0) -%}
+                    {%- set active = facet in request.args -%}
+
+                    {%- call ui.util.call(ui.facet_section, title=title, key=facet, tooltip=details.tooltip, selected=1 if active else 0, collapsed=not active) -%}
+                        {%- set label = _('Only IDB Borrowing Member Countries') -%}
+                        <div class="facet-switch"{% if use_htmx %} hx-boost="true"{% endif %}>
+                            {%- if active or items -%}
+                                <a class="facet-switch-control" href="{{ h.remove_url_param(facet) if active else h.add_url_param(new_params={facet: items[0].name}) }}" role="switch" aria-checked="{{ 'true' if active else 'false' }}">
+                                    <span class="facet-switch-label">{{ label }}</span>
+                                    <span class="facet-switch-track" aria-hidden="true"></span>
+                                </a>
+                            {%- else -%}
+                                <span class="facet-switch-control disabled" role="switch" aria-checked="false" aria-disabled="true">
+                                    <span class="facet-switch-label">{{ label }}</span>
+                                    <span class="facet-switch-track" aria-hidden="true"></span>
+                                </span>
+                            {%- endif -%}
+                        </div>
+                    {%- endcall %}
+
+                {%- else -%}
+                    {%- set items = h.get_facet_items_dict(facet, search_facets, limit=0) -%}
+                    {%- if details.sort_by_name -%}
+                        {%- set items = items | sort(attribute='display_name') -%}
+                    {%- endif -%}
+                    {%- set is_long = details.long and items | length > long_list_size -%}
+
+                    {%- call ui.util.call(ui.facet_section, title=title, key=facet, tooltip=details.tooltip, selected=request.args.getlist(facet) | length, collapsed=facet not in request.args) -%}
+                        {%- if items -%}
+                            {%- if details.search -%}
+                                {%- set search_id = ui.util.id(facet, prefix="facet-search-") -%}
+                                <div class="facet-search">
+                                    <label class="visually-hidden" for="{{ search_id }}">{{ details.search }}</label>
+                                    <input id="{{ search_id }}" class="form-control facet-search-input" type="search" placeholder="{{ details.search }}" autocomplete="off">
+                                    <span class="facet-icon facet-icon-search" aria-hidden="true"></span>
+                                </div>
+                            {%- endif -%}
+
+                            {%- call ui.util.call(ui.facet_list, hx=hx_boost) -%}
+                                {%- for item in items -%}
+                                    {#- the selected values are always visible -#}
+                                    {{ ui.facet(item.display_name, key=facet, value=item.name, count=item.count, active=item.active, extra=is_long and loop.index > long_list_size and not item.active) }}
+                                {%- endfor %}
+                            {%- endcall %}
+
+                            {%- if details.search -%}
+                                <p class="facet-search-empty" hidden>{{ _('No values match your search') }}</p>
+                            {%- endif -%}
+
+                            {%- if is_long -%}
+                                <button type="button" class="facet-view-all" aria-expanded="false">
+                                    <span class="facet-view-all-more">{{ details.view_all.format(num=items | length) }}</span>
+                                    <span class="facet-view-all-less">{{ _('View less') }}</span>
+                                    <span class="facet-icon facet-icon-chevron" aria-hidden="true"></span>
+                                </button>
+                            {%- endif -%}
+                        {%- else -%}
+                            <p class="facet-empty">{{ _('There are no {facet_type} that match this search').format(facet_type=title) }}</p>
+                        {%- endif -%}
                     {%- endcall %}
                 {%- endif -%}
             {%- endfor %}
         {%- endblock facet_list %}
+
+        <div class="filters-footer">
+            <button type="button" class="hide-filters btn btn-primary">{{ _('Show results') }}</button>
+        </div>
     </div>
-    <a class="close no-text hide-filters"><i class="fa fa-times-circle"></i><span class="text">{{ _('close') }}</span></a>
 </div>

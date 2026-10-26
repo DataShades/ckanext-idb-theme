@@ -1,0 +1,617 @@
+// Filters panel of the dataset search (package/snippets/search_facets.html):
+// a collapsible block per filter. On mobile, the panel is a full-screen
+// dialog opened by the "Filters" button.
+
+$facet-title-color: #004E70;
+$facet-border-color: #C7C7C9;
+$facet-divider-color: #EAEAEA;
+$facet-accent-color: #007EB6;
+$facet-selected-background: #EDF5FA;
+$facet-adornment-background: #F0F4F7; // adornment/blue/bg
+$facet-count-background: #E5E4E4; // interaction/background-pressed
+$facet-count-color: #5C5A5A;
+$facet-control-color: #535354;
+
+// Material Symbols of the design system, drawn with the text color
+$facet-icons: (
+    "info": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z'/></svg>",
+    "chevron": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M16.59 8.59 12 13.17 7.41 8.59 6 10l6 6 6-6z'/></svg>",
+    "search": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/></svg>",
+    "calendar": "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v5h-5z'/></svg>",
+);
+$facet-check-icon: "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='white' d='M9 16.17 4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/></svg>";
+
+.facet-icon {
+    display: inline-block;
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    background-color: currentColor;
+    -webkit-mask: var(--facet-icon) center / contain no-repeat;
+    mask: var(--facet-icon) center / contain no-repeat;
+}
+
+@each $name, $svg in $facet-icons {
+    .facet-icon-#{$name} {
+        --facet-icon: #{escape-svg(url("data:image/svg+xml,#{$svg}"))};
+    }
+}
+
+// below the floated info of the Org and Group pages: the flex panel would
+// shrink next to the float
+.filters {
+    clear: both;
+}
+
+.filters-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.filters-header,
+.filters-footer {
+    display: none;
+}
+
+// filter block ///////////////////////////////////////////////////////////////
+
+.facet-section {
+    background: var(--idb-color-on-primary);
+    border: 1px solid $facet-border-color;
+    border-radius: var(--idb-border-radius-sm);
+}
+
+.facet-section-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--idb-space-xs);
+    padding: 11px var(--idb-space-sm);
+    border-radius: var(--idb-border-radius-sm);
+
+    &:has(.facet-section-toggle:focus-visible) {
+        outline: 2px solid $facet-accent-color;
+        outline-offset: -2px;
+    }
+
+    &:has(.facet-section-toggle:not(.collapsed)) {
+        border-radius: var(--idb-border-radius-sm) var(--idb-border-radius-sm) 0 0;
+
+        // the number of the selected values only shows on a collapsed filter
+        .facet-section-count {
+            display: none;
+        }
+
+        .facet-section-arrow {
+            margin-inline-start: auto;
+            transform: rotate(180deg);
+        }
+    }
+}
+
+.facet-section-heading {
+    margin: 0;
+    color: $facet-title-color;
+    font-size: var(--idb-font-size-label-large);
+    line-height: var(--idb-line-height-label-large);
+    font-weight: 600;
+}
+
+// the whole header toggles the filter
+.facet-section-toggle {
+    padding: 0;
+    background: none;
+    border: 0;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        cursor: pointer;
+    }
+
+    &:focus-visible {
+        outline: 0;
+    }
+}
+
+// above the toggle of the header
+.facet-section-info {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    padding: 0;
+    background: $facet-adornment-background;
+    border: 0;
+    border-radius: var(--idb-border-radius-sm);
+    color: $facet-title-color;
+
+    .facet-icon {
+        width: 1rem;
+        height: 1rem;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $facet-accent-color;
+    }
+}
+
+// the clicks go to the toggle of the header below
+.facet-section-count,
+.facet-section-arrow {
+    pointer-events: none;
+}
+
+.facet-section-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.5rem;
+    height: 1.5rem;
+    margin-inline-start: auto;
+    padding: 0 0.375rem;
+    background: $facet-accent-color;
+    border-radius: var(--idb-border-radius-sm);
+    color: var(--idb-color-on-primary);
+    font-size: var(--idb-font-size-label);
+    line-height: var(--idb-line-height-label);
+    font-weight: 700;
+}
+
+.facet-section-arrow {
+    margin-inline-start: auto;
+    color: $facet-control-color;
+    transition: transform .2s;
+
+    .facet-section-count + & {
+        margin-inline-start: 0;
+    }
+}
+
+// padding of the content, not margins of its children: the last child can
+// be hidden, e.g. the empty message of the search. Not on the body itself:
+// Bootstrap animates the height of the body
+.facet-section-content {
+    padding: var(--idb-space-xs) 0 0.75rem;
+    border-top: 1px solid $facet-divider-color;
+
+    > :last-child {
+        margin-bottom: 0;
+    }
+}
+
+.facet-empty {
+    padding: 0 var(--idb-space-sm);
+    color: var(--idb-color-text-subtle);
+    font-size: var(--idb-font-size-label-large);
+    line-height: var(--idb-line-height-label-large);
+}
+
+// list of values /////////////////////////////////////////////////////////////
+
+.facet-items {
+    margin: 0;
+    padding: 0 var(--idb-space-xs);
+}
+
+.facet-item {
+    // the "hidden" attribute of the values that don't match the search
+    &[hidden] {
+        display: none !important;
+    }
+
+    a {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 5px 8px 5px 12px;
+        border-radius: var(--idb-border-radius-sm);
+        color: var(--idb-color-on-surface);
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+        text-decoration: none;
+
+        &:hover {
+            background: var(--idb-color-neutral-99);
+        }
+
+        &:focus-visible {
+            outline: 2px solid $facet-accent-color;
+            outline-offset: -2px;
+        }
+    }
+
+    &.active a {
+        background: $facet-selected-background;
+        color: $facet-accent-color;
+        font-weight: 700;
+    }
+}
+
+.facet-item-check {
+    flex-shrink: 0;
+    width: 1.125rem;
+    height: 1.125rem;
+    border: 1px solid #AEAEAD;
+    border-radius: var(--idb-border-radius-sm);
+
+    .active & {
+        background: $facet-accent-color escape-svg(url("data:image/svg+xml,#{$facet-check-icon}")) center / 0.875rem no-repeat;
+        border-color: $facet-accent-color;
+    }
+}
+
+.facet-item-label {
+    flex-grow: 1;
+    min-width: 0;
+    color: #272626;
+    font-family: "Inter", sans-serif;
+    font-size: var(--idb-font-size-label);
+    line-height: var(--idb-line-height-label);
+    font-weight: 400;
+    overflow-wrap: anywhere;
+
+    .active & {
+        color: $facet-accent-color;
+        font-weight: 600;
+    }
+}
+
+.facet-item-count {
+    flex-shrink: 0;
+    min-width: 1.5rem;
+    padding: 0.25rem 0.375rem;
+    background: $facet-count-background;
+    border-radius: var(--idb-border-radius-sm);
+    color: $facet-count-color;
+    font-size: 0.6875rem;
+    line-height: 1rem;
+    font-weight: 600;
+    text-align: center;
+
+    .active & {
+        background: $facet-accent-color;
+        color: var(--idb-color-on-primary);
+    }
+}
+
+// long lists: the first values until "View all" or a search shows the others
+.js .facet-section:not(.expanded):not(.searching) .facet-item-extra {
+    display: none;
+}
+
+.facet-view-all {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    width: 100%;
+    margin-top: var(--idb-space-xs);
+    padding: 0.25rem;
+    background: none;
+    border: 0;
+    color: $facet-accent-color;
+    font-size: var(--idb-font-size-label);
+    line-height: var(--idb-line-height-label);
+    font-weight: 700;
+
+    &:hover {
+        text-decoration: underline;
+    }
+
+    .facet-icon {
+        width: 1rem;
+        height: 1rem;
+        transition: transform .2s;
+    }
+
+    .facet-view-all-less {
+        display: none;
+    }
+
+    .expanded & {
+        .facet-view-all-more {
+            display: none;
+        }
+
+        .facet-view-all-less {
+            display: inline;
+        }
+
+        .facet-icon {
+            transform: rotate(180deg);
+        }
+    }
+
+    .searching & {
+        display: none;
+    }
+}
+
+// search field of a filter
+.facet-search {
+    position: relative;
+    margin: 0 var(--idb-space-xs) 0.25rem;
+
+    .facet-search-input {
+        height: 2.5rem;
+        padding: var(--idb-space-xs) 2.75rem var(--idb-space-xs) 0.75rem;
+        border: 1px solid #A6A6A8;
+        border-radius: var(--idb-border-radius);
+        color: var(--idb-color-text-default);
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+
+        &::placeholder {
+            color: #272626;
+            opacity: 1;
+        }
+
+        // the icon of the field replaces the clear button
+        &::-webkit-search-cancel-button {
+            display: none;
+        }
+    }
+
+    .facet-icon {
+        position: absolute;
+        top: 50%;
+        right: 0.75rem;
+        width: 1.5rem;
+        height: 1.5rem;
+        transform: translateY(-50%);
+        color: var(--idb-color-on-surface);
+        pointer-events: none;
+    }
+}
+
+.facet-search-empty {
+    margin: 0;
+    padding: var(--idb-space-xs) var(--idb-space-sm);
+    color: var(--idb-color-text-subtle);
+    font-size: var(--idb-font-size-label-large);
+    line-height: var(--idb-line-height-label-large);
+}
+
+// Coverage: switch ///////////////////////////////////////////////////////////
+
+.facet-switch {
+    padding: 0 var(--idb-space-sm);
+}
+
+.facet-switch-control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--idb-space-sm);
+    padding: 0.25rem 0;
+    color: var(--idb-color-on-surface);
+    font-size: var(--idb-font-size-label-large);
+    line-height: var(--idb-line-height-label-large);
+    text-decoration: none;
+
+    &:hover {
+        color: var(--idb-color-on-surface);
+    }
+
+    &:focus-visible {
+        outline: 2px solid $facet-accent-color;
+        outline-offset: 2px;
+        border-radius: var(--idb-border-radius-sm);
+    }
+
+    &.disabled {
+        color: var(--idb-color-text-placeholder);
+    }
+}
+
+// track 36x22 and handle 16 of the small switch of the design system
+.facet-switch-track {
+    position: relative;
+    flex-shrink: 0;
+    width: 2.25rem;
+    height: 1.375rem;
+    background: #EDF5FA;
+    border: 2px solid #AEAEAD;
+    border-radius: 1rem;
+    transition: background-color .2s, border-color .2s;
+
+    &::after {
+        content: "";
+        position: absolute;
+        top: 2.5px;
+        left: 2.5px;
+        width: 13px;
+        height: 13px;
+        background: #5C5A5A;
+        border-radius: 50%;
+        transition: transform .2s, background-color .2s;
+    }
+
+    [aria-checked="true"] > & {
+        background: $facet-accent-color;
+        border-color: $facet-accent-color;
+
+        &::after {
+            background: var(--idb-color-on-primary);
+            transform: translateX(14px);
+        }
+    }
+
+    .disabled > & {
+        opacity: .38;
+    }
+}
+
+// Date Range: year fields ////////////////////////////////////////////////////
+
+.facet-date-range {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 0 var(--idb-space-sm);
+}
+
+.facet-date-label {
+    margin-bottom: 0.25rem;
+
+    // no colon of the theme labels
+    &::after {
+        content: none;
+    }
+
+    color: var(--idb-color-text-default);
+    font-size: var(--idb-font-size-label-large);
+    line-height: var(--idb-line-height-label-large);
+    font-weight: 600;
+}
+
+.facet-date-input {
+    position: relative;
+    max-width: 196px;
+
+    .form-control {
+        height: 2.5rem;
+        padding: var(--idb-space-xs) 2.5rem var(--idb-space-xs) 0.75rem;
+        border: 1px solid #A6A6A8;
+        border-radius: var(--idb-border-radius-sm);
+        color: var(--idb-color-text-default);
+        font-size: var(--idb-font-size-text);
+        appearance: textfield;
+
+        &::placeholder {
+            color: var(--idb-color-text-placeholder);
+        }
+
+        &::-webkit-inner-spin-button,
+        &::-webkit-outer-spin-button {
+            appearance: none;
+            margin: 0;
+        }
+    }
+
+    .facet-icon {
+        position: absolute;
+        top: 50%;
+        right: 0.75rem;
+        transform: translateY(-50%);
+        color: $facet-control-color;
+        pointer-events: none;
+    }
+}
+
+// mobile: "Filters" button and full-screen panel /////////////////////////////
+
+.show-filters.btn,
+.hide-filters {
+    display: none;
+}
+
+.show-filters.btn {
+    align-items: center;
+    gap: var(--idb-space-xs);
+    padding: var(--idb-space-xs) var(--idb-space-sm);
+    background: var(--idb-color-on-primary);
+    border: 1px solid var(--idb-color-button-stroke-border);
+    border-radius: var(--idb-border-radius-lg);
+    color: $facet-title-color;
+    font-size: var(--idb-font-size-label-large);
+    line-height: var(--idb-line-height-label-large);
+    font-weight: 600;
+}
+
+.show-filters-count {
+    @extend .facet-section-count;
+    margin-inline-start: 0;
+}
+
+@include media-breakpoint-down(md) {
+    .js body.filters-modal {
+        overflow: hidden;
+    }
+
+    .js .show-filters.btn {
+        display: inline-flex;
+    }
+
+    .js .main .secondary .filters {
+        display: none;
+        position: fixed;
+        inset: 0;
+        z-index: 1050;
+        overflow: auto;
+        background: var(--idb-color-on-primary);
+    }
+
+    .js body.filters-modal .secondary .filters {
+        display: block;
+    }
+
+    .js .filters-panel {
+        min-height: 100%;
+        padding: 0 var(--idb-space-sm);
+    }
+
+    .js .filters-header,
+    .js .filters-footer {
+        position: sticky;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        background: var(--idb-color-on-primary);
+    }
+
+    .js .filters-header {
+        top: 0;
+        justify-content: space-between;
+        padding: var(--idb-space-sm) 0;
+        border-bottom: 1px solid $facet-divider-color;
+    }
+
+    .filters-title {
+        margin: 0;
+        color: $facet-title-color;
+        font-size: var(--idb-font-size-subtitle);
+        line-height: var(--idb-line-height-subtitle);
+        font-weight: 700;
+    }
+
+    .js .filters-close {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        padding: 0;
+        background: none;
+        border: 0;
+        border-radius: 50%;
+        color: $facet-control-color;
+        font-size: 1.5rem;
+
+        &:hover {
+            background: var(--idb-color-neutral-99);
+        }
+    }
+
+    .js .filters-footer {
+        bottom: 0;
+        margin-top: auto;
+        padding: var(--idb-space-sm) 0;
+        border-top: 1px solid $facet-divider-color;
+
+        .hide-filters {
+            display: block;
+            width: 100%;
+            border-radius: var(--idb-border-radius-lg);
+        }
+    }
+}

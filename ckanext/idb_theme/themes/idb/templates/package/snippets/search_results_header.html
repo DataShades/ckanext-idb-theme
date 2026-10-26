@@ -1,6 +1,6 @@
 {#
-Results header of the Datasets page: the number of results and the "Order by"
-dropdown. The other search parameters are kept as hidden fields. The header is
+Results header of the Datasets page: the number of results, the "Filters"
+button that opens the filters panel on mobile and the "Order by" dropdown. The other search parameters are kept as hidden fields. The header is
 swapped out of band on htmx requests.
 
 dataset_type     - The dataset type.
@@ -8,16 +8,30 @@ q                - The search query.
 sort_by_selected - The sort expression of the search.
 page             - The page of the search results.
 query_error      - Whether the search failed.
+fields           - The list of active facet filters, (name, value) pairs.
 
 Example:
 
-{% snippet "package/snippets/search_results_header.html", dataset_type=dataset_type, q=q, sort_by_selected=sort_by_selected, page=page, query_error=query_error %}
+{% snippet "package/snippets/search_results_header.html", dataset_type=dataset_type, q=q, sort_by_selected=sort_by_selected, page=page, query_error=query_error, fields=fields %}
 
 #}
 {%- set count = page.item_count if page else 0 -%}
 
 <div id="dataset-search-results-header" class="search-results-header col-12" hx-swap-oob="true" hx-swap="none">
     {{ ui.search_results_text(count=count, error=_('There was an error while searching. Please try again.') if query_error, type='dataset', query=q, attrs={"class": "search-results-count"}) }}
+
+    {%- set temporal = request.args.get('ext_temporal_start') or request.args.get('ext_temporal_end') -%}
+    {%- set filter_count = (fields or []) | length + (1 if temporal else 0) -%}
+    <button type="button" class="show-filters btn">
+        {{ ui.icon('sliders', aria={"hidden": "true"}) }}
+        {{ _('Filters') }}
+        {%- if filter_count %}
+            <span class="show-filters-count">
+                {{- filter_count -}}
+                <span class="visually-hidden"> {{ ungettext('selected filter', 'selected filters', filter_count) }}</span>
+            </span>
+        {%- endif %}
+    </button>
 
     {%- call ui.util.call(ui.form, action=h.url_for(dataset_type ~ '.search'), attrs={"class": "search-results-sort"}, hx={"boost": "true", "trigger": "change, submit"}) -%}
         {%- for name, value in request.args.items(multi=True) -%}

@@ -9,12 +9,14 @@
   q=q,
   sort_by_selected=sort_by_selected,
   page=page,
-  query_error=query_error
+  query_error=query_error,
+  fields=fields
 %}
 {% snippet "package/snippets/dataset_search_results.html",
   dataset_type=dataset_type,
   page=page,
-  query_error=query_error
+  query_error=query_error,
+  fields=fields
 %}
 {% snippet "package/snippets/search_facets.html",
   facet_titles=facet_titles,

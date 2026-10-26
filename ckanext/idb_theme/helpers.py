@@ -47,6 +47,79 @@ def idb_theme_default_collapsed(facet_name: str):
     return facet_name in config.collapsed_facets()
 
 
+def idb_theme_facet_details(facet_name: str) -> dict[str, Any]:
+    """Get the details of a filter of the search facets panel.
+
+    tooltip     - the text of the info icon next to the filter title.
+    long        - only the first values are shown, with a "View all" link.
+    view_all    - the "View all" link text, with the `{num}` placeholder.
+    search      - the placeholder of the field that filters the values, or
+                  an empty string when the filter has no search field.
+    sort_by_name - the values are sorted by name instead of the count.
+    """
+    details: dict[str, dict[str, Any]] = {
+        "vocab_iadb_iar_coverage": {
+            "tooltip": _("Countries covered within the dataset, including the 26 IDB borrowing member countries."),
+        },
+        "vocab_iadb_iar_dataset_type": {
+            "tooltip": _("The type of data asset, for example a dataset or a geospatial dataset."),
+        },
+        "vocab_iadb_iar_region": {
+            "tooltip": _("The world regions covered by the dataset, based on its countries."),
+            "sort_by_name": True,
+        },
+        "vocab_iadb_iar_spatial_coverage": {
+            "tooltip": _("The countries covered by the dataset."),
+            "long": True,
+            "view_all": _("View all {num} countries"),
+            "search": _("Search countries"),
+            "sort_by_name": True,
+        },
+        "temporal_coverage": {
+            "tooltip": _("Time period covered by the dataset, as defined by the years represented in the data."),
+        },
+        "vocab_iadb_iar_theme": {
+            "tooltip": _("The main topics of the dataset."),
+            "long": True,
+            "view_all": _("View all {num} themes"),
+            "search": _("Search themes"),
+        },
+        "tags": {
+            "tooltip": _("Keywords or terms that describe the dataset’s content and subject matter."),
+            "long": True,
+            "view_all": _("View all {num} tags"),
+            "search": _("Search tags"),
+        },
+        "groups": {
+            "tooltip": _("Groups of related datasets with a shared initiative, project or methodology."),
+            "long": True,
+            "view_all": _("View all {num} Data Projects"),
+        },
+        "organization": {
+            "tooltip": _("The IDB division or unit responsible for the dataset."),
+        },
+        "vocab_iadb_iar_gov_tier": {
+            "tooltip": _("The governance and documentation requirements that apply to the dataset."),
+        },
+        "res_format": {
+            "tooltip": _("The file formats of the dataset’s resources, (e.g., CSV, PDF, or DTA)"),
+        },
+        "vocab_iadb_iar_admin_level": {
+            "tooltip": _("Level of geographic detail represented in the dataset (e.g., national, province, municipality)."),
+            "sort_by_name": True,
+        },
+    }
+
+    return {
+        "tooltip": "",
+        "long": False,
+        "view_all": _("View all {num}"),
+        "search": "",
+        "sort_by_name": False,
+        **details.get(facet_name, {}),
+    }
+
+
 def idb_theme_info_graph() -> dict[str, Any]:
     """Get the key numbers of the homepage hero.
 

@@ -206,7 +206,7 @@
 {%- endmacro %}
 
 {%- macro facet_list(content) -%}
-    <ul {{ ui.util.attrs(kwargs, {"class": "list-unstyled nav nav-simple nav-facet"}) }}>{{ content }}</ul>
+    <ul {{ ui.util.attrs(kwargs, {"class": "list-unstyled facet-items"}) }}>{{ content }}</ul>
 {%- endmacro %}
 
 {%- macro group_list(content) -%}

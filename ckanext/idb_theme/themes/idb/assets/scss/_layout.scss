@@ -14,64 +14,15 @@
 }
 
 
-/* Filters modal */
+/* Filters modal: see _search-facets.scss */
 
 .no-text .text {
     display: none;
 }
 
-.js body.filters-modal {
-    overflow: hidden;
-}
-
-.show-filters.btn {
-    background-color: $gray-50;
-    font-weight: 500;
-}
-
-.show-filters.btn,
-.hide-filters {
-    display: none;
-}
-
 @include media-breakpoint-down(md) {
-.main .secondary {
+    .main .secondary {
         margin: 1rem 0;
-    }
-    .js .main .secondary .filters {
-        display: none;
-        position: fixed;
-        overflow: auto;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 1000;
-        padding: 40px 10px 0;
-        background-color: $white;
-    }
-    .js body.filters-modal .secondary .filters {
-        display: block;
-    }
-    .js .main .secondary .filters>div {
-        background-color: #fff;
-        -webkit-border-radius: 4px;
-        -moz-border-radius: 4px;
-        border-radius: 4px;
-        overflow: hidden;
-        padding: 0 10px;
-    }
-    .js body.filters-modal .secondary .filters .hide-filters {
-        display: inline-block;
-        position: absolute;
-        top: 14px;
-        right: 17px;
-        i {
-            font-size: 24px;
-        }
-    }
-    .js .show-filters.btn {
-        display: inline-block;
     }
 }
 

@@ -4,37 +4,55 @@
     {{ ui.section(content, title, **kwargs) }}
 {%- endmacro %}
 
-{%- macro facet_section(content, title, items, key, collapsed, has_more) -%}
-    <section {{ ui.util.attrs(kwargs, {"class": "module module-narrow module-shallow accordion"}) }}>
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="module-heading accordion-button {{ 'collapsed' if collapsed or not items }}"
-                        type="button" data-bs-toggle="collapse" data-bs-target="#{{ ui.util.id(title) }}"
-                        {% if not items %}disabled{% endif %}>
-                    <i class="filter-svg fa-solid fa-filter"></i>
-                    {{ title }}
+{#
+A collapsible filter of the search facets panel: the title with an info icon
+(tooltip) and the number of selected values, and the filter controls. The
+facets panel script keeps the filters that the user opened or closed in that
+state when htmx swaps the panel.
+
+content  - The filter controls.
+title    - The filter title.
+key      - The facet name, the id of the filter is based on it.
+tooltip  - The text of the info icon, no icon when empty.
+selected - The number of the selected values.
+collapsed - Whether the filter is collapsed, true by default.
+#}
+{%- macro facet_section(content, title, items, key, collapsed=true, has_more=false, tooltip="", selected=0) -%}
+    {%- set id = ui.util.id(key, prefix="facet-") -%}
+    <section {{ ui.util.attrs(kwargs, {"class": "facet-section", "data-facet": key}) }}>
+        <div class="facet-section-header">
+            <h2 class="facet-section-heading">
+                <button class="facet-section-toggle{{ ' collapsed' if collapsed }}" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#{{ id }}"
+                        aria-expanded="{{ 'false' if collapsed else 'true' }}" aria-controls="{{ id }}">
+                    {{- title -}}
                 </button>
             </h2>
 
-            {% if items %}
-                <nav id="{{ ui.util.id(title) }}" class="accordion-collapse {{ 'collapse' if collapsed else 'show' }}" aria-label="{{ _('Filter by: {title}').format(title=title) }}">
-                    {{ content }}
-
-                    <p class="module-footer">
-                        {% if has_more %}
-                            <a hx-boost="true" href="{{ h.remove_url_param('_%s_limit' % key, replace=0) }}" class="read-more">{{ _('Show More {facet_type}').format(facet_type=title) }}</a>
-                        {% elif request.args['_%s_limit' % key] %}
-                            <a hx-boost="true" href="{{ h.remove_url_param('_%s_limit' % key) }}" class="read-more">{{ _('Show Only Popular {facet_type}').format(facet_type=title) }}</a>
-                        {% endif %}
-                    </p>
-                </nav>
-            {% else %}
-                <p class="module-content empty">{{ _('There are no {facet_type} that match this search').format(facet_type=title) }}</p>
+            {% if tooltip %}
+                <button type="button" class="facet-section-info" data-bs-toggle="tooltip" data-bs-placement="top"
+                        data-bs-title="{{ tooltip }}" aria-label="{{ _('About this filter: {title}').format(title=title) }}">
+                    <span class="facet-icon facet-icon-info" aria-hidden="true"></span>
+                </button>
             {% endif %}
 
+            {% if selected %}
+                <span class="facet-section-count">
+                    {{- selected -}}
+                    <span class="visually-hidden"> {{ ungettext('selected value', 'selected values', selected) }}</span>
+                </span>
+            {% endif %}
+
+            <span class="facet-icon facet-icon-chevron facet-section-arrow" aria-hidden="true"></span>
+        </div>
+
+        {#- the spacing is on the inner block: Bootstrap animates the height of the collapse -#}
+        <div id="{{ id }}" class="facet-section-body collapse{{ ' show' if not collapsed }}">
+            <div class="facet-section-content">
+                {{ content }}
+            </div>
         </div>
     </section>
-
 {%- endmacro %}
 
 {%- macro section(content, title, icon, level=2, shallow=false, narrow=false) -%}

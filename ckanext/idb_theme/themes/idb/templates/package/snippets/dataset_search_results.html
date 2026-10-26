@@ -6,10 +6,11 @@ requests.
 dataset_type - The dataset type.
 page         - The page of the search results.
 query_error  - Whether the search failed.
+fields       - The list of active facet filters, (name, value) pairs.
 
 Example:
 
-{% snippet "package/snippets/dataset_search_results.html", dataset_type=dataset_type, page=page, query_error=query_error %}
+{% snippet "package/snippets/dataset_search_results.html", dataset_type=dataset_type, page=page, query_error=query_error, fields=fields %}
 
 #}
 <section class="search-results" id="search-results" hx-swap-oob="true" hx-swap="none">
@@ -27,8 +28,17 @@ Example:
                 <img class="search-empty-image" src="{{ h.url_for_static('/images/no-results.svg') }}" alt="" width="272" height="278">
                 <h3 class="search-empty-title">{{ _('No datasets match your search') }}</h3>
                 <p class="search-empty-text">{{ _("No datasets match your current filters. Try changing your filters to find what you're looking for.") }}</p>
-                {# a full page load: htmx requests keep the search term and the advanced search of the hero #}
+                {#- removes the filters like the "Clear all" link of the hero. Without
+                    filters, a full page load clears the search: htmx requests keep the
+                    search term and the advanced search of the hero -#}
+                {%- set temporal_keys = ['ext_temporal_start', 'ext_temporal_end'] -%}
+                {%- set filter_keys = (fields or []) | map(attribute=0) | list -%}
+                {%- set has_filters = filter_keys or request.args.get(temporal_keys[0]) or request.args.get(temporal_keys[1]) -%}
+                {%- if has_filters %}
+                <a class="align-items-baseline btn d-inline-flex search-empty-clear" href="{{ h.remove_url_param(filter_keys + temporal_keys) }}" hx-boost="true">
+                {%- else %}
                 <a class="align-items-baseline btn d-inline-flex search-empty-clear" href="{{ h.url_for(dataset_type ~ '.search') }}">
+                {%- endif %}
                     {{ _('Clear all filters') }}
                     {{ ui.icon('xmark', aria={"hidden": "true"}) }}
                 </a>

@@ -23,16 +23,19 @@
     {%- include "macros/idb/snippets/user.html" -%}
 {%- endmacro %}
 
-{%- macro facet(content, key, value, count, active) -%}
+{#
+A value of a filter: a checkbox-like link that selects or removes the value.
+
+extra - The value is hidden until the "View all" link of the filter expands
+        the list.
+#}
+{%- macro facet(content, key, value, count, active, extra=false) -%}
     {% set href = h.remove_url_param(key, value) if active and key else h.add_url_param(new_params={key: value}) %}
-    {% set truncated = content|truncate(22) %}
-    <li class="nav-item {% if active %}active{% endif %}">
-        <a {{ ui.util.attrs(kwargs) }} href="{{ href }}" aria-label="{{ _('Search datasets by {name}: {label}').format(name=key, label=truncated) }}" {% if content != truncated %} data-bs-title="{{ content }}" data-bs-toggle="tooltip" {% endif %}>
-            <span class="item-label">{{ truncated }}</span>
-            <span class="item-count-span">
-                <span class="item-count badge">{{ count }}</span>
-                <span class="item-state"></span>
-            </span>
+    <li class="facet-item{{ ' active' if active }}{{ ' facet-item-extra' if extra }}" data-facet-label="{{ content | lower }}">
+        <a {{ ui.util.attrs(kwargs) }} href="{{ href }}" role="checkbox" aria-checked="{{ 'true' if active else 'false' }}">
+            <span class="facet-item-check" aria-hidden="true"></span>
+            <span class="facet-item-label">{{ content }}</span>
+            <span class="facet-item-count">{{ count }}</span>
         </a>
     </li>
 {%- endmacro %}
