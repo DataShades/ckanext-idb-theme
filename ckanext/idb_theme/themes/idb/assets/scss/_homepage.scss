@@ -344,7 +344,7 @@
     &-grid {
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: var(--idb-space-sm) var(--idb-space-sm);
+        gap: var(--idb-space-md);
         margin: 0;
     }
 }
@@ -484,7 +484,7 @@
         linear-gradient(0deg, rgba(0, 59, 84, 0.4), rgba(0, 59, 84, 0.4)),
         var(--home-countries-image) center calc(50% + 10px) / cover no-repeat,
         var(--idb-color-secondary-container);
-    padding: var(--idb-space-lg) 0;
+    padding: 40px 0;
 
     &-content {
         display: flex;

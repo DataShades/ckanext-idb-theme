@@ -15903,7 +15903,7 @@ td.diff_header {
 .home-data-projects-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: var(--idb-space-sm) var(--idb-space-sm);
+  gap: var(--idb-space-md);
   margin: 0;
 }
 
@@ -16016,7 +16016,7 @@ td.diff_header {
 
 .home-countries {
   background: linear-gradient(238.38deg, rgba(0, 126, 182, 0.6) 32.81%, rgba(0, 55, 80, 0.6) 98.26%), linear-gradient(0deg, rgba(0, 59, 84, 0.4), rgba(0, 59, 84, 0.4)), var(--home-countries-image) center calc(50% + 10px)/cover no-repeat, var(--idb-color-secondary-container);
-  padding: var(--idb-space-lg) 0;
+  padding: 40px 0;
 }
 .home-countries-content {
   display: flex;
