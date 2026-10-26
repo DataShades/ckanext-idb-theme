@@ -49,7 +49,7 @@
     padding: 80px 0 var(--idb-space-xxl);
 
     &-content {
-        max-width: 50.625rem;
+        max-width: 67rem;
     }
 
     &-intro {
@@ -99,8 +99,8 @@
     // `.btn` styles of _buttons.scss load later and would override the radius and padding
     &-search-submit.btn {
         @include home-pill-button;
-        --bs-btn-padding-x: 1.125rem;
-        --bs-btn-padding-y: 0.3125rem;
+        --bs-btn-padding-x: 1.5rem;
+        --bs-btn-padding-y: 0.5rem;
         margin-left: auto;
         font-size: var(--idb-font-size-text);
         line-height: var(--idb-line-height-text);
@@ -117,7 +117,11 @@
         flex-direction: column;
         gap: 0.125rem;
         min-width: 0;
-        padding: var(--idb-space-xs) var(--idb-space-sm);
+        padding: var(--idb-space-xs) 80px;
+
+        &:first-child {
+            padding-left: 1rem;
+        }
 
         & + & {
             border-left: 1px solid rgba(255, 255, 255, 0.3);
@@ -134,6 +138,7 @@
         font-size: var(--idb-font-size-label-large);
         line-height: var(--idb-line-height-label-large);
         font-weight: 600;
+        white-space: nowrap;
         color: var(--idb-color-on-primary);
         text-decoration: none;
 
@@ -164,8 +169,13 @@
         }
 
         // two columns: separate the numbers of each row only
+        &-metric {
+            padding-inline: var(--idb-space-sm);
+        }
+
         &-metric:nth-child(odd) {
             border-left: 0;
+            padding-left: 0;
         }
     }
 }
