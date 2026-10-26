@@ -16793,7 +16793,7 @@ td.diff_header {
 }
 
 .facet-section-content {
-  padding: var(--idb-space-xs) 0 0.75rem;
+  padding: var(--idb-space-xs) 0 10px;
   border-top: 1px solid #EAEAEA;
 }
 .facet-section-content > :last-child {
@@ -16809,7 +16809,7 @@ td.diff_header {
 
 .facet-items {
   margin: 0;
-  padding: 0 var(--idb-space-xs);
+  padding: 0 16px 0 10px;
 }
 
 .facet-item[hidden] {
@@ -16891,10 +16891,9 @@ td.diff_header {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.25rem;
+  gap: 12px;
   width: 100%;
-  margin-top: var(--idb-space-xs);
-  padding: 0.25rem;
+  padding: var(--idb-space-xs) var(--idb-space-sm);
   background: none;
   border: 0;
   color: #007EB6;
@@ -16928,7 +16927,7 @@ td.diff_header {
 
 .facet-search {
   position: relative;
-  margin: 0 var(--idb-space-xs) 0.25rem;
+  margin: 0 var(--idb-space-xs) var(--idb-space-xs);
 }
 .facet-search .facet-search-input {
   height: 2.5rem;
