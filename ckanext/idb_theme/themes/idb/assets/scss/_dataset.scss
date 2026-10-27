@@ -26,6 +26,7 @@
 
     .card-footer {
         border-top: 2px solid var(--idb-color-secondary-70);
+        color: var(--idb-color-neutral-20);
 
         svg {
             color: var(--idb-color-neutral-60);
@@ -105,7 +106,6 @@
 
     .card-footer {
         font-size: .75rem;
-        color: var(--idb-color-neutral-20);
     }
 }
 

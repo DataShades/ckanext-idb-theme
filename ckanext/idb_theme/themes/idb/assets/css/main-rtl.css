@@ -14489,6 +14489,7 @@ select[data-module=autocomplete] {
 }
 .dataset-item .card-footer {
   border-top: 2px solid var(--idb-color-secondary-70);
+  color: var(--idb-color-neutral-20);
 }
 .dataset-item .card-footer svg {
   color: var(--idb-color-neutral-60);
@@ -14557,7 +14558,6 @@ select[data-module=autocomplete] {
 }
 .dataset-item--short .card-footer {
   font-size: 0.75rem;
-  color: var(--idb-color-neutral-20);
 }
 
 .dataset-heading .badge {
@@ -15729,6 +15729,9 @@ td.diff_header {
 }
 
 @media (max-width: 767.98px) {
+  .homepage .module-feeds.home-highlights {
+    padding: var(--idb-space-xl) 0;
+  }
   .homepage .module-feeds .featured-groups {
     grid-template-columns: none;
   }

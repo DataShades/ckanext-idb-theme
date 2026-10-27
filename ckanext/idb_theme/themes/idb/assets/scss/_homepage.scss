@@ -275,6 +275,10 @@
 }
 
 @include media-breakpoint-down(md){
+    .homepage .module-feeds.home-highlights {
+        padding: var(--idb-space-xl) 0;
+    }
+
     .homepage {
         .module-feeds {
             .featured-groups {
