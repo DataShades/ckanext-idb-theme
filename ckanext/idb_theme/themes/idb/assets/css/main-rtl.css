@@ -15509,9 +15509,11 @@ td.diff_header {
   margin-top: 20px;
 }
 
-.ckan-layout--sidebar-start,
-.ckan-layout--sidebar-end {
-  --bs-gutter-x: 40px;
+@media (min-width: 768px) {
+  .ckan-layout--sidebar-start,
+  .ckan-layout--sidebar-end {
+    --bs-gutter-x: 40px;
+  }
 }
 
 .homepage {
@@ -16298,7 +16300,7 @@ td.diff_header {
 }
 .home-hero-search .search-tweaks-advanced-search .advanced-search-help {
   display: none;
-  margin: 12px var(--idb-space-sm) 0;
+  margin: 12px var(--idb-space-sm) 0 14px;
   color: #EAF9FF;
   font-size: 12px;
   line-height: 16px;
@@ -16398,6 +16400,7 @@ td.diff_header {
 .home-hero-search .search-tweaks-advanced-search .advanced-search-widget .switch-input {
   flex-shrink: 0;
   gap: var(--idb-space-xs);
+  color: var(--idb-color-text-default);
   text-transform: uppercase;
   user-select: none;
 }
@@ -16469,10 +16472,19 @@ td.diff_header {
 }
 .home-hero-search .search-tweaks-advanced-search .advanced-search-widget .selected-value .caret-icon {
   flex-shrink: 0;
+  width: 16px;
+  height: 12px;
   margin: 0;
+  background: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%23535354' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/></svg>") center/16px 12px no-repeat;
 }
-.home-hero-search .search-tweaks-advanced-search .advanced-search-widget .selected-value .caret-icon path {
-  stroke: var(--idb-color-text-subtle);
+.home-hero-search .search-tweaks-advanced-search .advanced-search-widget .selected-value .caret-icon svg {
+  display: none;
+}
+.home-hero-search .search-tweaks-advanced-search .advanced-search-widget .pseudo-select:has(> .options) .caret-icon {
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%23535354' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 11l6-6 6 6'/></svg>");
+}
+.home-hero-search .search-tweaks-advanced-search .advanced-search-widget .pseudo-select.disabled .caret-icon {
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%23898989' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/></svg>");
 }
 .home-hero-search .search-tweaks-advanced-search .advanced-search-widget .value-label {
   min-width: 0;
@@ -16523,6 +16535,9 @@ td.diff_header {
 .home-hero-search .search-tweaks-advanced-search .advanced-search-widget .remove-field svg {
   width: 20px;
   height: 20px;
+}
+.home-hero-search .search-tweaks-advanced-search .advanced-search-widget .remove-field line {
+  transform: translate(-1.5px, -1.5px);
 }
 .home-hero-search .search-tweaks-advanced-search .advanced-search-widget .remove-field:hover {
   background: var(--idb-color-primary-light);

@@ -151,5 +151,8 @@
 // Space between the sidebar and the main content of the pages with a sidebar
 .ckan-layout--sidebar-start,
 .ckan-layout--sidebar-end {
-    --bs-gutter-x: 40px;
+    // only when columns sit side by side: below md the -20px row margins overflow the container
+    @include media-breakpoint-up(md) {
+        --bs-gutter-x: 40px;
+    }
 }
