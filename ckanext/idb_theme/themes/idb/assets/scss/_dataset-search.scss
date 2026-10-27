@@ -2,7 +2,7 @@
 // the empty state. The hero reuses the `.home-hero` layout of the homepage.
 
 .search-hero {
-    padding: 26px 0 var(--idb-space-xl);
+    padding: var(--idb-space-md) 0 var(--idb-space-xl);
     background-position: 0 0, right 47%;
 
     .home-hero-content {
@@ -197,7 +197,21 @@
     font-size: var(--idb-font-size-text);
     line-height: 20px;
     font-weight: 400;
+    color: var(--idb-color-text-default);
     vertical-align: middle;
+    // caret instead of the triangle of the other selects
+    --bs-form-select-bg-img: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%23535354' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/></svg>");
+    background-position: right 1rem center;
+    background-size: 16px 12px;
+
+    &:disabled {
+        --bs-form-select-bg-img: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%23898989' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/></svg>");
+    }
+}
+
+// the extra classes beat the open state of the `idb-select` module
+.search-results-sort .idb-select.idb-select--open .idb-select-trigger {
+    --bs-form-select-bg-img: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%23535354' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 11l6-6 6 6'/></svg>");
 }
 
 .search-results-sort:has(.form-select:disabled) label {
@@ -210,7 +224,7 @@
     align-items: center;
     justify-content: center;
     gap: var(--idb-space-sm) var(--idb-space-lg);
-    margin: var(--idb-space-lg) 0 var(--idb-space-xl);
+    margin: 20px 0 60px;
 
     &-size .form-select {
         color: var(--idb-color-text-default);

@@ -52,7 +52,7 @@
 {% endblock %}
 
 {% block content_action -%}
-    {{ ui.content_action(h.humanize_entity_type('package', dataset_type, 'add link') or _("Add Dataset"), href=h.url_for(dataset_type ~ '.new'), icon="plus-square") if h.check_access('package_create') }}
+    {{ ui.content_action(h.humanize_entity_type('package', dataset_type, 'add link') or _("Add Dataset"), href=h.url_for(dataset_type ~ '.new'), svg="add-dataset") if h.check_access('package_create') }}
 {%- endblock %}
 
 {% block primary_content %}

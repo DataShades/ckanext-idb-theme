@@ -49,7 +49,7 @@
 {%- endmacro %}
 
 {%- macro content_action(content, href) -%}
-    {{ ui.button(content, href=href, **kwargs) }}
+    {{ ui.button(content, href=href, icon_end=true, **kwargs) }}
 {%- endmacro %}
 
 {%- macro pagination(page=1, total=1, url_generator=h.pager_url, padding=2, hide_edges=false, hide_siblings=false, start_label=null, end_label=null, previous_label=ui.icon("chevron-left", style="solid"), next_label=ui.icon("chevron-right", style="solid"), padding_label="...", url_params={}) -%}

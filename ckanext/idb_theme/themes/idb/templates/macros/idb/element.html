@@ -5,16 +5,18 @@
     </span>
 {%- endmacro %}
 
-{%- macro button(content, href, icon, size, type="button", style="primary") -%}
-    {%- set prefix = ui.icon(icon) if icon else "" -%}
+{%- macro button(content, href, icon, size, type="button", style="primary", icon_end=false, svg=none) -%}
+    {%- set icon_markup = h.snippet("svg/" ~ svg ~ ".svg") if svg else (ui.icon(icon) if icon else "") -%}
+    {%- set prefix = icon_markup if not icon_end else "" -%}
+    {%- set suffix = icon_markup if icon_end else "" -%}
     {%- set class = "btn btn-" ~ style ~ ((' btn-' ~ size) if size else "") -%}
     {%- do kwargs.setdefault("attrs", {}).setdefault("class", class) -%}
 
     {%- if href -%}
-        {{ ui.link(prefix ~ content, href=href, **kwargs) }}
+        {{ ui.link(prefix ~ content ~ suffix, href=href, **kwargs) }}
     {%- else -%}
         <button {{ ui.util.attrs(kwargs) }} type="{{ type }}">
-            {{- prefix ~ content -}}
+            {{- prefix ~ content ~ suffix -}}
         </button>
     {%- endif %}
 {%- endmacro %}

@@ -3,7 +3,10 @@
     gap: 0.5rem;
     align-items: center;
     justify-content: center;
-    border-radius: var(--idb-border-radius);
+    border-radius: var(--idb-border-radius-lg);
+    box-shadow: none;
+    --bs-btn-box-shadow: none;
+    --bs-btn-active-shadow: none;
     --bs-btn-padding-x: 1.5rem;
     --bs-btn-padding-y: 0.5rem;
     font-size: var(--idb-font-size-label-large);
@@ -23,11 +26,15 @@
 }
 
 .btn-primary {
-    color: $white;
-    background: var(--idb-color-primary);
-    &:hover {
-        background-color: var(--idb-color-primary-dark);
-    }
+    --bs-btn-color: #{$white};
+    --bs-btn-bg: var(--idb-color-button-flat-background);
+    --bs-btn-border-color: var(--idb-color-button-flat-background);
+    --bs-btn-hover-color: #{$white};
+    --bs-btn-hover-bg: var(--idb-color-button-flat-background-hover);
+    --bs-btn-hover-border-color: var(--idb-color-button-flat-background-hover);
+    --bs-btn-active-color: #{$white};
+    --bs-btn-active-bg: var(--idb-color-button-flat-background-hover);
+    --bs-btn-active-border-color: var(--idb-color-button-flat-background-hover);
 }
 
 .btn-secondary {
