@@ -14595,6 +14595,12 @@ select[data-module=autocomplete] {
 }
 
 @media (min-width: 768px) {
+  .dataset-item--full .card-body {
+    padding-top: 30px;
+  }
+}
+
+@media (min-width: 768px) {
   .dataset-item--short .card-body {
     padding-top: var(--idb-space-lg);
   }
