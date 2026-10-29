@@ -16084,7 +16084,7 @@ td.diff_header {
   align-items: center;
   gap: 0.375rem;
   max-width: 100%;
-  padding: 0.25rem var(--idb-space-xs);
+  padding: 0.25rem 0.75rem;
   background: #EDF5FA;
   border-radius: var(--idb-border-radius-sm);
   color: #004575;
@@ -16812,6 +16812,7 @@ td.diff_header {
   min-width: 1.5rem;
   height: 1.5rem;
   margin-inline-start: auto;
+  margin-inline-end: 0.25rem;
   padding: 0 0.375rem;
   background: #007EB6;
   border-radius: var(--idb-border-radius-sm);
@@ -16847,7 +16848,7 @@ td.diff_header {
 
 .facet-items {
   margin: 0;
-  padding: 0 16px 0 10px;
+  padding: 0 0.5rem;
 }
 
 .facet-item[hidden] {
@@ -16970,7 +16971,7 @@ td.diff_header {
 .facet-search .facet-search-input {
   height: 2.5rem;
   padding: var(--idb-space-xs) 2.75rem var(--idb-space-xs) 0.75rem;
-  border: 1px solid #A6A6A8;
+  border: 1px solid #AEAEAD;
   border-radius: var(--idb-border-radius);
   color: var(--idb-color-text-default);
   font-size: var(--idb-font-size-label-large);
