@@ -21,7 +21,7 @@ Example:
                     <li>
                         <a class="home-theme-card" href="{{ theme.url }}">
                             <span class="home-theme-icon" aria-hidden="true">
-                                {% snippet "svg/themes/" ~ theme.id ~ ".svg" %}
+                                {% snippet "svg/themes/" ~ theme.id ~ ".svg", "svg/themes/default.svg" %}
                             </span>
                             <span class="home-theme-name">{{ theme.name }}</span>
                             <span class="home-theme-count">{{ ungettext("{num} dataset", "{num} datasets", theme.count).format(num=theme.count) }}</span>
