@@ -59,6 +59,7 @@
 
 {% set alert = alert | default(feedback.alert) %}
 {% set modal = modal | default(feedback.modal) %}
+{% set offcanvas = offcanvas | default(feedback.offcanvas) %}
 {% set popover = popover | default(feedback.popover) %}
 {% set progress = progress | default(feedback.progress) %}
 {% set spinner = spinner | default(feedback.spinner) %}
@@ -98,6 +99,8 @@
 {% set modal_handle = modal_handle | default(_handle.modal_handle) %}
 {% set popover_handle = popover_handle | default(_handle.popover_handle) %}
 {% set modal_close_handle = modal_close_handle | default(_handle.modal_close_handle) %}
+{% set offcanvas_handle = offcanvas_handle | default(_handle.offcanvas_handle) %}
+{% set offcanvas_close_handle = offcanvas_close_handle | default(_handle.offcanvas_close_handle) %}
 
 {% set account = account | default(meta.account) %}
 {% set footer = footer | default(meta.footer) %}

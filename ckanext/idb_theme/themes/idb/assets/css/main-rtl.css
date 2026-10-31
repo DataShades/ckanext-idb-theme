@@ -12871,6 +12871,18 @@ a.open-data span.suffix {
   color: #3A833A;
 }
 
+.additional-info .additional-info-item {
+  font-size: 0.875rem;
+}
+.additional-info .additional-info-item hr {
+  border-color: #C7C7C9;
+  opacity: 1;
+}
+.additional-info .dataset-label {
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
 .tag {
   display: inline-block;
   margin-bottom: 4px;
@@ -18235,12 +18247,20 @@ input[id^=lang-].btn-check + label.btn:hover {
   background: linear-gradient(90deg, #004E70 0%, #206B82 100%);
 }
 
+.bg-neutral-99 {
+  background-color: var(--idb-color-neutral-99);
+}
+
 .border-primary-linear {
   border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .fs-36 {
   font-size: 2rem !important;
+}
+
+.text-idb-default {
+  color: var(--idb-color-text-default);
 }
 
 @media (min-width: 576px) {

@@ -38,8 +38,29 @@
         {% snippet "package/snippets/tags.html", tags=pkg.tags %}
     {% endblock %}
 
-    {% block package_additional_info %}
-        {% snippet "package/snippets/additional_info.html", pkg_dict=pkg %}
-    {% endblock %}
+    {%- set additional_info_panel_id = "package-additional-info" -%}
+
+    {%- set schema = schema or h.scheming_get_dataset_schema(dataset_type) -%}
+
+    {{ ui.offcanvas_handle(
+        _('See Additional information'),
+        id=additional_info_panel_id,
+        style="outline-primary",
+        icon="info-circle",
+        icon_end=true
+    ) }}
+
+    {% snippet "snippets/offcanvas_panel.html",
+        id=additional_info_panel_id,
+        title=_('Additional information'),
+        width="50vw",
+        content_snippet="package/snippets/additional_info.html",
+        content_data={
+            "pkg_dict": pkg,
+            "dataset_type": dataset_type,
+            "schema": schema,
+            "show_heading": false
+        }
+    %}
 
 {% endblock %}

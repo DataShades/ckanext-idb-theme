@@ -1,0 +1,26 @@
+{#
+  Reusable Bootstrap 5 offcanvas panel (no trigger).
+
+  Open it from any number of buttons via ui.offcanvas_handle(..., id=<same id>).
+
+  :param str id: Required offcanvas element id — must match handle buttons
+  :param str title: Panel header title
+  :param str placement: start|end|top|bottom (default: end)
+  :param bool dismissible: Show close button (default: true)
+  :param str width: Horizontal panel width (CSS value, e.g. 50vw, 600px).
+                    Sets --bs-offcanvas-width; default BS5 is 400px
+  :param str content_snippet: Template path rendered inside the panel body
+  :param dict content_data: Keyword args forwarded to content_snippet
+  :param footer: Optional markup rendered at the bottom of the panel body
+#}
+{%- set placement = placement if placement is defined and placement else "end" -%}
+{%- set dismissible = true if dismissible is not defined else dismissible -%}
+{%- set footer = footer if footer is defined else none -%}
+{%- set width = width if width is defined else none -%}
+{%- set content_data = content_data if content_data is defined and content_data else {} -%}
+
+{%- call ui.util.call(ui.offcanvas, id=id, title=title if title is defined else none, dismissible=dismissible, placement=placement, footer=footer, width=width) -%}
+    {%- if content_snippet is defined and content_snippet -%}
+        {{ h.snippet(content_snippet, **content_data) }}
+    {%- endif %}
+{%- endcall %}

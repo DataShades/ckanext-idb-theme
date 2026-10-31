@@ -42,6 +42,37 @@
     </div>
 {%- endmacro %}
 
+{%- macro offcanvas(content, title=none, footer=none, dismissible=true, id=none, placement="end", width=none) -%}
+    {%- set id = id or ui.util.id(prefix="offcanvas-") -%}
+    {%- set title_id = id ~ "-label" -%}
+    {%- set class = "offcanvas offcanvas-" ~ (placement or "end") -%}
+    {%- set default_attrs = {"class": class, "id": id, "tabindex": "-1"} -%}
+    {%- if width -%}
+        {%- do default_attrs.update({"style": "--bs-offcanvas-width: " ~ width}) -%}
+    {%- endif %}
+    {%- if title -%}
+        {%- do kwargs.setdefault("aria", {}).setdefault("labelledby", title_id) -%}
+    {%- endif %}
+    <div {{ ui.util.attrs(kwargs, default_attrs) }}>
+        {%- if title or dismissible -%}
+            <div class="offcanvas-header bg-neutral-99">
+                {%- if title -%}<p class="h3 offcanvas-title my-2" id="{{ title_id }}">{{ title }}</p>{%- endif %}
+                {%- if dismissible -%}
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{{ _('Close') }}"></button>
+                {%- endif %}
+            </div>
+        {%- endif %}
+        <div class="offcanvas-body p-4">
+            {{ content }}
+            {%- if footer -%}
+                <div class="offcanvas-footer mt-3">
+                    {{ footer }}
+                </div>
+            {%- endif %}
+        </div>
+    </div>
+{%- endmacro %}
+
 
 {%- macro popover(content, title, id) -%}
     <div {{ ui.util.attrs(kwargs) }} popover id="{{ id }}" data-popover-title="{{ title }}">

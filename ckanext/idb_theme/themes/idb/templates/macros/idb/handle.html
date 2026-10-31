@@ -11,3 +11,14 @@
     {%- do kwargs.setdefault("data", {}).update({"bs-dismiss": "modal", "bs-target": "#"~id}) -%}
     {{ ui.button(content, **kwargs) }}
 {%- endmacro %}
+
+{%- macro offcanvas_handle(content, id) -%}
+    {%- do kwargs.setdefault("data", {}).update({"bs-toggle": "offcanvas", "bs-target": "#"~id}) -%}
+    {%- do kwargs.setdefault("aria", {}).setdefault("controls", id) -%}
+    {{ ui.button(content, **kwargs) }}
+{%- endmacro %}
+
+{%- macro offcanvas_close_handle(content, id) -%}
+    {%- do kwargs.setdefault("data", {}).update({"bs-dismiss": "offcanvas", "bs-target": "#"~id}) -%}
+    {{ ui.button(content, **kwargs) }}
+{%- endmacro %}

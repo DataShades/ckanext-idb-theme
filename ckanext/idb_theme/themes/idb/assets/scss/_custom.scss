@@ -67,3 +67,17 @@ a.open-data {
         color: $green;
     }
 }
+
+.additional-info {
+    .additional-info-item {
+        font-size: $font-size-sm;
+        hr {
+            border-color: #C7C7C9;
+            opacity: 1;
+        }
+    }
+    .dataset-label {
+        font-weight: $font-weight-semibold;
+        font-size: $font-size-sm;
+    }
+}

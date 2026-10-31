@@ -50,4 +50,14 @@
         {% snippet "snippets/license.html", pkg_dict=pkg %}
     {% endblock %}
 
+    {%- set additional_info_panel_id = "package-additional-info" -%}
+
+    {{ ui.offcanvas_handle(
+        _('See Additional information'),
+        id=additional_info_panel_id,
+        style="outline-primary",
+        icon="info-circle",
+        icon_end=true
+    ) }}
+
 {% endblock %}
