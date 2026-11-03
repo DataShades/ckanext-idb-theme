@@ -55,8 +55,8 @@
     {%- endif %}
     <div {{ ui.util.attrs(kwargs, default_attrs) }}>
         {%- if title or dismissible -%}
-            <div class="offcanvas-header bg-neutral-99">
-                {%- if title -%}<p class="h3 offcanvas-title my-2" id="{{ title_id }}">{{ title }}</p>{%- endif %}
+            <div class="offcanvas-header bg-neutral-99 py-4">
+                {%- if title -%}<p class="h3 offcanvas-title text-idb-primary my-0" id="{{ title_id }}">{{ title }}</p>{%- endif %}
                 {%- if dismissible -%}
                     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{{ _('Close') }}"></button>
                 {%- endif %}

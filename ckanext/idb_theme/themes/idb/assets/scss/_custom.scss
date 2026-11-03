@@ -81,3 +81,11 @@ a.open-data {
         font-size: $font-size-sm;
     }
 }
+
+#package-additional-info {
+    border-left: none;
+
+    @include media-breakpoint-down(md) {
+        --bs-offcanvas-width: 100% !important;
+    }
+}

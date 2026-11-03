@@ -27,6 +27,7 @@
   --idb-color-neutral-60: #555353;
   --idb-color-neutral-99: #F3F3F3;
   --idb-color-text-default: #232222;
+  --idb-color-text-primary: #272626;
   --idb-color-text-subtle: #5C5A5A;
   --idb-color-text-placeholder: #929090;
   --idb-color-button-stroke-text: #007EB6;
@@ -12943,6 +12944,15 @@ a.open-data span.suffix {
   font-size: 0.875rem;
 }
 
+#package-additional-info {
+  border-left: none;
+}
+@media (max-width: 767.98px) {
+  #package-additional-info {
+    --bs-offcanvas-width: 100% !important;
+  }
+}
+
 .tag {
   display: inline-block;
   margin-bottom: 4px;
@@ -18321,4 +18331,8 @@ input[id^=lang-].btn-check + label.btn:hover {
 
 .text-idb-default {
   color: var(--idb-color-text-default);
+}
+
+.text-idb-primary {
+  color: var(--idb-color-text-primary);
 }
