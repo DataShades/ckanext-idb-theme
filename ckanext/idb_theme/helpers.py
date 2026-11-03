@@ -39,7 +39,7 @@ ADVANCED_SEARCH_FORMAT_FIELD = "res_format"
 ADVANCED_SEARCH_LICENSE_FIELD = "vocab_license"
 ADVANCED_SEARCH_TAGS_FIELD = "extras_tags_translated"
 # the option name has a typo in ckanext-resource-indexer itself
-ADVANCED_SEARCH_ATTACHMENTS_FIELD_OPTION = "ckanext.resoruce_indexer.index_field"
+ADVANCED_SEARCH_ATTACHMENTS_FIELD_OPTION = "ckanext.resource_indexer.index_field"
 
 
 def idb_theme_default_collapsed(facet_name: str):
