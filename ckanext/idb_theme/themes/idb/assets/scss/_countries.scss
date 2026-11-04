@@ -1,0 +1,175 @@
+// Countries page of the portal plugin (ckanext-iadb-iar, country/index.html).
+// The header, the search and the layout are the ones of the Themes page, see
+// _themes.scss. The cards are grouped by Regional Country Department (the
+// Coverage switch on) or in tabs by region (the switch off). The empty state
+// reuses `.search-empty` of the Datasets page.
+
+$country-card-shadow: 0 0 10px 0 #0000000D;
+$country-tab-border-color: #EAEAEA;
+
+.countries-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: var(--idb-space-sm);
+    margin: 0 0 20px;
+
+    .countries-results-members & {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+.country {
+    &-card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        padding: var(--idb-space-md);
+        background: var(--idb-color-on-primary);
+        border-radius: var(--idb-border-radius-sm);
+        box-shadow: $country-card-shadow;
+        text-decoration: none;
+        transition: box-shadow .15s ease-in-out;
+
+        &:hover,
+        &:focus-visible {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+            .country-name {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    // the flags are 4:3
+    &-flag {
+        flex-shrink: 0;
+        width: 1.5rem;
+        height: auto;
+        aspect-ratio: 4 / 3;
+        margin-bottom: var(--idb-space-sm);
+        border-radius: 2px;
+        box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06);
+        object-fit: cover;
+    }
+
+    &-name {
+        color: var(--idb-color-primary-20);
+        font-size: var(--idb-font-size-text);
+        line-height: var(--idb-line-height-text);
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    &-count {
+        margin-top: auto;
+        color: var(--idb-color-button-stroke-text);
+        font-size: var(--idb-font-size-label);
+        line-height: var(--idb-line-height-label);
+        font-weight: 600;
+    }
+}
+
+// Regional Country Department: the title collapses the cards
+.countries-group {
+    &-title {
+        margin: 0 0 var(--idb-space-sm);
+        color: var(--idb-color-primary-20);
+        font-size: 1.25rem;
+        line-height: 1.75rem;
+        font-weight: 600;
+    }
+
+    &-toggle {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: var(--idb-space-sm);
+        width: 100%;
+        padding: 0;
+        background: none;
+        border: 0;
+        color: inherit;
+        font: inherit;
+        text-align: start;
+
+        .facet-icon {
+            margin-top: 0.25rem;
+            transition: transform .2s;
+        }
+
+        &.collapsed .facet-icon {
+            transform: rotate(-90deg);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--idb-color-button-stroke-text);
+            outline-offset: 2px;
+        }
+    }
+}
+
+// world regions: the tabs are links, the server renders the selected one
+.countries-tabs.nav-tabs {
+    flex-wrap: nowrap;
+    gap: var(--idb-space-xs);
+    margin-bottom: var(--idb-space-md);
+    overflow-x: auto;
+    border-bottom: 1px solid $country-tab-border-color;
+    scrollbar-width: none;
+
+    .nav-link {
+        margin-bottom: -1px;
+        padding: var(--idb-space-xs) var(--idb-space-sm);
+        border: 0;
+        border-bottom: 2px solid transparent;
+        border-radius: 0;
+        background: none;
+        color: var(--idb-color-text-default);
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+        white-space: nowrap;
+
+        &:hover {
+            color: var(--idb-color-button-stroke-text);
+        }
+
+        &.active {
+            border-bottom-color: var(--idb-color-button-stroke-text);
+            color: var(--idb-color-button-stroke-text);
+            font-weight: 700;
+        }
+    }
+}
+
+.countries-empty {
+    margin-top: 40px;
+}
+
+@include media-breakpoint-down(xl) {
+    .countries-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@include media-breakpoint-down(lg) {
+    .countries-grid,
+    .countries-results-members .countries-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@include media-breakpoint-down(md) {
+    .countries-grid,
+    .countries-results-members .countries-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .country-card {
+        padding: var(--idb-space-sm);
+    }
+
+    .countries-group-title {
+        font-size: 1.125rem;
+        line-height: 1.5rem;
+    }
+}

@@ -159,7 +159,7 @@ def idb_theme_info_graph() -> dict[str, Any]:
             {
                 "value": len(facets.get(INFO_GRAPH_COUNTRY_FACET, {}).get("items", [])),
                 "label": _("Countries covered"),
-                # TODO: link the Countries page once it is implemented.
+                # a portal with a page of all countries links it by chaining the helper
                 "url": tk.h.url_for(f"{dataset_type}.search"),
             },
             {
@@ -495,7 +495,7 @@ def idb_theme_explore_countries() -> dict[str, Any]:
 
     return {
         "total": len(result.get("search_facets", {}).get(INFO_GRAPH_COUNTRY_FACET, {}).get("items", [])),
-        # TODO: link the Countries page once it is implemented.
+        # a portal with a page of all countries links it by chaining the helper
         "url": tk.h.url_for(f"{dataset_type}.search"),
     }
 

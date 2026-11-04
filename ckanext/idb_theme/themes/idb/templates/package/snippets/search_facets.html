@@ -10,9 +10,14 @@ and the other facets are lists of values. Long lists show the first values and
 a "View all" link, and may have a field that filters the values (see
 `h.idb_theme_facet_details`).
 
-facet_titles  - The facet titles, by the facet name.
-search_facets - The search facets of the result.
-use_htmx      - Whether the filters use htmx requests, true by default.
+facet_titles        - The facet titles, by the facet name.
+search_facets       - The search facets of the result.
+use_htmx            - Whether the filters use htmx requests, true by default.
+coverage_default_on - Whether the Coverage switch is on by default, false by
+                      default. The page then turns the switch on when the
+                      request has no Coverage filter, and the switch off sets
+                      the filter to an empty value, which the dataset search
+                      ignores (see the Countries page of ckanext-iadb-iar).
 
 Example:
 
@@ -20,6 +25,7 @@ Example:
 
 #}
 {%- set use_htmx = use_htmx | default(true) -%}
+{%- set coverage_default_on = coverage_default_on | default(false) -%}
 {%- set hx_boost = {"boost": "true"} if use_htmx else {} -%}
 {%- set temporal_keys = ['ext_temporal_start', 'ext_temporal_end'] -%}
 {%- set long_list_size = 5 -%}
@@ -73,13 +79,14 @@ Example:
 
                 {%- elif facet == "vocab_iadb_iar_coverage" -%}
                     {%- set items = h.get_facet_items_dict(facet, search_facets, limit=0) -%}
-                    {%- set active = facet in request.args -%}
+                    {#- an empty value is the switch off of a page with the switch on by default -#}
+                    {%- set active = request.args.get(facet, '') != '' -%}
 
-                    {%- call ui.util.call(ui.facet_section, title=title, key=facet, tooltip=details.tooltip, selected=1 if active else 0, collapsed=not active) -%}
+                    {%- call ui.util.call(ui.facet_section, title=title, key=facet, tooltip=details.tooltip, selected=1 if active else 0, collapsed=facet not in request.args) -%}
                         {%- set label = _('Only IDB Borrowing Member Countries') -%}
                         <div class="facet-switch"{% if use_htmx %} hx-boost="true"{% endif %}>
                             {%- if active or items -%}
-                                <a class="facet-switch-control" href="{{ h.remove_url_param(facet) if active else h.add_url_param(new_params={facet: items[0].name}) }}" role="switch" aria-checked="{{ 'true' if active else 'false' }}">
+                                <a class="facet-switch-control" href="{{ h.remove_url_param(facet, replace='' if coverage_default_on else none) if active else h.remove_url_param(facet, replace=items[0].name) }}" role="switch" aria-checked="{{ 'true' if active else 'false' }}">
                                     <span class="facet-switch-label">{{ label }}</span>
                                     <span class="facet-switch-track" aria-hidden="true"></span>
                                 </a>
