@@ -1,5 +1,3 @@
-{% set dataset_type = h.default_package_type() %}
-
 {% block header_wrapper %}
     {% block header_account %}
 
@@ -57,14 +55,10 @@
         {% block header_site_navigation %}
             {%- call ui.util.call(ui.main_nav) -%}
                 {% block header_site_navigation_tabs %}
-                    {% set org_type = h.default_group_type('organization') %}
-                    {% set group_type = h.default_group_type('group') %}
-
-                    {{ ui.main_nav_item(h.humanize_entity_type('package', dataset_type, 'main nav') or _('Datasets'), href=h.url_for(dataset_type ~ '.search'), active=(request.endpoint or "").startswith((dataset_type, dataset_type + '_resource'))) }}
-                    {{ ui.main_nav_item(h.humanize_entity_type('group', group_type, 'main nav') or _('Groups'), href=h.url_for(group_type ~ '.index'), active=(request.endpoint or "").startswith(group_type)) }}
-                    {{ ui.main_nav_item(h.humanize_entity_type('organization', org_type, 'main nav') or _('Organizations'), href=h.url_for(org_type ~ '.index'), active=(request.endpoint or "").startswith(org_type)) }}
-                    {{ ui.main_nav_item(_('About'), href=h.url_for('home.about'), active=request.endpoint=="home.about") }}
-
+                    {#- portal plugins add their pages by chaining h.idb_theme_main_nav -#}
+                    {% for item in h.idb_theme_main_nav() %}
+                        {{ ui.main_nav_item(item.label, href=item.url, active=item.active) }}
+                    {% endfor %}
                 {% endblock %}
             {%- endcall %}
         {% endblock %}

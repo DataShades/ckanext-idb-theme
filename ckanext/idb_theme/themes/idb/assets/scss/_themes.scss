@@ -1,0 +1,144 @@
+// Themes page of the portal plugin (ckanext-iadb-iar, theme/index.html):
+// header with the theme search, the filters
+// panel of the Datasets page and the theme cards. The cards reuse the
+// `.home-theme-card` of the homepage, the empty state reuses `.search-empty`
+// of the Datasets page.
+
+.themes-page {
+    background: #F9F9FA;
+
+    .primary {
+        background: none;
+    }
+
+    // the panel ends with the cards
+    .filters-panel {
+        margin-bottom: 20px;
+    }
+}
+
+.themes-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--idb-space-sm);
+    margin-bottom: 20px;
+
+    &-text {
+        min-width: 0;
+    }
+
+    &-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--idb-space-sm);
+    }
+}
+
+.themes-title {
+    margin-bottom: 4px;
+    color: var(--idb-color-primary-20);
+    font-size: var(--idb-font-size-title);
+    line-height: var(--idb-line-height-title);
+    font-weight: 700;
+}
+
+.themes-description {
+    margin: 0;
+    color: var(--idb-color-text-default);
+    font-size: var(--idb-font-size-text);
+    line-height: var(--idb-line-height-text);
+}
+
+.themes-search {
+    position: relative;
+    width: 12rem;
+    margin: 0;
+
+    .themes-search-input {
+        height: 2.5rem;
+        padding: var(--idb-space-xs) 2.75rem var(--idb-space-xs) 0.75rem;
+        background: var(--idb-color-on-primary);
+        border: 1px solid var(--idb-color-button-stroke-border);
+        border-radius: var(--idb-border-radius);
+        color: var(--idb-color-text-default);
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+
+        &::placeholder {
+            color: var(--idb-color-text-primary);
+            opacity: 1;
+        }
+
+        // the icon of the field replaces the clear button
+        &::-webkit-search-cancel-button {
+            display: none;
+        }
+    }
+
+    .facet-icon {
+        position: absolute;
+        top: 50%;
+        right: 0.75rem;
+        width: 1.5rem;
+        height: 1.5rem;
+        transform: translateY(-50%);
+        color: var(--idb-color-on-surface);
+        pointer-events: none;
+    }
+}
+
+// equal cards: the icon on top, the name and the count at the bottom
+.themes-grid {
+    gap: var(--idb-space-md);
+    margin-bottom: 20px;
+
+    .home-theme-icon {
+        margin-bottom: auto;
+    }
+
+    .home-theme-name {
+        margin-top: 20px;
+    }
+}
+
+.themes-empty {
+    margin-top: 40px;
+}
+
+// nothing matches the theme search: no filters, the empty state takes the
+// whole width
+.themes-layout:has(.themes-empty) {
+    > .secondary,
+    .show-filters.btn {
+        display: none;
+    }
+
+    > .primary {
+        flex: 0 0 100%;
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+@include media-breakpoint-down(lg) {
+    .themes-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@include media-breakpoint-down(md) {
+    .themes-header-actions {
+        width: 100%;
+    }
+
+    .themes-search {
+        flex: 1;
+        width: auto;
+    }
+
+    .themes-grid {
+        gap: var(--idb-space-sm);
+    }
+}

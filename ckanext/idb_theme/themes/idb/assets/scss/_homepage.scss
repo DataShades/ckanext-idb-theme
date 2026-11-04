@@ -437,6 +437,7 @@
         padding: var(--idb-space-md);
         background: var(--idb-color-on-primary);
         border-radius: var(--idb-border-radius-sm);
+        box-shadow: 0 0 10px 0 #0000000D;
         text-decoration: none;
         transition: box-shadow .15s ease-in-out;
 
@@ -453,8 +454,8 @@
     &-icon {
         display: flex;
         align-items: center;
-        width: 1.75rem;
-        height: 1.75rem;
+        width: 44px;
+        height: 44px;
         margin-bottom: 20px;
         color: #196E8C;
 
@@ -477,6 +478,7 @@
         color: var(--idb-color-button-stroke-text);
         font-size: var(--idb-font-size-text);
         line-height: var(--idb-line-height-text);
+        font-weight: 600;
     }
 }
 

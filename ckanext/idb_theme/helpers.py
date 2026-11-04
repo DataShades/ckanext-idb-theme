@@ -431,9 +431,52 @@ def idb_theme_explore_themes(limit: int = 8) -> dict[str, Any]:
             }
             for item in items[:limit]
         ],
-        # TODO: link the Themes page once it is implemented.
+        # a portal with a page of all themes links it by chaining the helper
         "url": tk.h.url_for(f"{dataset_type}.search"),
     }
+
+
+def idb_theme_main_nav() -> list[dict[str, Any]]:
+    """Get the items of the main menu.
+
+    name   - the item ID, for plugins that add items next to it.
+    label  - the item text.
+    url    - the page URL.
+    active - whether the current page belongs to the item.
+
+    Portal plugins add their pages by chaining the helper.
+    """
+    dataset_type = tk.h.default_package_type()
+    group_type = tk.h.default_group_type("group")
+    org_type = tk.h.default_group_type("organization")
+    endpoint = (tk.request.endpoint or "") if has_request_context() else ""
+
+    return [
+        {
+            "name": "datasets",
+            "label": tk.h.humanize_entity_type("package", dataset_type, "main nav") or _("Datasets"),
+            "url": tk.h.url_for(f"{dataset_type}.search"),
+            "active": endpoint.startswith((dataset_type, f"{dataset_type}_resource")),
+        },
+        {
+            "name": "groups",
+            "label": tk.h.humanize_entity_type("group", group_type, "main nav") or _("Groups"),
+            "url": tk.h.url_for(f"{group_type}.index"),
+            "active": endpoint.startswith(group_type),
+        },
+        {
+            "name": "organizations",
+            "label": tk.h.humanize_entity_type("organization", org_type, "main nav") or _("Organizations"),
+            "url": tk.h.url_for(f"{org_type}.index"),
+            "active": endpoint.startswith(org_type),
+        },
+        {
+            "name": "about",
+            "label": _("About"),
+            "url": tk.h.url_for("home.about"),
+            "active": endpoint == "home.about",
+        },
+    ]
 
 
 def idb_theme_explore_countries() -> dict[str, Any]:
