@@ -17,7 +17,7 @@
         {%- if field.field_name not in exclude_fields
             and field.display_snippet is not none -%}
             <div class="additional-info-item">
-                <label for="additional-info-{{ field.field_name }}" class="dataset-label mb-2">{{
+                <label for="additional-info-{{ field.field_name }}" class="dataset-label mb-1">{{
                     h.scheming_language_text(field.label) }}</label>
                 <div id="additional-info-{{ field.field_name }}" class="dataset-details"{%
                     if field.display_property %} property="{{ field.display_property
@@ -29,7 +29,7 @@
     {%- endfor -%}
     {% if h.check_access('package_update',{'id':pkg_dict.id}) %}
         <div>
-            <label for="additional-info-state" class="dataset-label mb-2">{{ _("State") }}</label>
+            <label for="additional-info-state" class="dataset-label mb-1">{{ _("State") }}</label>
             <div id="additional-info-state" class="dataset-details">{{ _(pkg_dict.state) }}</div>
         </div>
     {% endif %}
