@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime
 import math
 from typing import Any
 
@@ -194,6 +195,11 @@ def idb_theme_home_title() -> str:
 def idb_theme_hide_user_image_upload() -> bool:
     """Check whether user image upload controls should be hidden."""
     return config.hide_user_image_upload()
+
+
+def idb_theme_current_year() -> int:
+    """Return the current year for the footer copyright notice."""
+    return datetime.date.today().year
 
 
 def idb_theme_download_count(pkg: dict[str, Any]) -> int:
