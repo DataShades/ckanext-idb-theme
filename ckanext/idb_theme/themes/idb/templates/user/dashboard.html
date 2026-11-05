@@ -13,33 +13,44 @@
     {{ ui.breadcrumb(_('Dashboard'), href=h.url_for('dashboard.datasets'), active=true) }}
 {%- endblock %}
 
-{% block secondary_content %}
-    {%- call ui.util.call(ui.sidebar_nav) -%}
-        {% block dashboard_nav_links -%}
-            {{ ui.sidebar_nav_item(ui.icon('sitemap') ~ (h.humanize_entity_type('package', dataset_type, 'my label') or _('My Datasets')), href=h.url_for('dashboard.datasets'), active=request.endpoint=='dashboard.datasets') }}
-            {{ ui.sidebar_nav_item(ui.icon('building') ~ (h.humanize_entity_type('organization', org_type, 'my label') or _('My Organizations')), href=h.url_for('dashboard.organizations'), active=request.endpoint=='dashboard.organizations') }}
-            {{ ui.sidebar_nav_item(ui.icon('users') ~ (h.humanize_entity_type('group', group_type, 'my label') or _('My Groups')), href=h.url_for('dashboard.groups'), active=request.endpoint=='dashboard.groups') }}
-        {%- endblock dashboard_nav_links %}
-    {%- endcall %}
-{% endblock secondary_content %}
+{% block wrapper_class %}dashboard-layout{% endblock %}
+
+{# Content actions are rendered inside the dashboard header, next to the tab title #}
+{% block pre_primary %}{% endblock %}
+
+{% block secondary %}
+    <aside class="secondary dashboard-sidebar col-12 col-md-4 col-lg-3">
+        {% block secondary_content %}
+            {%- call ui.util.call(ui.dashboard_nav, title=_('Menu')) -%}
+                {% block dashboard_nav_links -%}
+                    {# TODO: items with href="#" are placeholders, each tab gets its URL in its own task #}
+                    {{ ui.dashboard_nav_item(_('Manage Datasets'), href=h.url_for('dashboard.datasets'), active=request.endpoint=='dashboard.datasets', svg='dashboard/dataset') }}
+                    {{ ui.dashboard_nav_item(_('Manage Organizational Unit'), href=h.url_for('dashboard.organizations'), active=request.endpoint=='dashboard.organizations', svg='dashboard/lan') }}
+                    {{ ui.dashboard_nav_item(_('Manage Users'), href='#', svg='dashboard/manage_accounts') }}
+                    {{ ui.dashboard_nav_item(_('My Subscriptions'), href='#', svg='dashboard/bookmark') }}
+                {%- endblock dashboard_nav_links %}
+            {%- endcall %}
+        {% endblock secondary_content %}
+    </aside>
+{% endblock secondary %}
 
 {% block primary %}
-    <div class="primary col-md-8 col-lg-9 col-xs-12" role="main">
-        <article class="module">
-            <div class="module-content">
-                <div class="dashboard-container row">
-                    <div class="col-md-8">
-                        {% block page_heading %}{% endblock %}
-                    </div>
-                    {% if self.page_primary_action() | trim %}
-                        {%- call ui.util.call(ui.page_action_wrapper, variant="dashboard") -%}
-                            {% block page_primary_action -%}{% endblock %}
-                        {%- endcall %}
-                    {% endif %}
-                </div>
-                {% block primary_content_inner %}
-                {% endblock %}
+    <div class="primary dashboard-content col-12 col-md-8 col-lg-9" role="main">
+        <div class="dashboard-header">
+            <div class="dashboard-title">
+                {% block page_heading %}{% endblock %}
             </div>
-        </article>
+
+            {% if self.content_action() | trim or self.page_primary_action() | trim %}
+                <div class="dashboard-actions">
+                    {{ self.content_action() }}
+                    {% block page_primary_action -%}{% endblock %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="dashboard-body">
+            {% block primary_content_inner %}{% endblock %}
+        </div>
     </div>
 {% endblock %}
