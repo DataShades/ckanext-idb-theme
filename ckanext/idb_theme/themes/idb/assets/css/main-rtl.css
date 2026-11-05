@@ -15209,7 +15209,7 @@ td.diff_header {
 .toolbar {
   position: relative;
   margin-bottom: 10px;
-  padding: 5px 0;
+  padding: 5px 0 10px;
 }
 
 .toolbar .breadcrumb::after {
@@ -15226,9 +15226,9 @@ td.diff_header {
   border: none;
   background: none;
   color: var(--idb-color-on-surface-muted);
-  font-size: var(--idb-font-size-label);
-  line-height: var(--idb-line-height-label);
-  font-weight: var(--idb-font-weight);
+  font-size: var(--idb-font-size-label-large);
+  line-height: var(--idb-line-height-label-large);
+  font-weight: 600;
 }
 
 .toolbar .breadcrumb li:not(:first-child) {
@@ -15239,6 +15239,7 @@ td.diff_header {
   padding-right: 0;
   margin: 0 var(--idb-space-xs);
   color: var(--idb-color-on-surface-muted);
+  font-weight: 400;
   content: "/";
 }
 
@@ -15264,7 +15265,7 @@ td.diff_header {
 }
 
 .toolbar .breadcrumb a {
-  color: var(--idb-color-on-surface-muted);
+  color: #007EB6;
 }
 
 @media (max-width: 575.98px) {
@@ -15273,10 +15274,8 @@ td.diff_header {
     text-shadow: none;
   }
 }
-.toolbar .breadcrumb .active a,
-.toolbar .breadcrumb a.active {
-  font-weight: 600;
-  color: var(--idb-color-on-surface-muted);
+.toolbar .breadcrumb li:last-child a {
+  color: #232222;
 }
 
 .actions {
@@ -15999,7 +15998,7 @@ td.diff_header {
 }
 .search-hero .toolbar .breadcrumb,
 .search-hero .toolbar .breadcrumb a,
-.search-hero .toolbar .breadcrumb .active a,
+.search-hero .toolbar .breadcrumb li:last-child a,
 .search-hero .toolbar .breadcrumb li:not(:first-child)::before,
 .search-hero .toolbar .breadcrumb .idb-breadcrumb-ellipsis {
   color: var(--idb-color-on-primary);
