@@ -189,7 +189,6 @@
 }
 
 .search-results-sort .form-select {
-    min-width: 197px;
     height: 2.5rem;
     padding-top: var(--idb-space-xs);
     padding-bottom: var(--idb-space-xs);
@@ -290,6 +289,7 @@
     align-items: center;
     max-width: 30rem;
     margin: var(--idb-space-xl) auto;
+    font-family: "Inter", sans-serif;
     text-align: center;
 
     &-image {

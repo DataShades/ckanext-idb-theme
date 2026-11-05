@@ -36,6 +36,35 @@
     }
 }
 
+.data-projects-page {
+    // the header text and the actions are on separate lines
+    .themes-header {
+        gap: 20px;
+
+        &-actions {
+            gap: 10px;
+        }
+    }
+
+    // the form fits the field, so the icon stays inside it
+    .themes-search {
+        width: auto;
+
+        &-input {
+            min-width: 246px;
+        }
+
+        .facet-icon {
+            color: var(--idb-color-on-surface-variant);
+        }
+    }
+
+    .dataset-pagination,
+    .filters-panel {
+        margin-bottom: 28px;
+    }
+}
+
 .themes-title {
     margin-bottom: 4px;
     color: var(--idb-color-primary-20);
@@ -67,7 +96,7 @@
         line-height: var(--idb-line-height-label-large);
 
         &::placeholder {
-            color: var(--idb-color-text-primary);
+            color: #939292;
             opacity: 1;
         }
 

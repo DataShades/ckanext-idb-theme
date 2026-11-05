@@ -17195,6 +17195,19 @@ td.diff_header {
   gap: var(--idb-space-sm);
 }
 
+.data-projects-page .themes-header {
+  gap: 20px;
+}
+.data-projects-page .themes-header .themes-header-actions {
+  gap: 10px;
+}
+.data-projects-page .themes-header .themes-search-input::placeholder {
+  color: #939292;
+}
+.data-projects-page .themes-header .themes-search .facet-icon {
+  color: var(--idb-color-on-surface-variant);
+}
+
 .themes-title {
   margin-bottom: 4px;
   color: var(--idb-color-primary-20);
