@@ -256,23 +256,29 @@ def idb_theme_dataset_sort_options() -> list[dict[str, str]]:
     ]
 
 
-def idb_theme_datasets_per_page() -> int:
+def idb_theme_datasets_per_page(options: list[int] | None = None) -> int:
     """Return the number of datasets per page chosen on the Datasets page.
 
-    Unknown values fall back to the default one.
+    ``options`` are the page sizes of the dropdown, the ones of the Datasets
+    page by default; other pages, e.g. the Data Projects page of
+    ckanext-iadb-iar, set their own. Unknown values fall back to the first
+    option.
     """
+    options = options or DATASETS_PER_PAGE_OPTIONS
     value = tk.request.args.get(DATASETS_PER_PAGE_PARAM, type=int) if has_request_context() else None
-    return value if value in DATASETS_PER_PAGE_OPTIONS else DATASETS_PER_PAGE_OPTIONS[0]
+    return value if value in options else options[0]
 
 
-def idb_theme_datasets_pagination(item_count: int) -> dict[str, Any]:
+def idb_theme_datasets_pagination(item_count: int, options: list[int] | None = None) -> dict[str, Any]:
     """Get the pagination of the Datasets page.
 
     The page size is chosen by the user, while the ``Page`` object of the
     dataset search view is built with ``ckan.datasets_per_page``, so the
-    numbers are computed here from the request.
+    numbers are computed here from the request. ``options`` are the page
+    sizes of the dropdown, see `idb_theme_datasets_per_page`.
     """
-    per_page = idb_theme_datasets_per_page()
+    options = options or DATASETS_PER_PAGE_OPTIONS
+    per_page = idb_theme_datasets_per_page(options)
     page = tk.h.get_page_number(tk.request.args)
     last_page = max(math.ceil(item_count / per_page), 1)
 
@@ -282,7 +288,7 @@ def idb_theme_datasets_pagination(item_count: int) -> dict[str, Any]:
     return {
         "param": DATASETS_PER_PAGE_PARAM,
         "per_page": per_page,
-        "per_page_options": DATASETS_PER_PAGE_OPTIONS,
+        "per_page_options": options,
         "item_count": item_count,
         "first_item": min((page - 1) * per_page + 1, item_count),
         "last_item": min(page * per_page, item_count),

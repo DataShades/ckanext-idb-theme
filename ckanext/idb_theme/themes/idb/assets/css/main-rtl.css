@@ -16151,7 +16151,6 @@ td.diff_header {
 }
 
 .search-results-sort .form-select {
-  min-width: 197px;
   height: 2.5rem;
   padding-top: var(--idb-space-xs);
   padding-bottom: var(--idb-space-xs);
@@ -16241,6 +16240,7 @@ td.diff_header {
   align-items: center;
   max-width: 30rem;
   margin: var(--idb-space-xl) auto;
+  font-family: "Inter", sans-serif;
   text-align: center;
 }
 .search-empty-image {
@@ -17195,17 +17195,66 @@ td.diff_header {
   gap: var(--idb-space-sm);
 }
 
+@media (min-width: 768px) {
+  .data-projects-page .secondary {
+    padding-right: 0;
+  }
+}
 .data-projects-page .themes-header {
   gap: 20px;
 }
-.data-projects-page .themes-header .themes-header-actions {
+.data-projects-page .themes-header-actions {
   gap: 10px;
 }
-.data-projects-page .themes-header .themes-search-input::placeholder {
-  color: #939292;
+.data-projects-page .themes-search {
+  width: auto;
 }
-.data-projects-page .themes-header .themes-search .facet-icon {
+.data-projects-page .themes-search-input {
+  min-width: 246px;
+}
+.data-projects-page .themes-search .facet-icon {
   color: var(--idb-color-on-surface-variant);
+}
+.data-projects-page .dataset-pagination,
+.data-projects-page .filters-panel {
+  margin-bottom: 28px;
+}
+.data-projects-page .data-projects-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px var(--idb-space-md);
+  margin: 0 0 20px;
+}
+.data-projects-page .home-data-project-image {
+  height: 80px;
+  aspect-ratio: auto;
+}
+.data-projects-page .home-data-project-image--logo {
+  padding: var(--idb-space-md) var(--idb-space-md) var(--idb-space-lg);
+  object-fit: contain;
+  object-position: left top;
+}
+.data-projects-page .home-data-project-title {
+  font-size: 1.125rem;
+  line-height: 1.5rem;
+}
+.data-projects-page .home-data-project-description {
+  min-height: calc(3 * var(--idb-line-height-label));
+  font-size: var(--idb-font-size-label);
+  line-height: var(--idb-line-height-label);
+}
+.data-projects-page .home-data-project-count {
+  font-weight: 600;
+}
+@media (max-width: 991.98px) {
+  .data-projects-page .data-projects-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 575.98px) {
+  .data-projects-page .data-projects-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .themes-title {
@@ -17239,7 +17288,7 @@ td.diff_header {
   line-height: var(--idb-line-height-label-large);
 }
 .themes-search .themes-search-input::placeholder {
-  color: var(--idb-color-text-primary);
+  color: #939292;
   opacity: 1;
 }
 .themes-search .themes-search-input::-webkit-search-cancel-button {
