@@ -4,6 +4,9 @@ the shown datasets and the first, previous, next and last page buttons.
 
 dataset_type - The dataset type.
 item_count   - The number of found datasets.
+action       - The URL of the page, the Datasets page by default. Other
+               pages with the page size of the Datasets page set it, e.g. the
+               Data Projects page of ckanext-iadb-iar.
 
 Example:
 
@@ -31,7 +34,7 @@ Example:
 {%- endmacro %}
 
 <nav class="dataset-pagination" aria-label="{{ _('Pagination') }}">
-    {%- call ui.util.call(ui.form, action=h.url_for(dataset_type ~ '.search'), attrs={"class": "dataset-pagination-size"}, hx={"boost": "true", "trigger": "change, submit"}) -%}
+    {%- call ui.util.call(ui.form, action=action or h.url_for(dataset_type ~ '.search'), attrs={"class": "dataset-pagination-size"}, hx={"boost": "true", "trigger": "change, submit"}) -%}
         {%- for name, value in request.args.items(multi=True) -%}
             {%- if name not in [pagination.param, 'page'] -%}
                 <input type="hidden" name="{{ name }}" value="{{ value }}">
