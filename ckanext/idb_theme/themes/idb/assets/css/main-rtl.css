@@ -15929,7 +15929,7 @@ td.diff_header {
 .home-theme-name {
   margin-bottom: var(--idb-space-xs);
   color: var(--idb-color-primary-20);
-  font-size: 1.125rem;
+  font-size: 1rem;
   line-height: 1.5rem;
   font-weight: 600;
   overflow-wrap: anywhere;
@@ -17307,7 +17307,7 @@ td.diff_header {
 
 .themes-grid {
   gap: var(--idb-space-md);
-  margin-bottom: 20px;
+  margin-bottom: 28px;
 }
 .themes-grid .home-theme-icon {
   margin-bottom: auto;
