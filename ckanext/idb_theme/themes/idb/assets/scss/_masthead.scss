@@ -92,6 +92,7 @@ $notificationsBg: #CF1322;
     .logo {
         img {
             height: 36px;
+            margin-right: $spacer * .625;
         }
     }
 
@@ -142,24 +143,93 @@ $notificationsBg: #CF1322;
             li {
                 margin-right: 2px;
                 a {
-                    padding: ($spacer * .6)  ($spacer * .9);
-                    color: $black;
+                    padding: $spacer-2 $spacer;
+                    font-size: $font-size-sm;
+                    font-weight: $font-weight-semibold;
+                    color: var(--idb-color-on-surface-variant);
                     text-decoration: none;
                     margin-bottom: $spacer-1;
-                }
-                &:hover,
-                &:focus,
-                &.active {
-                    a {
-                        border-radius: $border-radius-sm;
-                        background-color: $brand-100;
-                        color: $brand-900;
+                    &:hover {
+                        border-radius: $border-radius-pill;
+                        background-color: color-mix(in srgb, var(--idb-color-on-surface-variant) 8%, transparent);
+                        color: var(--idb-color-on-surface-variant);
+                    }
+                    &:focus {
+                        outline: none;
+                        border-radius: $border-radius-pill;
+                        background-color: color-mix(in srgb, var(--idb-color-button-flat-background) 16%, transparent);
+                        color: var(--idb-color-button-stroke-text);
                     }
                 }
                 &.active {
                     a {
-                        font-weight: $font-weight-semibold;
+                        font-weight: $font-weight-bold;
+                        color: var(--idb-color-button-stroke-text);
+                        &:hover {
+                            color: var(--idb-color-on-surface-variant);
+                        }
+                        &:focus {
+                            color: var(--idb-color-button-stroke-text);
+                        }
                     }
+                }
+            }
+        }
+
+        // "More" menu: the secondary pages that do not fit in the menu bar
+        .nav-item.dropdown {
+            > .dropdown-toggle::after {
+                // the caret is replaced with a chevron icon
+                display: none;
+            }
+            > .dropdown-toggle .fa-chevron-down {
+                margin-left: $spacer-1;
+                font-size: .75em;
+                vertical-align: .1em;
+            }
+            &.active > .dropdown-toggle.active.show {
+                background-color: transparent;
+                font-weight: $font-weight-semibold;
+                color: var(--idb-color-on-surface-variant);
+            }
+        }
+        .dropdown-menu {
+            gap: 0;
+            padding: ($spacer * .625) $spacer-2;
+            margin-top: $spacer-2;
+            border-color: var(--idb-color-border-default);
+            border-radius: var(--idb-border-radius);
+            box-shadow: 0 8px 24px color-mix(in srgb, var(--idb-color-neutral-20) 12%, transparent);
+
+            > li {
+                margin-right: 0;
+                &:not(:last-of-type) {
+                    margin-bottom: 0.25rem;
+                }
+            }
+            .dropdown-item {
+                padding: $spacer-2 ($spacer * .75);
+                margin: 0;
+                border-radius: var(--idb-border-radius);
+                font-size: $font-size-sm;
+                font-weight: $font-weight-normal;
+                color: var(--idb-color-text-primary);
+                white-space: nowrap;
+                @include transition($nav-link-transition);
+
+                &:hover {
+                    background-color: var(--idb-color-neutral-99);
+                    font-weight: $font-weight-normal;
+                    color: var(--idb-color-text-primary);
+                }
+                &:focus {
+                    background-color: var(--idb-color-interaction-selected);
+                    color: var(--idb-color-button-stroke-text);
+                }
+                &.active {
+                    background-color: var(--idb-color-interaction-selected);
+                    font-weight: $font-weight-semibold;
+                    color: var(--idb-color-button-stroke-text);
                 }
             }
         }

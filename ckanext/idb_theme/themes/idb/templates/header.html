@@ -53,19 +53,34 @@
 
     {%- call ui.util.call(ui.header, logo=g.site_logo, title=g.site_title, subtitle=g.site_description) -%}
         {% block header_site_navigation %}
-            {%- call ui.util.call(ui.main_nav) -%}
+            {%- call ui.util.call(ui.main_nav, _extra_class="justify-content-start") -%}
                 {% block header_site_navigation_tabs %}
                     {#- portal plugins add their pages by chaining h.idb_theme_main_nav -#}
                     {% for item in h.idb_theme_main_nav() %}
-                        {{ ui.main_nav_item(item.label, href=item.url, active=item.active) }}
+                        {% if item.children %}
+                            {{ ui.main_nav_dropdown(item.label, item.children, item.active) }}
+                        {% else %}
+                            {{ ui.main_nav_item(item.label, href=item.url, active=item.active) }}
+                        {% endif %}
                     {% endfor %}
                 {% endblock %}
             {%- endcall %}
         {% endblock %}
 
+        {% block header_site_search %}
+            <form class="d-flex site-search" action="{% url_for dataset_type ~ '.search' %}" method="get">
+                <label class="d-none" for="field-sitewide-search">{% block header_site_search_label %}{{ h.humanize_entity_type('package', dataset_type, 'search_placeholder') or _('Search Datasets...') }}{% endblock %}</label>
+                <input id="field-sitewide-search" class="form-control me-2"  type="text" name="q" placeholder="{{ _('Search here') }}" aria-label="{{ h.humanize_entity_type('package', dataset_type, 'search_placeholder') or _('Search datasets...') }}"/>
+                <button class="btn" type="submit" aria-label="{{ _('Submit') }}"><i class="fa fa-search"></i></button>
+            </form>
+        {% endblock %}
+
+        {% block language_selector %}
+            {% snippet "snippets/language_selector.html" %}
+        {% endblock %}
+
         {% if not current_user.is_authenticated %}
             {% block header_account_notlogged %}
-
                 <div class="col-md-2 gap-2 login">
                     {{ ui.button(_('Login') ~ ui.icon("sign-in"), href=h.url_for('user.login')) }}
                     {{ ui.button(_('Register') ~ ui.icon("id-card"), href=h.url_for('user.register')) if h.check_access('user_create') }}
