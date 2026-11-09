@@ -522,6 +522,9 @@
             display: flex;
             flex-wrap: wrap;
             gap: 4px;
+            // without it the flex item grows to its content and the badge is clipped instead of cut
+            min-width: 0;
+            max-width: 100%;
         }
 
         .table-badge {
