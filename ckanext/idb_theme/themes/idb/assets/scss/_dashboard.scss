@@ -109,6 +109,10 @@
     }
 }
 
+.dashboard-page .toolbar {
+    margin-bottom: 30px;
+}
+
 .dashboard-layout {
     .dashboard-sidebar {
         margin-bottom: var(--idb-space-md);
@@ -120,7 +124,7 @@
 
     .dashboard-content {
         min-width: 0; // let wide children (tables, charts) shrink instead of overflowing the column
-        margin-bottom: var(--idb-space-lg);
+        margin-bottom: 36px;
     }
 
     .dashboard-header {
@@ -139,8 +143,8 @@
             margin: 0;
             font-size: var(--idb-font-size-subtitle);
             line-height: var(--idb-line-height-subtitle);
-            font-weight: 600;
-            color: var(--idb-color-text-default);
+            font-weight: 700;
+            color: var(--idb-color-primary-20);
             overflow-wrap: anywhere;
 
             @include media-breakpoint-up(md) {

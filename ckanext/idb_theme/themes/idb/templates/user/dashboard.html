@@ -13,6 +13,8 @@
     {{ ui.breadcrumb(_('Dashboard'), href=h.url_for('dashboard.datasets'), active=true) }}
 {%- endblock %}
 
+{% block maintag %}<div class="main dashboard-page">{% endblock %}
+
 {% block wrapper_class %}dashboard-layout{% endblock %}
 
 {# Content actions are rendered inside the dashboard header, next to the tab title #}
