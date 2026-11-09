@@ -134,5 +134,8 @@
 
 {#  CUSTOM COMPONENTS #}
 {% set language_selector = language_selector | default(meta.language_selector) %}
+{% set notifications = notifications | default(meta.notifications) %}
+{% set search_overlay = search_overlay | default(meta.search_overlay) %}
+{% set user_menu = user_menu | default(meta.user_menu) %}
 {% set dashboard_nav = dashboard_nav | default(_wrapper.dashboard_nav) %}
 {% set dashboard_nav_item = dashboard_nav_item | default(_nav.dashboard_nav_item) %}

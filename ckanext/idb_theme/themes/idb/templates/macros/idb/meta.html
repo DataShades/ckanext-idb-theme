@@ -5,7 +5,7 @@
     </div>
 {%- endmacro %}
 
-{%- macro header(content, title, subtitle, logo, href=h.url_for('home.index')) -%}
+{%- macro header(content, title, subtitle, logo, href=h.url_for('home.index'), actions=None, overlay=None) -%}
     {%- set logo = h.url_for_static("images/idb-logo.svg") -%}
 
     <header {{ ui.util.attrs(kwargs, {"class": "masthead"}) }}>
@@ -14,7 +14,7 @@
                 <div class="debug">Blueprint : {{ g.blueprint }}<br />View : {{ g.view }}</div>
             {% endif %}
 
-            <nav class="navbar navbar-expand-lg navbar-light gap-5">
+            <nav class="navbar navbar-expand-lg navbar-light align-items-center gap-5">
                 <div class="{{ g.header_class }} navbar-left">
                     {% if logo -%}
                         {{ ui.link(ui.image(h.url_for_static_or_external(logo), alt=title, aria={"label": _('Navigate to Home - {site_title}').format(site_title=title)}) ~ _('DataHub'), href=href, attrs={"class": "logo d-flex align-items-center gap-4 text-decoration-none text-idb-default"}) }}
@@ -26,13 +26,16 @@
                         {%- endif %}
                     {%- endif %}
                 </div>
+                {{ actions }}
                 {{ ui.button(ui.icon("bars"), attrs={"class": "navbar-toggler"}, data={"bs-toggle": "collapse", "bs-target": "#main-navigation-toggle"}, aria={"controls": "main-navigation-toggle",  "expanded": "false", "label": _('Toggle navigation')}) }}
 
-                <div class="main-navbar collapse navbar-collapse align-items-center gap-4" id="main-navigation-toggle">
+                <div class="main-navbar collapse navbar-collapse align-items-center gap-4 justify-content-between" id="main-navigation-toggle">
                     {{ content }}
                 </div>
             </nav>
         {%- endcall %}
+        {#- rendered outside the container so it can cover the whole header bar -#}
+        {{ overlay }}
     </header>
 {%- endmacro %}
 
@@ -48,19 +51,102 @@
     <div {{ ui.util.attrs(kwargs, {"class": "bg-black"}) }}>{{ content }}</div>
 {%- endmacro %}
 
-{%- macro language_selector() -%}
-    {% set current_lang = request.environ.CKAN_LANG %}
-    {%- set data_attrs = {"module": "autocomplete", "module-dropdown-class": "lang-dropdown", "module-container-class": "lang-container"} -%}
-    {%- set label = ui.icon("globe", style="solid") ~ ui.util.tag(_('Language'), "span", attrs={"class": "sr-only"}) -%}
-    {%- set item_kwargs = kwargs -%}
+{%- macro language_selector(label=None, icon="globe") -%}
+    {%- set current_lang = request.environ.CKAN_LANG -%}
+    {%- set locales = h.get_available_locales() -%}
+    {%- set ns = namespace(current_name=current_lang) -%}
+    {%- for locale in locales -%}
+        {%- if locale.short_name == current_lang -%}
+            {%- set ns.current_name = locale.english_name or locale.display_name or current_lang -%}
+        {%- endif -%}
+    {%- endfor -%}
 
     <div class="lang-select">
-        {%- call ui.util.call(ui.form, method="POST", action=h.url_for('util.internal_redirect'), data={"module": "select-switch"}) -%}
-            {%- call ui.util.call(ui.select_box, name="url", id=ui.util.id(), data=data_attrs, label=label, **item_kwargs) -%}
-                {% for locale in h.get_available_locales() %}
-                    {{ ui.select_option(locale.display_name or locale.english_name, value=h.url_for(h.current_url(), locale=locale.short_name), selected=locale.short_name == current_lang) }}
-                {% endfor %}
-            {%- endcall %}
-        {%- endcall %}
+        {%- if label -%}
+            <span class="lang-select-label">{{ ui.icon(icon, style="solid", aria={"hidden": "true"}) ~ label }}</span>
+        {%- endif -%}
+        {%- call ui.util.call(ui.dropdown, title=(ns.current_name[:3] | upper) ~ ui.icon("plus"), style="link", menu_class="dropdown-menu-end", aria={"label": _('Change language, current language is {language}').format(language=ns.current_name)}) -%}
+            {%- for locale in locales -%}
+                {%- set is_active = locale.short_name == current_lang -%}
+                {%- set item_attrs = {"class": "dropdown-item" ~ (" active" if is_active else ""), "lang": locale.short_name.replace("_", "-")} -%}
+                {%- if is_active -%}
+                    {%- do item_attrs.update({"aria-current": "true"}) -%}
+                {%- endif -%}
+                {{ ui.dropdown_item(locale.display_name or locale.english_name, href=h.url_for(h.current_url(), locale=locale.short_name), attrs=item_attrs) }}
+            {%- endfor -%}
+        {%- endcall -%}
+    </div>
+{%- endmacro %}
+
+{%- macro notifications(count=0) -%}
+    {%- if count -%}
+        {%- set label = ngettext('{count} new notification', '{count} new notifications', count).format(count=count) -%}
+    {%- else -%}
+        {%- set label = _('No new notifications') -%}
+    {%- endif -%}
+
+    <span {{ ui.util.attrs(kwargs, {"class": "header-notifications", "role": "img", "aria-label": label}) }}>
+        {{ ui.icon("bell", style="regular", aria={"hidden": "true"}) }}
+        {%- if count %}
+            {{ ui.badge(count, attrs={"class": "badge header-notifications-badge", "aria-hidden": "true"}) }}
+        {%- endif %}
+    </span>
+{%- endmacro %}
+
+{%- macro user_menu() -%}
+    {%- if current_user.is_authenticated -%}
+        {%- set display_name = current_user.display_name or current_user.name -%}
+        {%- set words = display_name.split() or [display_name] -%}
+        {%- set initials = ((words[0][:1] ~ words[1][:1]) if words | length > 1 else words[0][:2]) | upper -%}
+        {%- set items = [
+            (_('My Profile'), h.url_for('user.read', id=current_user.name), 'user.read'),
+            (_('My Dashboard'), h.url_for('dashboard.datasets'), 'dashboard.datasets'),
+            (_('Settings'), h.url_for('user.edit', id=current_user.name), 'user.edit'),
+        ] -%}
+
+        {%- if current_user.image_url -%}
+            {%- set avatar = ui.image(h.url_for_static_or_external(current_user.image_url), alt=display_name, height=40, width=40, attrs={"class": "user-image"}) -%}
+        {%- else -%}
+            {%- set avatar = ui.util.tag(initials, "span", attrs={"class": "header-user-initials", "aria-hidden": "true"}) -%}
+        {%- endif -%}
+
+        <div class="header-user">
+            {%- call ui.util.call(ui.dropdown, title=avatar, attrs={"class": "dropdown-toggle"}, menu_class="dropdown-menu-end", aria={"label": _('User menu for {name}').format(name=display_name)}) -%}
+                {%- for label, url, endpoint in items -%}
+                    {%- set active = request.endpoint == endpoint -%}
+                    {%- set item_attrs = {"class": "dropdown-item d-flex align-items-center justify-content-between" ~ (" active" if active else "")} -%}
+                    {%- if active -%}
+                        {%- do item_attrs.update({"aria-current": "page"}) -%}
+                    {%- endif -%}
+                    {{ ui.dropdown_item(label ~ (ui.icon("check", aria={"hidden": "true"}) if active else ""), href=url, attrs=item_attrs) }}
+                {%- endfor -%}
+                <li>
+                    {%- call ui.util.call(ui.form, method="POST", action=h.url_for('user.logout')) -%}
+                        {{ ui.button(_('Log out'), type="submit", attrs={"class": "dropdown-item"}) }}
+                    {%- endcall -%}
+                </li>
+            {%- endcall -%}
+        </div>
+    {%- endif -%}
+{%- endmacro %}
+
+{#- Search form that covers the header bar on narrow screens, where the inline
+    field is hidden. Toggled by the `idb-search-overlay` JS module through the
+    `.header-search-toggle` trigger. -#}
+{%- macro search_overlay(url, placeholder=None, label=None) -%}
+    {%- set placeholder = placeholder or _('Search here') -%}
+    {%- set defaults = {
+        "class": "header-search-overlay d-lg-none",
+        "data-module": "idb-search-overlay",
+        "data-module-trigger": ".header-search-toggle",
+    } -%}
+    <div {{ ui.util.attrs(kwargs, defaults) }}>
+        <div class="header-search-overlay-panel">
+            {%- call ui.util.call(ui.form, method="get", action=url, attrs={"class": "header-search-overlay-form", "role": "search"}) -%}
+                <label class="visually-hidden" for="field-header-search">{{ label or placeholder }}</label>
+                {{ ui.search_input(placeholder=placeholder, attrs={"id": "field-header-search", "class": "header-search-overlay-input"}) }}
+                {{ ui.button(ui.icon("xmark", aria={"hidden": "true"}), attrs={"class": "header-search-overlay-close", "aria-label": _('Close search')}) }}
+            {%- endcall -%}
+        </div>
     </div>
 {%- endmacro %}
