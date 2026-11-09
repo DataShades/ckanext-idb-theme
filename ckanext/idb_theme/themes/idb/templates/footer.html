@@ -2,12 +2,12 @@
 {% set org_type = h.default_group_type('organization') %}
 {% set group_type = h.default_group_type('group') %}
 
-{%- macro footer_section(title, links) -%}
+{%- macro footer_section(title, links, external=false) -%}
     <nav class="footer-section" aria-label="{{ title }}">
         <h2 class="footer-heading">{{ title }}</h2>
         <ul class="footer-nav list-unstyled">
             {%- for label, href in links %}
-                <li><a href="{{ href }}">{{ label }}</a></li>
+                <li><a href="{{ href }}"{% if external %} target="_blank" rel="noopener noreferrer"{% endif %}>{{ label }}</a></li>
             {%- endfor %}
         </ul>
     </nav>
@@ -49,9 +49,9 @@
 
                         {{ footer_section(_('IDB'), [
                             ('iadb.org', 'https://www.iadb.org'),
-                            (_('Regional and Sectoral Data Group'), '#'),
-                            (_('Open Data'), 'https://data.iadb.org'),
-                        ]) }}
+                            (_('Regional and Sectoral Data Group'), 'https://idbg.sharepoint.com/sites/RegionalandSectoralDataGroup'),
+                            (_('Open Data'), 'https://data.iadb.org/'),
+                        ], external=true) }}
                     {% endblock %}
                 </div>
             {% endblock %}
