@@ -133,3 +133,5 @@
 
 {#  CUSTOM COMPONENTS #}
 {% set language_selector = language_selector | default(meta.language_selector) %}
+{% set dashboard_nav = dashboard_nav | default(_wrapper.dashboard_nav) %}
+{% set dashboard_nav_item = dashboard_nav_item | default(_nav.dashboard_nav_item) %}
