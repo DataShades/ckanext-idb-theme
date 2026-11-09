@@ -59,10 +59,13 @@ $country-tab-border-color: #EAEAEA;
         line-height: 1.5rem;
         font-weight: 600;
         overflow-wrap: anywhere;
+
+        .countries-results-all & {
+            margin-bottom: 4px;
+        }
     }
 
     &-count {
-        margin-top: auto;
         color: var(--idb-color-button-stroke-text);
         font-size: var(--idb-font-size-text);
         line-height: var(--idb-line-height-text);
