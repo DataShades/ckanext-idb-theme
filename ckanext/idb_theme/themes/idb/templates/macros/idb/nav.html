@@ -21,6 +21,24 @@
     {{ ui.nav_item(content, href, active, **kwargs) }}
 {%- endmacro %}
 
+{%- macro main_nav_dropdown(content, items, active) -%}
+    {%- call ui.util.call(ui.list_item, attrs={"class": "nav-item dropdown" ~ (" active" if active else "")}) -%}
+        <a href="#" class="dropdown-toggle{{ ' active' if active }}" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ content }}
+            {{ ui.icon("chevron-down", style="solid", aria={"hidden": "true"}) }}
+        </a>
+        <ul class="dropdown-menu">
+            {%- for item in items %}
+                {%- set item_attrs = {"class": "dropdown-item" ~ (" active" if item.active else "")} -%}
+                {%- if item.active -%}
+                    {%- do item_attrs.update({"aria-current": "page"}) -%}
+                {%- endif -%}
+                {{ ui.dropdown_item(item.label, href=item.url, attrs=item_attrs) }}
+            {%- endfor %}
+        </ul>
+    {%- endcall %}
+{%- endmacro %}
+
 {%- macro sidebar_nav_item(content, href, active) -%}
     {{ ui.nav_item(content, href, active, **kwargs) }}
 {%- endmacro %}

@@ -50,14 +50,14 @@
     <div {{ ui.util.attrs(kwargs, {"class": "container" ~ ('-fluid' if fluid else "")}) }}>{{ content }}</div>
 {%- endmacro %}
 
-{%- macro dropdown(content, title, inline, style="primary") -%}
+{%- macro dropdown(content, title, inline, style="primary", menu_class="") -%}
     {%- do kwargs.setdefault("data", {}).setdefault("bs-toggle", "dropdown") -%}
     {%- do kwargs.setdefault("attrs", {}).setdefault("id", ui.util.id()) -%}
     {%- do kwargs.setdefault("aria", {}).setdefault("expanded", "false") -%}
 
     <div class="dropdown {{ 'btn-group' if inline }}">
         {{ ui.button(title, style=style ~ " dropdown-toggle", **kwargs) }}
-        <ul class="dropdown-menu" aria-labelledby="{{ kwargs.attrs.id }}">
+        <ul class="dropdown-menu {{ menu_class }}" aria-labelledby="{{ kwargs.attrs.id }}">
             {{ content }}
         </ul>
     </div>

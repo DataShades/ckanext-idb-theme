@@ -22,8 +22,8 @@ test-server:  ## start server for frontend testing
 
 dev: ## watch theme CSS and recompile on changes
 	cd ckanext/idb_theme/themes/idb; if [ ! -d node_modules ]; then npm ci; fi;
-	cd ckanext/idb_theme/themes/idb; npm run watch-styles;
+	cd ckanext/idb_theme/themes/idb; npm run dev;
 
 build: ## build and optimize the theme
 	cd ckanext/idb_theme/themes/idb; if [ ! -d node_modules ]; then npm ci; fi;
-	cd ckanext/idb_theme/themes/idb; npm run compile-styles;
+	cd ckanext/idb_theme/themes/idb; npm run build;

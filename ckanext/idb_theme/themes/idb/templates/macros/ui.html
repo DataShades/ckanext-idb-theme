@@ -116,6 +116,7 @@
 {% set content_nav_item = content_nav_item | default(_nav.content_nav_item) %}
 {% set dropdown_item = dropdown_item | default(_nav.dropdown_item) %}
 {% set main_nav_item = main_nav_item | default(_nav.main_nav_item) %}
+{% set main_nav_dropdown = main_nav_dropdown | default(_nav.main_nav_dropdown) %}
 {% set nav_item = nav_item | default(_nav.nav_item) %}
 {% set sidebar_nav_item = sidebar_nav_item | default(_nav.sidebar_nav_item) %}
 {% set page_action = page_action | default(_nav.page_action) %}
@@ -133,5 +134,8 @@
 
 {#  CUSTOM COMPONENTS #}
 {% set language_selector = language_selector | default(meta.language_selector) %}
+{% set notifications = notifications | default(meta.notifications) %}
+{% set search_overlay = search_overlay | default(meta.search_overlay) %}
+{% set user_menu = user_menu | default(meta.user_menu) %}
 {% set dashboard_nav = dashboard_nav | default(_wrapper.dashboard_nav) %}
 {% set dashboard_nav_item = dashboard_nav_item | default(_nav.dashboard_nav_item) %}

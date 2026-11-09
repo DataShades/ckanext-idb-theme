@@ -27,9 +27,13 @@
     }
 }
 
-.masthead .main-navbar .site-search button {
-    margin-right: -40px;
-    margin-left: 0;
+.masthead .main-navbar .site-search .btn {
+    right: auto;
+    left: $spacer-2;
+}
+.masthead .main-navbar .site-search .form-control {
+    padding-right: $spacer;
+    padding-left: 2.75rem;
 }
 
 .masthead {

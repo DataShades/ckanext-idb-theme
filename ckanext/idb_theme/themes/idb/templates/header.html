@@ -1,4 +1,9 @@
 {% set dataset_type = h.default_package_type() %}
+{#- There is no notifications backend in the portal yet: the counter is a mockup.
+    Replace `notifications_url` with its page and `notifications_count` with the
+    real number of unread notifications; `0` hides the badge. -#}
+{% set notifications_url = '#' %}
+{% set notifications_count = 1 %}
 {% block header_wrapper %}
     {% block header_account %}
 
@@ -52,27 +57,102 @@
         {% endif %}
     {% endblock %}
 
-    {%- call ui.util.call(ui.header, logo=g.site_logo, title=g.site_title, subtitle=g.site_description) -%}
+    {# Actions of the bar on narrow screens: the navigation collapses and these
+    stay visible next to the logo (see the responsive header styles) #}
+    {%- set mobile_actions -%}
+        <div class="header-mobile-actions align-items-center gap-3">
+            {{ ui.link(
+                ui.icon("search", aria={"hidden": "true"}),
+                href=h.url_for(dataset_type ~ '.search'),
+                attrs={"class": "header-search-toggle d-inline-flex align-items-center justify-content-center p-1 fs-5 text-idb-default text-decoration-none", "aria-label": _('Search'), "aria-controls": "header-search-overlay", "aria-expanded": "false"}
+            ) }}
+            {% if notifications_count > 0 %}
+                {{ ui.link(
+                    ui.notifications(notifications_count),
+                    href=notifications_url,
+                    attrs={"class": "header-notifications-link d-inline-flex align-items-center justify-content-center p-1 text-idb-default text-decoration-none", "aria-label": _('Notifications')}
+                ) }}
+            {% endif %}
+            {{ ui.user_menu() }}
+        </div>
+    {%- endset -%}
+
+    {# The search form replaces the header bar itself, so it is passed into the
+    header instead of being rendered next to it #}
+    {%- set header_search_overlay -%}
+        {{ ui.search_overlay(
+            h.url_for(dataset_type ~ '.search'),
+            label=h.humanize_entity_type('package', dataset_type, 'search_placeholder') or _('Search Datasets...'),
+            attrs={"id": "header-search-overlay"}
+        ) }}
+    {%- endset -%}
+
+    {%- call ui.util.call(ui.header, logo=g.site_logo, title=g.site_title, subtitle=g.site_description, actions=mobile_actions, overlay=header_search_overlay) -%}
         {% block header_site_navigation %}
-            {%- call ui.util.call(ui.main_nav) -%}
+            {%- call ui.util.call(ui.main_nav, attrs={"class": "navbar-nav justify-content-start"}) -%}
                 {% block header_site_navigation_tabs %}
                     {#- portal plugins add their pages by chaining h.idb_theme_main_nav -#}
                     {% for item in h.idb_theme_main_nav() %}
-                        {{ ui.main_nav_item(item.label, href=item.url, active=item.active) }}
+                        {% if item.children %}
+                            {{ ui.main_nav_dropdown(item.label, item.children, item.active) }}
+                        {% else %}
+                            {{ ui.main_nav_item(item.label, href=item.url, active=item.active) }}
+                        {% endif %}
                     {% endfor %}
                 {% endblock %}
             {%- endcall %}
         {% endblock %}
 
-        {% if not current_user.is_authenticated %}
-            {% block header_account_notlogged %}
-
-                <div class="col-md-2 gap-2 login">
-                    {{ ui.button(_('Login') ~ ui.icon("sign-in"), href=h.url_for('user.login')) }}
-                    {{ ui.button(_('Register') ~ ui.icon("id-card"), href=h.url_for('user.register')) if h.check_access('user_create') }}
-                </div>
+        <div class="header-nav-actions d-flex flex-column flex-lg-row align-items-lg-center gap-4">
+            {% block header_site_search %}
+                {%- call ui.util.call(ui.form, method="get", action=h.url_for(dataset_type ~ '.search'), attrs={"class": "d-flex site-search", "role": "search"}) -%}
+                    <label class="visually-hidden" for="field-sitewide-search">
+                        {% block header_site_search_label %}
+                            {{ h.humanize_entity_type('package', dataset_type, 'search_placeholder') or _('Search Datasets...') }}
+                        {% endblock %}
+                    </label>
+                    {{ ui.search_input(placeholder=_('Search here'), attrs={"id": "field-sitewide-search"}) }}
+                    {{ ui.search_submit_button() }}
+                {%- endcall %}
             {% endblock %}
-        {% endif %}
+
+            {%- block header_language_selector %}
+                {{ ui.language_selector(label=_('Language')) }}
+            {% endblock %}
+
+            {% block header_notifications %}
+                {% if notifications_count > 0 %}
+                    {{ ui.link(
+                        ui.notifications(notifications_count),
+                        href=notifications_url,
+                        attrs={"class": "header-notifications-link d-inline-flex align-items-center justify-content-center p-1 fs-5 text-idb-default text-decoration-none", "aria-label": _('Notifications')}
+                    ) }}
+                {% endif %}
+            {% endblock %}
+
+            {% block header_help_link %}
+                {# There is no help page in the portal yet: replace `#` with its URL once it exists #}
+                {%- set help_url = '#' -%}
+                {{ ui.link(
+                    ui.icon("circle-question", style="regular", aria={"hidden": "true"}) ~ ui.util.tag(_('Help'), "span", attrs={"class": "header-help-label"}),
+                    href=help_url,
+                    attrs={"class": "header-help-link d-inline-flex align-items-center justify-content-center p-1 fs-5 text-idb-default text-decoration-none", "aria-label": _('Help')}
+                ) }}
+            {% endblock %}
+
+            {% block header_user_menu %}
+                {{ ui.user_menu() }}
+            {% endblock %}
+
+            {% if not current_user.is_authenticated %}
+                {% block header_account_notlogged %}
+                    <div class="gap-2 login">
+                        {{ ui.button(_('Login') ~ ui.icon("sign-in"), href=h.url_for('user.login')) }}
+                        {{ ui.button(_('Register') ~ ui.icon("id-card"), href=h.url_for('user.register')) if h.check_access('user_create') }}
+                    </div>
+                {% endblock %}
+            {% endif %}
+        </div>
 
     {%- endcall %}
 

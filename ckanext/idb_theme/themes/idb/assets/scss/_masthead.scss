@@ -85,6 +85,7 @@ $notificationsBg: #CF1322;
 }
 
 .masthead {
+    position: relative;
     background: $mastheadBackgroundColor;
     border-bottom: $gray-300 1px solid;
     @extend .p-2;
@@ -92,6 +93,7 @@ $notificationsBg: #CF1322;
     .logo {
         img {
             height: 36px;
+            margin-right: $spacer * .625;
         }
     }
 
@@ -142,25 +144,277 @@ $notificationsBg: #CF1322;
             li {
                 margin-right: 2px;
                 a {
-                    padding: ($spacer * .6)  ($spacer * .9);
-                    color: $black;
+                    padding: $spacer-2 $spacer;
+                    font-size: $font-size-sm;
+                    font-weight: $font-weight-semibold;
+                    color: var(--idb-color-on-surface-variant);
                     text-decoration: none;
                     margin-bottom: $spacer-1;
+                    &:hover {
+                        border-radius: $border-radius-pill;
+                        background-color: color-mix(in srgb, var(--idb-color-on-surface-variant) 8%, transparent);
+                        color: var(--idb-color-on-surface-variant);
+                    }
+                    &:focus {
+                        outline: none;
+                        border-radius: $border-radius-pill;
+                        background-color: color-mix(in srgb, var(--idb-color-button-flat-background) 16%, transparent);
+                        color: var(--idb-color-button-stroke-text);
+                    }
                 }
+                &.active {
+                    a {
+                        font-weight: $font-weight-bold;
+                        color: var(--idb-color-button-stroke-text);
+                        &:hover {
+                            color: var(--idb-color-on-surface-variant);
+                        }
+                        &:focus {
+                            color: var(--idb-color-button-stroke-text);
+                        }
+                    }
+                }
+            }
+        }
+
+        // "More" menu: the secondary pages that do not fit in the menu bar
+        .nav-item.dropdown {
+            > .dropdown-toggle::after {
+                // the caret is replaced with a chevron icon
+                display: none;
+            }
+            > .dropdown-toggle .fa-chevron-down {
+                margin-left: $spacer-1;
+                font-size: .75em;
+                vertical-align: .1em;
+            }
+            &.active > .dropdown-toggle.active.show {
+                background-color: transparent;
+                font-weight: $font-weight-semibold;
+                color: var(--idb-color-on-surface-variant);
+            }
+        }
+    }
+
+    // dropdown menus used by the header components: "More", language, user
+    .dropdown-menu {
+        gap: 0;
+        padding: ($spacer * .625) $spacer-2;
+        margin-top: $spacer-2;
+        border-color: var(--idb-color-border-default);
+        border-radius: var(--idb-border-radius);
+        box-shadow: 0 8px 24px color-mix(in srgb, var(--idb-color-neutral-20) 12%, transparent);
+
+        > li {
+            margin-right: 0;
+            &:not(:last-of-type) {
+                margin-bottom: 0.25rem;
+            }
+        }
+        .dropdown-item {
+            padding: $spacer-2 ($spacer * .75);
+            margin: 0;
+            border-radius: var(--idb-border-radius);
+            font-size: $font-size-sm;
+            font-weight: $font-weight-normal;
+            color: var(--idb-color-text-primary);
+            white-space: nowrap;
+            @include transition($nav-link-transition);
+
+            &:hover {
+                background-color: var(--idb-color-neutral-99);
+                font-weight: $font-weight-normal;
+                color: var(--idb-color-text-primary);
+            }
+            &:focus {
+                background-color: var(--idb-color-interaction-selected);
+                color: var(--idb-color-button-stroke-text);
+            }
+            &.active {
+                background-color: var(--idb-color-interaction-selected);
+                font-weight: $font-weight-semibold;
+                color: var(--idb-color-button-stroke-text);
+            }
+        }
+    }
+
+    // language switcher: current language code and a plus icon, the menu
+    // lists every available locale
+    .lang-select {
+        .dropdown-toggle {
+            gap: $spacer-1;
+            padding: $spacer-1 $spacer;
+            font-size: $font-size-sm;
+            font-weight: $font-weight-semibold;
+            color: var(--idb-color-button-stroke-text);
+            text-decoration: none;
+
+            .fa-plus {
+                font-size: .75em;
+                vertical-align: .1em;
+            }
+            // the caret is replaced with the plus icon inside the label
+            &::after {
+                display: none;
+            }
+            &:hover,
+            &:focus-visible {
+                border-radius: $border-radius-pill;
+                background-color: color-mix(in srgb, var(--idb-color-on-surface-variant) 8%, transparent);
+                color: var(--idb-color-on-surface-variant);
+                text-decoration: none;
+            }
+            &.show {
+                background-color: transparent;
+                color: var(--idb-color-button-stroke-text);
+            }
+        }
+        .dropdown-menu {
+            padding: ($spacer * .625) $spacer-2;
+            margin-top: $spacer-2;
+            border-color: var(--idb-color-border-n-variant95);
+            border-radius: calc(var(--idb-border-radius) * 1.5);
+            box-shadow: 0 8px 24px color-mix(in srgb, var(--idb-color-neutral-20) 10%, transparent);
+
+            > li:not(:last-of-type) {
+                margin-bottom: $spacer-1;
+            }
+            .dropdown-item {
+                padding: $spacer-2 ($spacer * .75);
+                border-radius: var(--idb-border-radius);
+                font-size: $font-size-base * .75;
+                font-weight: $font-weight-normal;
+                color: var(--idb-color-text-primary);
+
                 &:hover,
                 &:focus,
-                &.active {
-                    a {
-                        border-radius: $border-radius-sm;
-                        background-color: $brand-100;
-                        color: $brand-900;
-                    }
+                &.active,
+                &[aria-current="true"] {
+                    background-color: var(--idb-color-neutral-99);
+                    font-weight: $font-weight-normal;
+                    color: var(--idb-color-text-primary);
                 }
-                &.active {
-                    a {
-                        font-weight: $font-weight-semibold;
-                    }
-                }
+            }
+        }
+    }
+
+    // site-wide search: a pill-shaped field with the submit icon inside it
+    .site-search {
+        position: relative;
+        flex: 0 0 auto;
+        width: 190px;
+
+        .form-control {
+            height: 2.5rem;
+            padding: $spacer-2 2.75rem $spacer-2 $spacer;
+            font-size: var(--idb-font-size-label-large);
+            line-height: var(--idb-line-height-label-large);
+            color: var(--idb-color-text-default);
+            border: 1px solid var(--idb-color-outline);
+            border-radius: $border-radius-pill;
+
+            &::placeholder {
+                color: var(--idb-color-text-placeholder);
+            }
+            // the icon of the field replaces the clear button
+            &::-webkit-search-cancel-button {
+                display: none;
+            }
+            &:focus {
+                border-color: var(--idb-color-button-stroke-text);
+                box-shadow: 0 0 0 2px var(--idb-color-primary-light);
+            }
+        }
+        // the submit button is drawn inside the field
+        .btn {
+            position: absolute;
+            top: 50%;
+            right: $spacer;
+            padding: 0;
+            margin: 0;
+            transform: translateY(-50%);
+            font-size: $font-size-base;
+            color: var(--idb-color-on-surface-variant);
+            background-color: transparent;
+
+            &:hover,
+            &:focus-visible {
+                color: var(--idb-color-button-stroke-text);
+            }
+        }
+    }
+
+    // notifications bell
+    .header-notifications {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        color: var(--idb-color-neutral-60);
+
+        .fa-bell {
+            font-size: 1.125rem;
+            line-height: 1;
+        }
+        .header-notifications-badge {
+            position: absolute;
+            top: -$spacer-1;
+            right: -$spacer-1;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 1.125rem;
+            height: 1.125rem;
+            padding: 0 ($spacer * .25);
+            border-radius: $border-radius-pill;
+            background-color: var(--idb-color-button-flat-background);
+            color: var(--idb-color-on-primary);
+            font-size: .625rem;
+            font-weight: $font-weight-semibold;
+            line-height: 1;
+        }
+    }
+
+    // user menu: round avatar with the user's initials or image, opened by
+    // a dropdown with the account links
+    .header-user {
+        .dropdown-toggle {
+            display: inline-flex;
+            padding: 0;
+            border: 0;
+            background: transparent;
+            line-height: 1;
+
+            // the avatar replaces the caret
+            &::after {
+                display: none;
+            }
+        }
+        .header-user-initials {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: $border-radius-pill;
+            background-color: var(--idb-color-button-flat-background);
+            color: var(--idb-color-on-primary);
+            font-size: $font-size-base;
+            font-weight: $font-weight-semibold;
+            line-height: 1;
+            text-decoration: none;
+        }
+        .user-image {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: $border-radius-pill;
+            object-fit: cover;
+        }
+        .dropdown-menu {
+            .dropdown-item {
+                font-size: $font-size-base * .75;
             }
         }
     }
@@ -170,25 +424,179 @@ $notificationsBg: #CF1322;
     }
 }
 
+// search form that covers the header bar itself, opened from the header action
+// on narrow screens, where the inline field of the navigation bar is hidden
+.header-search-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 10;
+    display: none;
+    background-color: $white;
+
+    &.show {
+        display: block;
+    }
+
+    // the field is centered in the height of the header
+    .header-search-overlay-panel {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        padding: 0 ($spacer * 1.5);
+        background-color: $white;
+    }
+    .header-search-overlay-form {
+        display: flex;
+        align-items: center;
+        gap: $spacer-2;
+        width: 100%;
+    }
+    // the field is borderless: the panel itself is the frame
+    .header-search-overlay-input {
+        flex: 1 1 auto;
+        min-width: 0;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background-color: transparent;
+        font-size: $font-size-sm;
+        line-height: 1.25;
+        color: var(--idb-color-text-default);
+
+        &::placeholder {
+            color: var(--idb-color-text-placeholder);
+        }
+        &:focus,
+        &:focus-visible {
+            border: 0;
+            outline: none;
+            box-shadow: none;
+        }
+        // the icon of the panel replaces the clear button
+        &::-webkit-search-cancel-button {
+            display: none;
+        }
+    }
+    .header-search-overlay-close {
+        display: inline-flex;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        padding: 0;
+        border: 0;
+        background-color: transparent;
+        font-size: 1.5rem;
+        color: var(--idb-color-on-surface-variant);
+
+        &:hover,
+        &:focus-visible {
+            color: var(--idb-color-button-stroke-text);
+        }
+        &:focus-visible {
+            outline: none;
+        }
+    }
+}
+
+.lang-select-label,
+.header-help-label,
+.header-mobile-actions {
+    display: none;
+}
+
 @include media-breakpoint-down(lg) {
     .masthead {
+        .navbar {
+            align-items: flex-start;
+            gap: $spacer !important;
+        }
+        .logo {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: $spacer-1 !important;
+            font-size: $font-size-base;
+            line-height: 1.5;
+        }
+        .navbar-toggler {
+            padding: 0;
+            border: 0;
+            color: var(--idb-color-on-surface-variant);
+            &:focus {
+                outline: none;
+                box-shadow: none;
+            }
+        }
+        .header-mobile-actions {
+            display: flex;
+            margin-left: auto;
+        }
+        .header-user {
+            .header-user-initials,
+            .user-image {
+                width: 3rem;
+                height: 3rem;
+            }
+            .header-user-initials {
+                font-size: $font-size-base;
+            }
+        }
+
         .main-navbar {
+            // the bar above already renders these actions
+            .header-nav-actions {
+                gap: $spacer-1 !important;
+                margin-top: $spacer-2;
+                padding: $spacer-2 0;
+                border-top: 1px solid var(--idb-color-border-n-variant95);
+                .site-search,
+                .header-notifications,
+                .header-notifications-link,
+                .header-user {
+                    display: none !important;
+                }
+                .header-help-link {
+                    order: 1;
+                    width: 100%;
+                    padding: $spacer-2 0 !important;
+                    justify-content: flex-start !important;
+                    gap: $spacer-2;
+                    color: var(--idb-color-neutral-60);
+
+                    .header-help-label {
+                        display: inline;
+                        font-size: $font-size-sm;
+                    }
+                }
+                .lang-select {
+                    order: 2;
+                }
+            }
+
             ul {
-                padding: 20px 0 0;
+                gap: $spacer-1;
+                padding: 0;
+                justify-content: flex-start;
+                margin-bottom: 0 !important;
+
                 li {
                     padding: 0;
                     a {
                         display: block;
-                        padding: $nav-link-padding-y $nav-link-padding-x;
+                        padding: $spacer-2 0;
+                        margin-bottom: 0;
                         @include font-size($nav-link-font-size);
-                        font-weight: $nav-link-font-weight;
-                        color: $brand-900;
+                        font-size: $font-size-sm;
+                        font-weight: $font-weight-normal;
+                        color: var(--idb-color-neutral-60);
                         text-decoration: if($link-decoration == none, null, none);
                         @include transition($nav-link-transition);
 
                         &:hover,
                         &:focus {
-                            color: $black;
+                            background-color: transparent;
+                            color: var(--idb-color-button-stroke-text);
                             text-decoration: if($link-hover-decoration == underline, none, null);
                         }
 
@@ -198,7 +606,76 @@ $notificationsBg: #CF1322;
                             cursor: default;
                         }
                     }
+                    &.active a {
+                        color: var(--idb-color-button-stroke-text);
+                        font-weight: $font-weight-semibold;
+                    }
                 }
+            }
+
+            // "More" is flattened: its toggle is hidden and the pages become
+            // regular entries, separated from the other pages by a divider
+            .nav-item.dropdown {
+                margin-top: $spacer-2;
+                padding-top: $spacer-2;
+                border-top: 1px solid var(--idb-color-border-n-variant95);
+
+                > .dropdown-toggle {
+                    display: none;
+                }
+                .dropdown-menu {
+                    display: flex;
+                    flex-direction: column;
+                    gap: $spacer-1;
+                    position: static;
+                    padding: 0;
+                    margin: 0;
+                    border: 0;
+                    background: transparent;
+                    box-shadow: none;
+
+                    > li:not(:last-of-type) {
+                        margin-bottom: 0;
+                    }
+                    .dropdown-item {
+                        padding: $spacer-2 0;
+                        border-radius: 0;
+                        font-size: $font-size-sm;
+                        font-weight: $font-weight-normal;
+                        color: var(--idb-color-neutral-60);
+                        white-space: normal;
+
+                        &:hover,
+                        &:focus {
+                            background-color: transparent;
+                            color: var(--idb-color-button-stroke-text);
+                        }
+                    }
+                }
+            }
+
+            // language row: the label on the left, the switcher on the right
+            .lang-select {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                width: 100%;
+
+                .lang-select-label {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: $spacer-2;
+                    font-size: $font-size-sm;
+                    color: var(--idb-color-neutral-60);
+                }
+                .dropdown-toggle {
+                    font-size: $font-size-sm;
+                }
+            }
+
+            // the collapsed bar is the only place with a search field
+            .site-search {
+                width: 100%;
             }
         }
         .login {
