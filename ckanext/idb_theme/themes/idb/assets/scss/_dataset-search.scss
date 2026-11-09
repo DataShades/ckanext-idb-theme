@@ -20,7 +20,7 @@
 
         .breadcrumb,
         .breadcrumb a,
-        .breadcrumb .active a,
+        .breadcrumb li:last-child a,
         .breadcrumb li:not(:first-child)::before,
         .breadcrumb .idb-breadcrumb-ellipsis {
             color: var(--idb-color-on-primary);

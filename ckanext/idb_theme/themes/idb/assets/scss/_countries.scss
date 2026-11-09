@@ -10,7 +10,7 @@ $country-tab-border-color: #EAEAEA;
 .countries-grid {
     display: grid;
     grid-template-columns: repeat(5, minmax(0, 1fr));
-    gap: var(--idb-space-sm);
+    gap: 20px;
     margin: 0 0 20px;
 
     .countries-results-members & {
@@ -23,7 +23,7 @@ $country-tab-border-color: #EAEAEA;
         display: flex;
         flex-direction: column;
         height: 100%;
-        padding: var(--idb-space-md);
+        padding: 20px var(--idb-space-md);
         background: var(--idb-color-on-primary);
         border-radius: var(--idb-border-radius-sm);
         box-shadow: $country-card-shadow;
@@ -37,6 +37,10 @@ $country-tab-border-color: #EAEAEA;
             .country-name {
                 text-decoration: underline;
             }
+        }
+
+        .countries-results-all & {
+            padding: 20px;
         }
     }
 
@@ -53,18 +57,22 @@ $country-tab-border-color: #EAEAEA;
     }
 
     &-name {
+        margin-bottom: var(--idb-space-xs);
         color: var(--idb-color-primary-20);
-        font-size: var(--idb-font-size-text);
-        line-height: var(--idb-line-height-text);
+        font-size: 1.125rem;
+        line-height: 1.5rem;
         font-weight: 600;
         overflow-wrap: anywhere;
+
+        .countries-results-all & {
+            margin-bottom: 4px;
+        }
     }
 
     &-count {
-        margin-top: auto;
         color: var(--idb-color-button-stroke-text);
-        font-size: var(--idb-font-size-label);
-        line-height: var(--idb-line-height-label);
+        font-size: var(--idb-font-size-text);
+        line-height: var(--idb-line-height-text);
         font-weight: 600;
     }
 }
@@ -74,8 +82,8 @@ $country-tab-border-color: #EAEAEA;
     &-title {
         margin: 0 0 var(--idb-space-sm);
         color: var(--idb-color-primary-20);
-        font-size: 1.25rem;
-        line-height: 1.75rem;
+        font-size: var(--idb-font-size-subtitle);
+        line-height: var(--idb-line-height-subtitle);
         font-weight: 600;
     }
 
@@ -93,7 +101,8 @@ $country-tab-border-color: #EAEAEA;
         text-align: start;
 
         .facet-icon {
-            margin-top: 0.25rem;
+            width: 2rem;
+            height: 2rem;
             transition: transform .2s;
         }
 
@@ -112,7 +121,7 @@ $country-tab-border-color: #EAEAEA;
 .countries-tabs.nav-tabs {
     flex-wrap: nowrap;
     gap: var(--idb-space-xs);
-    margin-bottom: var(--idb-space-md);
+    margin-bottom: var(--idb-space-sm);
     overflow-x: auto;
     border-bottom: 1px solid $country-tab-border-color;
     scrollbar-width: none;
@@ -124,9 +133,10 @@ $country-tab-border-color: #EAEAEA;
         border-bottom: 2px solid transparent;
         border-radius: 0;
         background: none;
-        color: var(--idb-color-text-default);
-        font-size: var(--idb-font-size-label-large);
-        line-height: var(--idb-line-height-label-large);
+        color: var(--idb-color-text-subtle);
+        font-family: "Inter", sans-serif;
+        font-size: var(--idb-font-size-text);
+        line-height: var(--idb-line-height-text);
         white-space: nowrap;
 
         &:hover {
@@ -136,7 +146,7 @@ $country-tab-border-color: #EAEAEA;
         &.active {
             border-bottom-color: var(--idb-color-button-stroke-text);
             color: var(--idb-color-button-stroke-text);
-            font-weight: 700;
+            font-weight: 600;
         }
     }
 }
@@ -164,7 +174,8 @@ $country-tab-border-color: #EAEAEA;
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .country-card {
+    .country-card,
+    .countries-results-all .country-card {
         padding: var(--idb-space-sm);
     }
 

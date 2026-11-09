@@ -109,6 +109,10 @@
     }
 }
 
+.dashboard-page .toolbar {
+    margin-bottom: 30px;
+}
+
 .dashboard-layout {
     .dashboard-sidebar {
         margin-bottom: var(--idb-space-md);
@@ -120,7 +124,7 @@
 
     .dashboard-content {
         min-width: 0; // let wide children (tables, charts) shrink instead of overflowing the column
-        margin-bottom: var(--idb-space-lg);
+        margin-bottom: 36px;
     }
 
     .dashboard-header {
@@ -139,8 +143,8 @@
             margin: 0;
             font-size: var(--idb-font-size-subtitle);
             line-height: var(--idb-line-height-subtitle);
-            font-weight: 600;
-            color: var(--idb-color-text-default);
+            font-weight: 700;
+            color: var(--idb-color-primary-20);
             overflow-wrap: anywhere;
 
             @include media-breakpoint-up(md) {
@@ -408,6 +412,246 @@
                 p {
                     margin: 0 0 4px;
                     overflow-wrap: anywhere;
+                }
+            }
+        }
+    }
+
+    // My Subscriptions tab: a ckanext-tables table, themed through its colour tokens
+    .dashboard-subscriptions {
+        --tables-bg: var(--idb-color-on-primary);
+        --tables-header-bg: var(--idb-color-neutral-99);
+        --tables-header-hover-bg: var(--idb-color-surface-variant);
+        --tables-row-hover-bg: var(--idb-color-neutral-99);
+        --tables-border: var(--idb-border-color);
+        --tables-divider: var(--idb-border-color);
+        --tables-input-border: var(--idb-color-button-stroke-border);
+        --tables-text: var(--idb-color-text-default);
+        --tables-text-muted: var(--idb-color-text-subtle);
+        --tables-active: var(--idb-color-button-stroke-text);
+
+        .table-control {
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--idb-space-sm);
+            background-color: var(--idb-color-on-primary);
+            border: 1px solid var(--idb-border-color);
+            border-radius: var(--idb-border-radius);
+        }
+
+        .table-search {
+            flex: 0 1 272px;
+
+            i {
+                right: var(--idb-space-sm);
+                left: auto;
+                color: var(--idb-color-text-subtle);
+            }
+
+            .form-control {
+                padding: 7px 44px 7px var(--idb-space-sm);
+                font-size: var(--idb-font-size-label-large);
+                border-radius: var(--idb-border-radius-lg);
+
+                &::placeholder {
+                    color: var(--idb-color-text-placeholder);
+                }
+            }
+        }
+
+        .table-quick-filters {
+            gap: var(--idb-space-xs);
+
+            .form-select {
+                min-width: 196px;
+                max-width: 100%;
+                font-size: var(--idb-font-size-label-large);
+                border-radius: var(--idb-border-radius-sm);
+            }
+
+            // searchable select (Tom Select): the wrapper keeps the `.form-select`
+            // border and chevron, the control inside it is plain text
+            .ts-wrapper.form-select {
+                padding: 0;
+
+                &.focus {
+                    border-color: var(--idb-color-primary);
+                    box-shadow: none;
+                }
+
+                .ts-control {
+                    padding: 6px 36px 6px 12px;
+                    font-size: inherit;
+                    color: var(--idb-color-text-default);
+                    background: transparent;
+                    border: 0;
+                    box-shadow: none;
+                    cursor: pointer;
+                }
+
+                &.single .ts-control::after {
+                    display: none;
+                }
+
+                .ts-dropdown {
+                    min-width: 100%;
+                    width: max-content;
+                    max-width: 320px;
+                    margin-top: 4px;
+                    font-size: var(--idb-font-size-label-large);
+                    border: 1px solid var(--idb-border-color);
+                    border-radius: var(--idb-border-radius-sm);
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+                    .dropdown-input {
+                        padding: 6px 12px;
+                        font-size: inherit;
+                        border-bottom: 1px solid var(--idb-border-color);
+                    }
+
+                    .option.active {
+                        color: var(--idb-color-text-default);
+                        background-color: var(--idb-color-primary-light);
+                    }
+                }
+            }
+        }
+
+        // the badges of a cell wrap on several lines, a long label is cut with an ellipsis
+        .table-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .table-badge {
+            max-width: 100%;
+            overflow: hidden;
+            padding: 2px var(--idb-space-xs);
+            font-size: 0.6875rem;
+            line-height: var(--idb-line-height-label);
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-weight: 600;
+            color: var(--idb-color-primary);
+            background-color: var(--idb-color-primary-light);
+            border: 1px solid var(--idb-color-secondary-70);
+            border-radius: var(--idb-border-radius-sm);
+        }
+
+        .btn-row-action {
+            padding: 4px var(--idb-space-xs);
+            color: var(--idb-color-button-stroke-text);
+            background: none;
+            border: 0;
+
+            &:hover,
+            &:focus-visible {
+                color: var(--idb-color-primary);
+            }
+        }
+
+        .tabulator-wrapper .tabulator {
+            overflow: hidden;
+            border: 1px solid var(--idb-border-color);
+            border-radius: var(--idb-border-radius);
+
+            &.tabulator-container {
+                margin-top: var(--idb-space-md);
+            }
+
+            .tabulator-header,
+            .tabulator-tableholder {
+                border: 0;
+            }
+
+            .tabulator-header {
+                border-bottom: 1px solid var(--idb-border-color);
+                font-size: var(--idb-font-size-label);
+                font-weight: 600;
+                color: var(--idb-color-text-default);
+
+                .tabulator-col .tabulator-col-content {
+                    padding: 12px var(--idb-space-sm);
+                }
+
+                // the sort arrow shows on hover and on the sorted column only
+                .tabulator-col.tabulator-sortable:not([aria-sort="ascending"], [aria-sort="descending"]) {
+                    .tabulator-col-sorter {
+                        visibility: hidden;
+                    }
+
+                    &:hover .tabulator-col-sorter {
+                        visibility: visible;
+                    }
+                }
+            }
+
+            .tabulator-row .tabulator-cell {
+                padding: 10px var(--idb-space-sm);
+                font-size: var(--idb-font-size-label);
+                line-height: var(--idb-line-height-label);
+                white-space: normal;
+
+                a {
+                    font-size: var(--idb-font-size-label-large);
+                    line-height: var(--idb-line-height-label-large);
+                    font-weight: 600;
+                    color: var(--idb-color-button-stroke-text);
+                    text-decoration: none;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
+            }
+
+            .tabulator-footer {
+                padding: var(--idb-space-xs) var(--idb-space-sm);
+                border-top: 1px solid var(--idb-border-color);
+                font-size: var(--idb-font-size-label);
+
+                // "Items per page", the page size, the counter and the arrows, in one row
+                .tabulator-footer-contents {
+                    flex-wrap: wrap;
+                    justify-content: flex-end;
+                    gap: var(--idb-space-sm);
+
+                    .tabulator-paginator {
+                        display: contents;
+
+                        label {
+                            order: 1;
+                            margin: 0;
+                            color: var(--idb-color-text-default);
+                        }
+
+                        .tabulator-page-size {
+                            order: 2;
+                            // `.form-select` (added by the tables module) is full width
+                            width: auto;
+                            min-width: 74px;
+                            max-width: none;
+                            padding: 6px 32px 6px 12px;
+                            font-size: var(--idb-font-size-label-large);
+                        }
+
+                        .tabulator-page {
+                            order: 4;
+                            color: var(--idb-color-text-default);
+                        }
+
+                        .tabulator-page[data-page="first"],
+                        .tabulator-page[data-page="last"],
+                        .tabulator-pages {
+                            display: none;
+                        }
+                    }
+
+                    .tabulator-page-counter {
+                        order: 3;
+                        color: var(--idb-color-text-default);
+                    }
                 }
             }
         }
