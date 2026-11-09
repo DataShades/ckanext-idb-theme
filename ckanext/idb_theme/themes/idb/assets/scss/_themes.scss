@@ -31,8 +31,97 @@
 
     &-actions {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         gap: var(--idb-space-sm);
+    }
+}
+
+.data-projects-page {
+    // 20px between the filters panel and the cards: the half gutter of the
+    // cards only (see `.ckan-layout--sidebar-start` in _layout.scss)
+    @include media-breakpoint-up(md) {
+        .secondary {
+            padding-right: 0;
+        }
+    }
+
+    // the header text and the actions are on separate lines
+    .themes-header {
+        gap: 20px;
+
+        &-actions {
+            gap: 10px;
+        }
+    }
+
+    // the form fits the field, so the icon stays inside it
+    .themes-search {
+        width: auto;
+
+        &-input {
+            min-width: 246px;
+        }
+
+        .facet-icon {
+            color: var(--idb-color-on-surface-variant);
+        }
+    }
+
+    .dataset-pagination,
+    .filters-panel {
+        margin-bottom: 28px;
+    }
+
+    // the project cards reuse `.home-data-project-card` of the homepage
+    .data-projects-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 20px var(--idb-space-md);
+        margin: 0 0 20px;
+    }
+
+    .home-data-project {
+        &-image {
+            height: 80px;
+            aspect-ratio: auto;
+
+            // no cover image: a small IDB logo in the top left corner, in line
+            // with the text; the image keeps its height
+            &--logo {
+                padding: var(--idb-space-md) var(--idb-space-md) var(--idb-space-lg);
+                object-fit: contain;
+                object-position: left top;
+            }
+        }
+
+        &-title {
+            font-size: 1.125rem;
+            line-height: 1.5rem;
+        }
+
+        // the space of 3 lines is kept, so the counts of a row are aligned
+        &-description {
+            min-height: calc(3 * var(--idb-line-height-label));
+            font-size: var(--idb-font-size-label);
+            line-height: var(--idb-line-height-label);
+        }
+
+        &-count {
+            font-weight: 600;
+        }
+    }
+
+    @include media-breakpoint-down(lg) {
+        .data-projects-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @include media-breakpoint-down(sm) {
+        .data-projects-grid {
+            grid-template-columns: minmax(0, 1fr);
+        }
     }
 }
 
@@ -67,7 +156,7 @@
         line-height: var(--idb-line-height-label-large);
 
         &::placeholder {
-            color: var(--idb-color-text-primary);
+            color: #939292;
             opacity: 1;
         }
 

@@ -25,6 +25,16 @@
     {{ ui.nav_item(content, href, active, **kwargs) }}
 {%- endmacro %}
 
+{%- macro dashboard_nav_item(content, href, active, icon, icon_style="solid", svg=none) -%}
+    <li class="dashboard-menu-item{{ ' active' if active }}">
+        <a {{ ui.util.attrs(kwargs, {"aria-current": "page"} if active else {}) }} href="{{ href }}">
+            {%- if svg %}<span class="dashboard-menu-icon">{{ h.snippet("svg/" ~ svg ~ ".svg") }}</span>
+            {%- elif icon %}<span class="dashboard-menu-icon">{{ ui.icon(icon, style=icon_style, attrs={"aria-hidden": "true"}) }}</span>{% endif -%}
+            <span class="dashboard-menu-text">{{ content }}</span>
+        </a>
+    </li>
+{%- endmacro %}
+
 {%- macro footer_main_nav_item(content, href, active) -%}
     <li>{{ ui.link(content, href=href, **kwargs) }}</li>
 {%- endmacro %}

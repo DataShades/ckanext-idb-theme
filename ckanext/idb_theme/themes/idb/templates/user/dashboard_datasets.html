@@ -6,7 +6,7 @@
 {%- endblock %}
 
 {% block page_heading %}
-    {{ ui.heading(h.humanize_entity_type('package', dataset_type, 'my label') or _('My Datasets'), attrs={"class": "mt-3 mt-md-0"}, level=1) }}
+    {{ ui.heading(h.humanize_entity_type('package', dataset_type, 'my label') or _('My Datasets'), level=1) }}
 {% endblock %}
 
 {% block primary_content_inner %}

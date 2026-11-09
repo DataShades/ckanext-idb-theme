@@ -2,15 +2,21 @@
 Pagination of the Datasets page: the "Items per page" dropdown, the range of
 the shown datasets and the first, previous, next and last page buttons.
 
-dataset_type - The dataset type.
-item_count   - The number of found datasets.
+dataset_type     - The dataset type.
+item_count       - The number of found datasets.
+action           - The URL of the page, the Datasets page by default. Other
+                   pages with the page size of the Datasets page set it, e.g.
+                   the Data Projects page of ckanext-iadb-iar.
+per_page_options - The page sizes of the "Items per page" dropdown, the first
+                   one is the default. The ones of the Datasets page by
+                   default.
 
 Example:
 
 {% snippet 'package/snippets/dataset_pagination.html', dataset_type=dataset_type, item_count=page.item_count %}
 
 #}
-{% set pagination = h.idb_theme_datasets_pagination(item_count) %}
+{% set pagination = h.idb_theme_datasets_pagination(item_count, per_page_options) %}
 
 {% set icons = {
     "first": "M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z",
@@ -31,7 +37,7 @@ Example:
 {%- endmacro %}
 
 <nav class="dataset-pagination" aria-label="{{ _('Pagination') }}">
-    {%- call ui.util.call(ui.form, action=h.url_for(dataset_type ~ '.search'), attrs={"class": "dataset-pagination-size"}, hx={"boost": "true", "trigger": "change, submit"}) -%}
+    {%- call ui.util.call(ui.form, action=action or h.url_for(dataset_type ~ '.search'), attrs={"class": "dataset-pagination-size"}, hx={"boost": "true", "trigger": "change, submit"}) -%}
         {%- for name, value in request.args.items(multi=True) -%}
             {%- if name not in [pagination.param, 'page'] -%}
                 <input type="hidden" name="{{ name }}" value="{{ value }}">

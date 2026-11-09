@@ -72,6 +72,17 @@
     </section>
 {%- endmacro %}
 
+{%- macro dashboard_nav(content, title) -%}
+    {%- set defaults = {"class": "dashboard-menu"} -%}
+    {%- if title %}{% do defaults.update({"aria-label": title}) %}{% endif -%}
+    <nav {{ ui.util.attrs(kwargs, defaults) }}>
+        {%- if title %}<span class="dashboard-menu-label" aria-hidden="true">{{ title }}</span>{% endif %}
+        <ul class="dashboard-menu-list">
+            {{ content }}
+        </ul>
+    </nav>
+{%- endmacro %}
+
 {%- macro pagination_wrapper(content) -%}
     <div {{ ui.util.attrs(kwargs, {"class": "pagination-wrapper"}) }}>
         <ul class="pagination justify-content-center">
