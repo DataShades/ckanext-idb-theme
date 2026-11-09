@@ -23,7 +23,7 @@ $country-tab-border-color: #EAEAEA;
         display: flex;
         flex-direction: column;
         height: 100%;
-        padding: var(--idb-space-md);
+        padding: 20px var(--idb-space-md);
         background: var(--idb-color-on-primary);
         border-radius: var(--idb-border-radius-sm);
         box-shadow: $country-card-shadow;
@@ -37,6 +37,10 @@ $country-tab-border-color: #EAEAEA;
             .country-name {
                 text-decoration: underline;
             }
+        }
+
+        .countries-results-all & {
+            padding: 20px;
         }
     }
 
@@ -97,7 +101,8 @@ $country-tab-border-color: #EAEAEA;
         text-align: start;
 
         .facet-icon {
-            margin-top: 0.25rem;
+            width: 2rem;
+            height: 2rem;
             transition: transform .2s;
         }
 
@@ -169,7 +174,8 @@ $country-tab-border-color: #EAEAEA;
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .country-card {
+    .country-card,
+    .countries-results-all .country-card {
         padding: var(--idb-space-sm);
     }
 
