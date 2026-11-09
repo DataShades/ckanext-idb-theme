@@ -1,8 +1,8 @@
 .toolbar {
     @include clearfix;
     position: relative;
-    margin-bottom: 10px;
-    padding: 5px 0;
+    margin-bottom: 20px;
+    padding: 4px 0 0;
 }
 
 .toolbar .breadcrumb {
@@ -14,9 +14,9 @@
     padding: 0;
     border: none;
     background: none;
-    color: var(--idb-color-on-surface-muted);
-    font-size: var(--idb-font-size-label);
-    line-height: var(--idb-line-height-label);
+    color: var(--idb-color-link);
+    font-size: var(--idb-font-size-label-large);
+    line-height: var(--idb-line-height-label-large);
     font-weight: var(--idb-font-weight);
 }
 
@@ -27,7 +27,7 @@
             float: none;
             padding-right: 0;
             margin: 0 var(--idb-space-xs);
-            color: var(--idb-color-on-surface-muted);
+            color: var(--idb-color-on-surface-variant);
             content: "/";
         }
     }
@@ -35,7 +35,7 @@
 
 .toolbar .breadcrumb .idb-breadcrumb-ellipsis {
     display: none;
-    color: var(--idb-color-on-surface-muted);
+    color: var(--idb-color-link);
 }
 
 @include media-breakpoint-down(lg) {
@@ -57,7 +57,7 @@
 }
 
 .toolbar .breadcrumb a {
-    color: var(--idb-color-on-surface-muted);
+    color: var(--idb-color-link);
 }
 
 @include media-breakpoint-down(sm) {
@@ -67,10 +67,12 @@
     }
 }
 
+.toolbar .breadcrumb li:last-child,
+.toolbar .breadcrumb li:last-child a,
 .toolbar .breadcrumb .active a,
 .toolbar .breadcrumb a.active {
     font-weight: 600;
-    color: var(--idb-color-on-surface-muted);
+    color: var(--idb-color-text-default);
 }
 
 .actions {
