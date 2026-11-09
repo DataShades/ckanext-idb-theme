@@ -29,7 +29,9 @@
                     {{ ui.dashboard_nav_item(_('Manage Datasets'), href=h.url_for('dashboard.datasets'), active=request.endpoint=='dashboard.datasets', svg='dashboard/dataset') }}
                     {{ ui.dashboard_nav_item(_('Manage Organizational Unit'), href=h.url_for('dashboard.organizations'), active=request.endpoint=='dashboard.organizations', svg='dashboard/lan') }}
                     {{ ui.dashboard_nav_item(_('Manage Users'), href='#', svg='dashboard/manage_accounts') }}
-                    {{ ui.dashboard_nav_item(_('My Subscriptions'), href='#', svg='dashboard/bookmark') }}
+                    {% block dashboard_nav_subscriptions -%}
+                        {{ ui.dashboard_nav_item(_('My Subscriptions'), href='#', svg='dashboard/bookmark') }}
+                    {%- endblock dashboard_nav_subscriptions %}
                 {%- endblock dashboard_nav_links %}
             {%- endcall %}
         {% endblock secondary_content %}
