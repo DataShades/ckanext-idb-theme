@@ -106,7 +106,9 @@ def idb_theme_facet_details(facet_name: str) -> dict[str, Any]:
             "tooltip": _("The file formats of the dataset’s resources, (e.g., CSV, PDF, or DTA)"),
         },
         "vocab_iadb_iar_admin_level": {
-            "tooltip": _("Level of geographic detail represented in the dataset (e.g., national, province, municipality)."),
+            "tooltip": _(
+                "Level of geographic detail represented in the dataset (e.g., national, province, municipality)."
+            ),
             "sort_by_name": True,
         },
     }
@@ -171,7 +173,7 @@ def idb_theme_info_graph() -> dict[str, Any]:
     }
 
 
-def idb_theme_get_group_count(type: str = "group") -> dict[str, int]:
+def idb_theme_get_group_count(type: str = "group") -> int:
     q = model.Session.query(model.Group).filter(model.Group.type == type).filter(model.Group.state == "active")
     if type == "organization":
         q = q.filter(model.Group.is_organization == True)
@@ -199,7 +201,7 @@ def idb_theme_hide_user_image_upload() -> bool:
 
 def idb_theme_current_year() -> int:
     """Return the current year for the footer copyright notice."""
-    return datetime.date.today().year
+    return datetime.datetime.now(tz=datetime.timezone.utc).date().year
 
 
 def idb_theme_download_count(pkg: dict[str, Any]) -> int:
