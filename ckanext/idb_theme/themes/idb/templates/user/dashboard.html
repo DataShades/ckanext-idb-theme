@@ -5,9 +5,8 @@
 {% set group_type = h.default_group_type('group') %}
 {% set dataset_type = h.default_package_type() %}
 
-{% block content_action -%}
-    {{ ui.content_action(_('Profile settings'), href=h.url_for('user.edit', id=user.name), icon="cog", style="secondary") }}
-{%- endblock %}
+{# no Profile settings button on the dashboard tabs, see the design #}
+{% block content_action %}{% endblock %}
 
 {% block breadcrumb_content -%}
     {{ ui.breadcrumb(_('Dashboard'), href=h.url_for('dashboard.datasets'), active=true) }}
@@ -26,7 +25,9 @@
             {%- call ui.util.call(ui.dashboard_nav, title=_('Menu')) -%}
                 {% block dashboard_nav_links -%}
                     {# TODO: items with href="#" are placeholders, each tab gets its URL in its own task #}
-                    {{ ui.dashboard_nav_item(_('Manage Datasets'), href=h.url_for('dashboard.datasets'), active=request.endpoint=='dashboard.datasets', svg='dashboard/dataset') }}
+                    {% block dashboard_nav_datasets -%}
+                        {{ ui.dashboard_nav_item(_('Manage Datasets'), href=h.url_for('dashboard.datasets'), active=request.endpoint=='dashboard.datasets', svg='dashboard/dataset') }}
+                    {%- endblock dashboard_nav_datasets %}
                     {{ ui.dashboard_nav_item(_('Manage Organizational Unit'), href=h.url_for('dashboard.organizations'), active=request.endpoint=='dashboard.organizations', svg='dashboard/lan') }}
                     {{ ui.dashboard_nav_item(_('Manage Users'), href='#', svg='dashboard/manage_accounts') }}
                     {% block dashboard_nav_subscriptions -%}

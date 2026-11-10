@@ -417,8 +417,9 @@
         }
     }
 
-    // My Subscriptions tab: a ckanext-tables table, themed through its colour tokens
-    .dashboard-subscriptions {
+    // Tables of the dashboard tabs (My Subscriptions, Manage Datasets): ckanext-tables
+    // tables, themed through their colour tokens
+    .dashboard-table {
         --tables-bg: var(--idb-color-on-primary);
         --tables-header-bg: var(--idb-color-neutral-99);
         --tables-header-hover-bg: var(--idb-color-surface-variant);
@@ -433,40 +434,54 @@
         .table-control {
             align-items: center;
             justify-content: space-between;
-            padding: var(--idb-space-sm);
+            padding: 16px;
             background-color: var(--idb-color-on-primary);
-            border: 1px solid var(--idb-border-color);
-            border-radius: var(--idb-border-radius);
+            border: 1px solid #C7C7C9;
+            border-radius: 8px;
         }
 
         .table-search {
             flex: 0 1 272px;
 
             i {
-                right: var(--idb-space-sm);
+                right: 20px;
                 left: auto;
-                color: var(--idb-color-text-subtle);
+                color: #535354;
             }
 
             .form-control {
-                padding: 7px 44px 7px var(--idb-space-sm);
-                font-size: var(--idb-font-size-label-large);
+                padding: 10px 16px;
+                // room for the magnifier icon
+                padding-inline-end: 44px;
+                font-family: "Open Sans", sans-serif;
+                font-size: 0.875rem;
+                line-height: 1.25rem;
+                font-weight: 400;
+                border: 1px solid #A6A6A8;
                 border-radius: var(--idb-border-radius-lg);
 
                 &::placeholder {
-                    color: var(--idb-color-text-placeholder);
+                    color: #929090;
                 }
             }
         }
 
         .table-quick-filters {
-            gap: var(--idb-space-xs);
+            gap: 10px;
 
             .form-select {
                 min-width: 196px;
                 max-width: 100%;
-                font-size: var(--idb-font-size-label-large);
-                border-radius: var(--idb-border-radius-sm);
+                padding: 8px 12px;
+                // room for the chevron
+                padding-inline-end: 36px;
+                font-size: 0.75rem;
+                line-height: 1rem;
+                font-weight: 400;
+                color: #272626;
+                border: 1px solid #AEAEAD;
+                border-radius: 8px;
+                --bs-form-select-bg-img: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%235C5A5A' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/></svg>");
             }
 
             // searchable select (Tom Select): the wrapper keeps the `.form-select`
@@ -475,14 +490,15 @@
                 padding: 0;
 
                 &.focus {
-                    border-color: var(--idb-color-primary);
                     box-shadow: none;
                 }
 
                 .ts-control {
-                    padding: 6px 36px 6px 12px;
+                    padding: 8px 36px 8px 12px;
                     font-size: inherit;
-                    color: var(--idb-color-text-default);
+                    line-height: inherit;
+                    font-weight: inherit;
+                    color: inherit;
                     background: transparent;
                     border: 0;
                     box-shadow: none;
@@ -529,21 +545,63 @@
 
         .table-badge {
             max-width: 100%;
+            font-family: "Inter", sans-serif;
             overflow: hidden;
             padding: 2px var(--idb-space-xs);
-            font-size: 0.6875rem;
-            line-height: var(--idb-line-height-label);
+            font-size: 0.75rem;
+            line-height: 1rem;
             white-space: nowrap;
             text-overflow: ellipsis;
             font-weight: 600;
-            color: var(--idb-color-primary);
-            background-color: var(--idb-color-primary-light);
-            border: 1px solid var(--idb-color-secondary-70);
-            border-radius: var(--idb-border-radius-sm);
+            color: #004E70;
+            background-color: #F0F4F7;
+            border: 1px solid #B6CFDE;
+            border-radius: 4px;
+        }
+
+        // the publication status of a dataset
+        .table-status {
+            display: inline-block;
+            max-width: 100%;
+            overflow: hidden;
+            padding: 2px var(--idb-space-xs);
+            font-size: 0.625rem;
+            line-height: 1rem;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-weight: 600;
+            color: #4C2E02;
+            background-color: #FEF2E1;
+            border-radius: 8px;
+        }
+
+        // the row actions column: the ⋮ button centered in the cell
+        .tabulator-cell[tabulator-field="__table_actions"] > .d-flex {
+            justify-content: center;
+        }
+
+        // the button opening the row actions menu: a plain ⋮ icon
+        .btn-row-actions {
+            padding: 4px var(--idb-space-xs);
+            line-height: 1rem;
+            color: var(--idb-color-button-stroke-text);
+            background: none;
+            border: 0;
+
+            i {
+                font-size: 1rem;
+            }
+
+            &:hover,
+            &:focus-visible {
+                color: var(--idb-color-primary);
+                background: none;
+            }
         }
 
         .btn-row-action {
             padding: 4px var(--idb-space-xs);
+            line-height: 1rem;
             color: var(--idb-color-button-stroke-text);
             background: none;
             border: 0;
@@ -556,7 +614,7 @@
 
         .tabulator-wrapper .tabulator {
             overflow: hidden;
-            border: 1px solid var(--idb-border-color);
+            border: 1px solid #C7C7C9;
             border-radius: var(--idb-border-radius);
 
             &.tabulator-container {
@@ -569,13 +627,31 @@
             }
 
             .tabulator-header {
+                border-top-left-radius: 8px;
+                border-top-right-radius: 8px;
+            }
+
+            .tabulator-header {
                 border-bottom: 1px solid var(--idb-border-color);
                 font-size: var(--idb-font-size-label);
                 font-weight: 600;
                 color: var(--idb-color-text-default);
 
                 .tabulator-col .tabulator-col-content {
-                    padding: 12px var(--idb-space-sm);
+                    padding: 17px 12px;
+                    background-color: #F3F3F3;
+                }
+
+                // the Actions column is 72px: its title is cut, never ends with an ellipsis
+                .tabulator-col[tabulator-field="__table_actions"] .tabulator-col-title {
+                    text-overflow: clip;
+                }
+
+                .tabulator-col .tabulator-col-title {
+                    font-size: 0.75rem;
+                    line-height: 1rem;
+                    font-weight: 700;
+                    color: #272626;
                 }
 
                 // the sort arrow shows on hover and on the sorted column only
@@ -590,8 +666,19 @@
                 }
             }
 
+            &.tabulator-container .tabulator-table {
+                margin-left: 0;
+            }
+
+            .tabulator-row,
+            .tabulator-row:last-child {
+                border-radius: 0;
+            }
+
+            // 48px rows with the 1px row border; a cell with wrapped badges grows the row
             .tabulator-row .tabulator-cell {
-                padding: 10px var(--idb-space-sm);
+                min-height: 47px;
+                padding: 8px var(--idb-space-sm);
                 font-size: var(--idb-font-size-label);
                 line-height: var(--idb-line-height-label);
                 white-space: normal;
@@ -610,7 +697,9 @@
             }
 
             .tabulator-footer {
-                padding: var(--idb-space-xs) var(--idb-space-sm);
+                padding: var(--idb-space-xs) 20px;
+                border-bottom-left-radius: 8px;
+                border-bottom-right-radius: 8px;
                 border-top: 1px solid var(--idb-border-color);
                 font-size: var(--idb-font-size-label);
 
@@ -618,14 +707,20 @@
                 .tabulator-footer-contents {
                     flex-wrap: wrap;
                     justify-content: flex-end;
-                    gap: var(--idb-space-sm);
+                    gap: 48px;
+                    font-family: "Inter", sans-serif;
+                    line-height: 1rem;
 
                     .tabulator-paginator {
                         display: contents;
 
+                        // the paginator children are items of the footer row, see `display: contents`:
+                        // "Items per page" sits 8px from its select, not the 48px gap
                         label {
                             order: 1;
                             margin: 0;
+                            margin-inline-end: calc(8px - 48px);
+                            font-size: 0.75rem;
                             color: var(--idb-color-text-default);
                         }
 
@@ -635,13 +730,68 @@
                             width: auto;
                             min-width: 74px;
                             max-width: none;
-                            padding: 6px 32px 6px 12px;
-                            font-size: var(--idb-font-size-label-large);
+                            // no margins of Tabulator: the footer gap spaces the items
+                            margin: 0;
+                            // the right padding leaves room for the icon
+                            padding: 11px 48px 11px 12px;
+                            font-size: 0.75rem;
+                            line-height: 1rem;
+                            border: 1px solid #AEAEAD;
+                            border-radius: 4px;
+                            // the icon of the page size select of the Datasets page, see .search-results-sort
+                            --bs-form-select-bg-img: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='%23535354' d='M7 10l5 5 5-5z'/></svg>");
+                            background-position: right 0.40rem center;
+                            background-size: 24px 24px;
                         }
 
+                        // the previous and next arrows: the chevrons of the Datasets page
+                        // paginator, see dataset_pagination.html, drawn in the button colour
                         .tabulator-page {
                             order: 4;
-                            color: var(--idb-color-text-default);
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 40px;
+                            height: 40px;
+                            padding: 0;
+                            color: #5C5A5A;
+                            background: transparent;
+
+                            &:disabled {
+                                color: #AFADAD;
+                                opacity: 1;
+                            }
+
+                            &:not(:disabled):hover,
+                            &:not(:disabled):focus-visible {
+                                color: #5C5A5A;
+                                background-color: var(--idb-color-neutral-99);
+                            }
+
+                            i {
+                                display: none;
+                            }
+
+                            &::before {
+                                content: "";
+                                width: 7.41px;
+                                height: 12px;
+                                background-color: currentColor;
+                                mask: no-repeat center / contain;
+                            }
+
+                            &[data-page="prev"]::before {
+                                mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='8 6 7.41 12'><path d='M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z'/></svg>");
+                            }
+
+                            // 16px from the previous button, not the 48px gap of the footer
+                            &[data-page="next"] {
+                                margin-inline-start: calc(16px - 48px);
+                            }
+
+                            &[data-page="next"]::before {
+                                mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='8.59 6 7.41 12'><path d='M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z'/></svg>");
+                            }
                         }
 
                         .tabulator-page[data-page="first"],
@@ -739,6 +889,43 @@
         &-text {
             min-width: 0;
             overflow-wrap: anywhere;
+        }
+    }
+}
+
+// The row actions menu of the dashboard tables, as the design system dropdown
+// menu. Tabulator appends it to <body>, outside the table.
+body:has(.dashboard-table) .tabulator-menu.tabulator-popup-container {
+    min-width: 160px;
+    padding: 6px var(--idb-space-xs);
+    border-color: var(--idb-color-border-default);
+    border-radius: var(--idb-border-radius);
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--idb-color-neutral-20) 12%, transparent);
+
+    .tabulator-menu-item {
+        padding: var(--idb-space-xs) 12px;
+        border-radius: var(--idb-border-radius);
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+        color: var(--idb-color-text-primary);
+        white-space: nowrap;
+
+        &:not(:last-child) {
+            margin-bottom: 4px;
+        }
+
+        i {
+            width: 1.25em;
+            color: var(--idb-color-on-surface-variant);
+        }
+
+        &:not(.tabulator-menu-item-disabled):hover {
+            color: var(--idb-color-text-primary);
+            background-color: var(--idb-color-neutral-99);
+        }
+
+        &.tabulator-menu-item-disabled {
+            opacity: 0.5;
         }
     }
 }
