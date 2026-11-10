@@ -21,7 +21,15 @@
 
 {% block content_primary_nav -%}
     {{ ui.content_nav_item(_('Edit resource'), href=h.url_for(pkg.type ~ '_resource.edit', id=pkg.name, resource_id=res.id), icon='pencil', active=request.endpoint==pkg.type ~ '_resource.edit') }}
-    {%- block inner_primary_nav %}{% endblock %}
+    {%- block inner_primary_nav %}
+        {% if res.datastore_active and h.plugin_loaded('datastore') %}
+            {{ ui.content_nav_item(_('Data Dictionary'),
+                href=h.url_for('datastore.dictionary', id=pkg.name, resource_id=res.id),
+                icon='code',
+                active=request.endpoint == 'datastore.dictionary'
+            ) }}
+        {% endif %}
+    {% endblock %}
     {{- ui.content_nav_item(_('Views'), href=h.url_for(pkg.type ~ '_resource.views', id=pkg.name, resource_id=res.id), icon='chart-bar', active=request.endpoint==pkg.type ~ '_resource.views') }}
 {%- endblock %}
 
