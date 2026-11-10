@@ -125,7 +125,7 @@
                     {{ ui.link(
                         ui.notifications(notifications_count),
                         href=notifications_url,
-                        attrs={"class": "header-notifications-link d-inline-flex align-items-center justify-content-center p-1 fs-5 text-idb-default text-decoration-none", "aria-label": _('Notifications')}
+                        attrs={"class": "header-notifications-link d-inline-flex align-items-center justify-content-center p-1 fs-5 text-decoration-none", "aria-label": _('Notifications')}
                     ) }}
                 {% endif %}
             {% endblock %}
@@ -134,9 +134,9 @@
                 {# There is no help page in the portal yet: replace `#` with its URL once it exists #}
                 {%- set help_url = '#' -%}
                 {{ ui.link(
-                    ui.icon("circle-question", style="regular", aria={"hidden": "true"}) ~ ui.util.tag(_('Help'), "span", attrs={"class": "header-help-label"}),
+                    ui.icon("circle-question", style="regular fa-lg", aria={"hidden": "true"}) ~ ui.util.tag(_('Help'), "span", attrs={"class": "header-help-label"}),
                     href=help_url,
-                    attrs={"class": "header-help-link d-inline-flex align-items-center justify-content-center p-1 fs-5 text-idb-default text-decoration-none", "aria-label": _('Help')}
+                    attrs={"class": "header-help-link d-inline-flex align-items-center justify-content-center p-1 fs-5 text-decoration-none", "aria-label": _('Help')}
                 ) }}
             {% endblock %}
 
