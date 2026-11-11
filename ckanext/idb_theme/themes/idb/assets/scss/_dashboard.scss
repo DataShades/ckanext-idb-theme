@@ -443,6 +443,15 @@
         .table-search {
             flex: 0 1 272px;
 
+            // tablet and down: full row, the quick filters wrap below
+            @include media-breakpoint-down(lg) {
+                flex-basis: 100%;
+            }
+
+            @include media-breakpoint-up(lg) {
+                min-width: 309px;
+            }
+
             i {
                 right: 20px;
                 left: auto;
@@ -451,8 +460,6 @@
 
             .form-control {
                 padding: 10px 16px;
-                // room for the magnifier icon
-                padding-inline-end: 44px;
                 font-family: "Open Sans", sans-serif;
                 font-size: 0.875rem;
                 line-height: 1.25rem;
@@ -466,15 +473,23 @@
             }
         }
 
+        // its search placeholder is longer than on the other tables
+        &.dashboard-org-users .table-search {
+            @include media-breakpoint-up(lg) {
+                min-width: 369px;
+            }
+        }
+
         .table-quick-filters {
             gap: 10px;
 
             .form-select {
-                min-width: 196px;
+                width: auto;
+                field-sizing: content;
                 max-width: 100%;
                 padding: 8px 12px;
-                // room for the chevron
-                padding-inline-end: 36px;
+                padding-inline-end: 48px;
+                background-position: right 18px center;
                 font-size: 0.75rem;
                 line-height: 1rem;
                 font-weight: 400;
@@ -484,17 +499,16 @@
                 --bs-form-select-bg-img: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%235C5A5A' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/></svg>");
             }
 
-            // searchable select (Tom Select): the wrapper keeps the `.form-select`
-            // border and chevron, the control inside it is plain text
             .ts-wrapper.form-select {
-                padding: 0;
-
                 &.focus {
                     box-shadow: none;
                 }
 
                 .ts-control {
-                    padding: 8px 36px 8px 12px;
+                    padding: 0;
+                    --ts-pr-min: 0px;
+                    --ts-pr-caret: 0px;
+                    --ts-pr-clear-button: 0px;
                     font-size: inherit;
                     line-height: inherit;
                     font-weight: inherit;
