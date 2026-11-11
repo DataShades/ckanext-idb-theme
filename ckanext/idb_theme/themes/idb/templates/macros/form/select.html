@@ -32,9 +32,9 @@ Complete example:
 
 #}
 
-{% macro select(name, id='', label='', options='', selected='', error='', classes=[], attrs={}, is_required=false) %}
+{% macro select(name, id='', label='', options='', selected='', error='', classes=[], attrs={}, is_required=false, tooltip=none) %}
 
     {%- set extra_html = caller() if caller -%}
-    {{ ui.select(extra_html, name=name, id=id, label=label, options=options, selected=selected, errors=error, attrs=attrs, required=is_required) }}
+    {{ ui.select(extra_html, name=name, id=id, label=label, options=options, selected=selected, errors=error, attrs=attrs, required=is_required, tooltip=tooltip) }}
 
 {% endmacro %}

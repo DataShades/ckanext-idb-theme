@@ -1,0 +1,709 @@
+// Multi-step / multi-section entity forms.
+// Components: templates/macros/idb/form_layout.html
+// Behaviour:  javascript/modules/form-sections.js
+
+:root {
+    --idb-form-card-bg: #fff;
+    --idb-form-banner-bg: var(--idb-color-alert-info-bg);
+    --idb-form-banner-border: var(--idb-color-alert-info-border);
+    --idb-form-success-bg: var(--idb-color-success-container);
+    --idb-form-success-border: var(--idb-color-success-md);
+    --idb-form-pending-color: rgba(10, 10, 10, 0.38); // #0A0A0A at 38%
+}
+
+
+// Page header ////////////////////////////////////////////////////////////////
+
+.form-page-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: var(--idb-space-md);
+
+    // spacing via margins (not gap) so the title keeps exactly 16px below it
+    > .info-banner {
+        margin-top: var(--idb-space-xs);
+    }
+
+    &__title {
+        margin: 0 0 var(--idb-space-sm);
+        color: var(--idb-color-primary);
+        font-size: var(--idb-font-size-display-small);
+        line-height: var(--idb-line-height-display-small);
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+}
+
+.form-page-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--idb-space-sm);
+    padding: 20px var(--idb-space-md);
+    background: var(--idb-form-card-bg);
+    border: 1px solid var(--idb-color-outline);
+    border-radius: 16px;
+
+    &__steps {
+        flex: 1 1 auto;
+        min-width: 0;
+
+        @include media-breakpoint-up(lg) {
+            flex: 0 1 auto;
+            padding-right: 40px;
+            border-right: 1px solid var(--idb-color-border-n-variant80);
+        }
+    }
+
+    &__status {
+        flex: 1 1 auto;
+        display: flex;
+        justify-content: center;
+    }
+
+    &__actions {
+        margin-left: auto;
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: var(--idb-space-xs) var(--idb-space-md);
+            border-radius: var(--idb-border-radius-lg);
+            text-align: center;
+            font-family: var(--idb-font-family-inter), sans-serif;
+            font-size: var(--idb-font-size-text);
+            line-height: var(--idb-line-height-text);
+            font-weight: 600;
+
+            &:disabled,
+            &.disabled {
+                border-color: var(--idb-color-interaction-disabled);
+                background: var(--idb-color-interaction-disabled);
+                color: var(--idb-color-text-disabled);
+                opacity: 1;
+            }
+        }
+    }
+
+    @include media-breakpoint-down(md) {
+        &__status {
+            justify-content: flex-start;
+        }
+
+        &__actions,
+        &__actions .btn {
+            width: 100%;
+        }
+    }
+}
+
+
+// Stepper ////////////////////////////////////////////////////////////////////
+
+.stepper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--idb-space-xs);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stepper-step {
+    display: flex;
+    align-items: center;
+    gap: var(--idb-space-xs);
+    min-width: 0;
+
+    & + &::before {
+        content: "";
+        display: block;
+        width: 24px;
+        height: 1px;
+        margin-right: 4px;
+        background: var(--idb-color-outline);
+    }
+
+    &__index {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 64px;
+        background: var(--idb-form-pending-color);
+        color: #fff;
+        font-size: 11px;
+        font-weight: 600;
+    }
+
+    &__text {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    &__label {
+        color: var(--idb-color-text-default);
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+        font-weight: 700;
+    }
+
+    &__status {
+        color: var(--idb-color-on-surface-variant);
+        font-size: var(--idb-font-size-label);
+        line-height: var(--idb-line-height-label);
+        font-weight: 400;
+    }
+
+    &--active,
+    &--complete {
+        .stepper-step__index {
+            background: var(--idb-color-button-flat-background);
+        }
+    }
+
+    &--complete .stepper-step__index {
+        background: var(--idb-color-success);
+    }
+
+    // everything in a pending step is muted
+    &--pending {
+        &::before {
+            background: var(--idb-form-pending-color);
+        }
+
+        .stepper-step__index {
+            background: var(--idb-form-pending-color);
+        }
+
+        .stepper-step__label,
+        .stepper-step__status {
+            color: var(--idb-form-pending-color);
+        }
+    }
+
+    @include media-breakpoint-down(sm) {
+        & + &::before {
+            width: 12px;
+        }
+    }
+}
+
+
+// Status pill ////////////////////////////////////////////////////////////////
+
+.form-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: var(--idb-border-radius);
+    background: var(--idb-color-neutral-99);
+    color: var(--idb-color-text-default);
+    text-align: center;
+    font-size: var(--idb-font-size-label-large);
+    line-height: var(--idb-line-height-label-large);
+    font-weight: 600;
+}
+
+
+// Info banner ////////////////////////////////////////////////////////////////
+
+.info-banner {
+    display: flex;
+    align-self: stretch;
+    align-items: center;
+    gap: var(--idb-space-xs);
+    padding: 12px var(--idb-space-sm);
+    border: 1px solid var(--idb-form-banner-border);
+    border-radius: var(--idb-border-radius-sm);
+    background: var(--idb-form-banner-bg);
+    color: var(--idb-color-alert-info-fg);
+
+    &__icon {
+        flex: 0 0 auto;
+        display: inline-flex;
+
+        svg {
+            width: 24px;
+            height: 24px;
+        }
+    }
+
+    &__content {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        font-family: var(--idb-font-family-inter), sans-serif;
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+        font-weight: 400;
+    }
+}
+
+
+// Completion badge ///////////////////////////////////////////////////////////
+
+.completion-badge {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 auto;
+    height: 32px;
+    padding: 0 var(--idb-space-xs);
+    border: 1px solid var(--idb-color-outline);
+    border-radius: var(--idb-border-radius);
+    background: var(--idb-color-neutral-99);
+    color: var(--idb-color-text-default);
+    font-size: var(--idb-font-size-label);
+    line-height: var(--idb-line-height-label);
+    font-weight: 600;
+    white-space: nowrap;
+
+    &.is-optional {
+        background: #fff;
+    }
+
+    // at least one required field filled (N/X with N > 0), complete included
+    &.is-started,
+    &.is-complete {
+        border-color: var(--idb-form-success-border);
+        background: var(--idb-form-success-bg);
+    }
+}
+
+
+// Two-column layout //////////////////////////////////////////////////////////
+
+.form-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+    align-items: start;
+    margin-bottom: 4px;
+
+    @include media-breakpoint-up(md) {
+        grid-template-columns: minmax(200px, 1fr) minmax(0, 3fr);
+    }
+
+    &__aside {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        min-width: 0;
+
+        // full row height, so the sticky block has room to travel
+        @include media-breakpoint-up(md) {
+            align-self: stretch;
+        }
+    }
+
+    // the sticky block travels inside this track, which ends above the help card
+    &__sticky-track {
+        flex: 1 0 auto;
+    }
+
+    &__sticky {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+
+        // `top` is set by the form-sections module: the page gap, or less when
+        // the block is taller than the screen, so its bottom stays reachable
+        @include media-breakpoint-up(md) {
+            position: sticky;
+            top: var(--form-sticky-top, var(--idb-space-sm));
+        }
+    }
+
+    &__main {
+        min-width: 0;
+    }
+}
+
+.form-side-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+    gap: 18px;
+    padding: 20px var(--idb-space-sm);
+    border: 1px solid var(--idb-color-border-n-variant80);
+    border-radius: var(--idb-border-radius);
+    background: var(--idb-form-card-bg);
+
+    // bars and lists keep the full card width
+    > ul,
+    > [role="progressbar"] {
+        align-self: stretch;
+    }
+
+    &__title {
+        margin: 0;
+        color: var(--idb-color-primary-20);
+        font-size: var(--idb-font-size-label);
+        line-height: var(--idb-line-height-label);
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+}
+
+
+// Section navigation /////////////////////////////////////////////////////////
+
+.form-section-nav {
+    &__list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    &__link {
+        display: flex;
+        align-self: stretch;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--idb-space-xs);
+        padding: var(--idb-space-xs) var(--idb-space-xs) var(--idb-space-xs) var(--idb-space-sm);
+        border-radius: var(--idb-border-radius);
+        color: var(--idb-color-primary-dark);
+        text-decoration: none;
+
+        &:hover,
+        &:focus-visible {
+            background: var(--idb-color-interaction-selected);
+            color: var(--idb-color-primary-dark);
+        }
+    }
+
+    &__text {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    &__title {
+        color: var(--idb-color-primary-20);
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+        font-weight: 700;
+        overflow-wrap: anywhere;
+    }
+
+    &__meta {
+        color: var(--idb-color-secondary-60);
+        font-size: var(--idb-font-size-label);
+        line-height: var(--idb-line-height-label);
+        font-weight: 400;
+
+        &.is-complete {
+            color: var(--idb-color-success);
+        }
+    }
+
+    &__chevron {
+        flex: 0 0 auto;
+        display: inline-flex;
+        font-size: 10px;
+        transition: transform 0.2s ease;
+    }
+
+    &__item.is-active &__link {
+        background: var(--idb-color-primary-container);
+    }
+
+    &__item.is-active &__chevron {
+        transform: rotate(180deg);
+    }
+}
+
+
+// Completion progress ////////////////////////////////////////////////////////
+
+// exact spacing between items instead of the side card's even gap
+.form-progress {
+    gap: 0;
+
+    .form-side-card__title {
+        margin-bottom: var(--idb-space-xs);
+    }
+
+    &__hint {
+        margin: 0 0 var(--idb-space-sm);
+        color: var(--idb-color-on-secondary-container);
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+        font-weight: 400;
+    }
+
+    &__required {
+        color: var(--idb-color-error-40);
+    }
+
+    &__bar {
+        align-self: stretch;
+        height: 8px;
+        margin-bottom: var(--idb-space-xs);
+        overflow: hidden;
+        border-radius: 16px;
+        background: #D8D8D9; // design: surface-variant (differs from --idb-color-surface-variant)
+    }
+
+    &__bar-fill {
+        height: 100%;
+        border-radius: 16px;
+        background: var(--idb-color-button-flat-background);
+        transition: width 0.3s ease;
+    }
+
+    &__summary {
+        margin: 0 0 var(--idb-space-sm);
+        color: var(--idb-color-primary-40);
+        font-size: var(--idb-font-size-label);
+        line-height: var(--idb-line-height-label);
+        font-weight: 400;
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--idb-space-xs);
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    &__item {
+        padding: 4px 0;
+    }
+
+    &__link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--idb-color-primary-30);
+        font-size: var(--idb-font-size-label);
+        line-height: var(--idb-line-height-label);
+        text-decoration: none;
+
+        // hovering anywhere on the link (circle included) underlines only the name
+        &:hover .form-progress__label,
+        &:focus-visible .form-progress__label {
+            text-decoration: underline;
+        }
+    }
+
+    &__check {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border: 1.5px solid var(--idb-color-border-default);
+        border-radius: 64px;
+        color: transparent;
+
+        // the check from check_circle.svg, at its original size inside the 24px circle
+        svg {
+            flex: 0 0 auto;
+            width: 24px;
+            height: 24px;
+        }
+    }
+
+    &__label {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        color: var(--idb-color-link-default);
+        font-family: var(--idb-font-family-inter), sans-serif;
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+        font-weight: 600;
+    }
+
+    &__item.is-complete &__check {
+        border-color: var(--idb-color-link-default);
+        background: var(--idb-color-link-default);
+        color: #fff;
+    }
+}
+
+
+// Help card //////////////////////////////////////////////////////////////////
+
+.help-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--idb-space-xs);
+    padding: 12px var(--idb-space-sm);
+    border-radius: var(--idb-border-radius);
+    background: var(--idb-color-primary-light);
+
+    &__title {
+        margin: 0;
+        color: var(--idb-color-primary-20);
+        font-size: 1.125rem;
+        line-height: 1.5rem;
+        font-weight: 600;
+    }
+
+    &__text {
+        margin: 0;
+        color: var(--idb-color-text-default);
+        font-size: var(--idb-font-size-label);
+        line-height: var(--idb-line-height-label);
+        font-weight: 400;
+    }
+
+    &__link {
+        color: var(--idb-color-link-default);
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+        font-weight: 600;
+        text-decoration: none;
+
+        &:hover,
+        &:focus-visible {
+            text-decoration: underline;
+        }
+    }
+}
+
+
+// Collapsible section ////////////////////////////////////////////////////////
+
+// The header has 20px bottom padding and the card adds 4px under it, so a
+// collapsed header has 24px at the bottom while an open one has 20px above the
+// fields. Nothing changes size on toggle, which keeps the animation smooth.
+.form-section {
+    padding-bottom: 4px;
+    border: 1px solid var(--idb-color-border-n-variant80);
+    border-radius: var(--idb-border-radius);
+    background: var(--idb-form-card-bg);
+    scroll-margin-top: var(--idb-space-sm);
+
+    & + & {
+        margin-top: var(--idb-space-sm);
+    }
+
+    &__header {
+        margin: 0;
+    }
+
+    &__toggle {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        padding: var(--idb-space-md) 40px 20px;
+        border: 0;
+        border-radius: var(--idb-border-radius);
+        background: transparent;
+        color: var(--idb-color-primary-dark);
+        text-align: left;
+        font-weight: normal;
+
+        &:focus-visible {
+            outline: 2px solid var(--idb-color-button-flat-background);
+            outline-offset: -2px;
+        }
+    }
+
+    // spacing via margins: 12px title-badge, 40px badge-arrow
+    &__heading {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        margin-right: 12px;
+    }
+
+    &__title {
+        color: var(--idb-color-primary-20);
+        font-size: var(--idb-font-size-subtitle);
+        line-height: var(--idb-line-height-subtitle);
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    &__subtitle {
+        color: var(--idb-color-text-default);
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+        font-weight: 400;
+    }
+
+    &__chevron {
+        flex: 0 0 auto;
+        display: inline-flex;
+        margin-left: 40px;
+        color: var(--idb-color-button-stroke-text);
+        font-size: 12px;
+        transition: transform 0.2s ease;
+    }
+
+    &__toggle:not(.collapsed) &__chevron {
+        transform: rotate(180deg);
+    }
+
+    // no top padding: the toggle above already has 20px at the bottom
+    &__content {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        padding: 0 40px 20px;
+
+        > * {
+            align-self: stretch;
+            min-width: 0;
+        }
+    }
+
+    // small screens keep a narrow side padding
+    @include media-breakpoint-down(md) {
+        &__toggle {
+            padding: 20px var(--idb-space-sm) var(--idb-space-sm);
+        }
+
+        &__content {
+            padding: 0 var(--idb-space-sm) var(--idb-space-sm);
+        }
+    }
+
+    @include media-breakpoint-down(sm) {
+        &__heading {
+            margin-right: var(--idb-space-xs);
+        }
+
+        &__chevron {
+            margin-left: var(--idb-space-sm);
+        }
+    }
+}
+
+.form-section-field {
+    scroll-margin-top: var(--idb-space-sm);
+
+    .form-group {
+        margin-bottom: var(--idb-space-sm);
+    }
+
+    // per-language inputs of a translated field
+    .multilingual-field-group .form-group {
+        margin-bottom: 20px;
+    }
+
+    // spacing above the divider comes from the gap of .form-section__content
+    & + & {
+        padding-top: var(--idb-space-sm);
+        border-top: 1px dashed var(--idb-color-border-n-variant95);
+    }
+}

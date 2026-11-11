@@ -20,9 +20,9 @@ Examples:
 {{ form.textarea('desc', id='field-description', label=_('Description'), value=data.desc, error=errors.desc) }}
 
 #}
-{% macro textarea(name, id='', label='', value='', placeholder='', error="", classes=[], attrs={}, is_required=false, rows=5, cols=20) %}
+{% macro textarea(name, id='', label='', value='', placeholder='', error="", classes=[], attrs={}, is_required=false, rows=5, cols=20, tooltip=none) %}
 
     {%- set extra_html = caller() if caller -%}
-    {{ ui.textarea(extra_html, name=name, id=id, label=label, value=value, placeholder=placeholder, errors=error, attrs=attrs, required=is_required) }}
+    {{ ui.textarea(extra_html, name=name, id=id, label=label, value=value, placeholder=placeholder, errors=error, attrs=attrs, required=is_required, tooltip=tooltip) }}
 
 {% endmacro %}

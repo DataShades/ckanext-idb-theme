@@ -85,8 +85,62 @@ textarea {
     width: 100%;
 }
 
+// Title/Medium SemiBold. Order: text, required mark, tooltip button.
+.form-label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+    color: var(--idb-color-primary-20);
+    font-size: 1.125rem;
+    line-height: 1.5rem;
+    font-weight: 600;
+
+    // the design has no colon after labels
+    &::after {
+        content: none;
+    }
+}
+
+// Help text under a field. Body/Medium
+.form-text {
+    margin-top: 0;
+    margin-bottom: 6px;
+    color: var(--idb-color-text-default);
+    font-size: var(--idb-font-size-label-large);
+    line-height: var(--idb-line-height-label-large);
+    font-weight: 400;
+}
+
+.field-tooltip {
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: var(--idb-border-radius-sm);
+    background: var(--idb-color-adornment-blue-bg);
+    color: var(--idb-color-alert-info-fg);
+    cursor: help;
+
+    svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--idb-color-button-flat-background);
+        outline-offset: 1px;
+    }
+}
+
 .control-required {
-    color: $errorBorder;
+    color: var(--idb-color-error-40);
+    font-size: 1.125rem;
+    line-height: 1.5rem;
+    font-weight: 600;
 }
 
 .form-actions {
