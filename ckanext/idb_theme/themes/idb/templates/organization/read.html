@@ -1,31 +1,63 @@
 {% extends "organization/read_base.html" %}
 
+{% block pre_primary %}
+    <div class="organization-info my-4">
+        {% snippet "organization/snippets/info.html", organization=group_dict, group_type=group_type, am_following=am_following, banner=true %}
+    </div>
+
+    {% if self.content_action() | trim %}
+        {%- call ui.util.call(ui.content_action_wrapper, attrs={"class": "content_action gap-1 mb-md-4"}) -%}
+            {% block content_action -%}{{ super() }}{% endblock %}
+        {%- endcall %}
+    {% endif %}
+
+    {% block form %}
+        {% set dataset_type = 'dataset' %}
+        {% set facets = {
+            'fields': fields_grouped,
+            'search': search_facets,
+            'titles': facet_titles,
+            'translated_fields': translated_fields,
+            'remove_field': remove_field 
+        } %}
+        {% set sorting = [
+            (_('Relevance'), 'score desc, metadata_modified desc'),
+            (_('Name Ascending'), 'title_string asc'),
+            (_('Name Descending'), 'title_string desc'),
+            (_('Last Modified'), 'metadata_modified desc'),
+            (_('Most downloaded'), 'downloads_sort desc, metadata_modified desc')
+        ] %}
+        {% snippet 'snippets/search_form.html', form_id='dataset-search-form', type=dataset_type, query=q, sorting=sorting, sorting_selected=sort_by_selected, count=page.item_count, placeholder=h.humanize_entity_type('package', dataset_type, 'search placeholder') or _('Search Datasets'), facets=facets, show_empty=request.args, error=query_error, fields=fields, oob=true %}
+    {% endblock %}
+{% endblock %}
+
 {% block primary_content %}
     <article class="module">
         {% block page_header %}
-            {{ super() }}
         {% endblock %}
-        {% snippet "package/snippets/search_results.html",
-      heading=organization.title or organization.name,
-      dataset_type=dataset_type,
-      fields_grouped=fields_grouped,
-      search_facets=search_facets,
-      facet_titles=facet_titles,
-      translated_fields=translated_fields,
-      remove_field=remove_field,
-      q=q,
-      sort_by_selected=sort_by_selected,
-      page=page,
-      query_error=query_error,
-      fields=fields,
-      state=organization.state
+
+        {% snippet "organization/snippets/search_results.html",
+            heading=organization.title or organization.name,
+            dataset_type=dataset_type,
+            fields_grouped=fields_grouped,
+            search_facets=search_facets,
+            facet_titles=facet_titles,
+            translated_fields=translated_fields,
+            remove_field=remove_field,
+            q=q,
+            sort_by_selected=sort_by_selected,
+            page=page,
+            query_error=query_error,
+            fields=fields,
+            state=organization.state,
+            action=request.path
         %}
     </article>
 {% endblock %}
 
 {% block organization_facets %}
     {% snippet "package/snippets/search_facets.html",
-    facet_titles=facet_titles,
-    search_facets=search_facets
+        facet_titles=facet_titles,
+        search_facets=search_facets
     %}
 {% endblock %}

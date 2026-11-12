@@ -40,6 +40,7 @@ scripts:
     - javascript/modules/highlights-carousel.js
     - javascript/modules/image-dropzone.js
     - javascript/modules/image-upload.js
+    - javascript/modules/members-filter.js
     - javascript/modules/markdown-editor.js
     - javascript/modules/metadata-button.js
     - javascript/modules/popover.js

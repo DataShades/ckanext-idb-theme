@@ -46,6 +46,274 @@
     object-position: center;
 }
 
+// banner of the unit (organization) page: image, name, description and
+// actions; the layout itself comes from Bootstrap utilities
+.idb-unit-banner {
+    position: relative;
+
+    .idb-unit-banner-image {
+        width: 8rem;
+        height: 8rem;
+        background-color: transparent;
+        border-radius: var(--idb-border-radius);
+
+        img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+    }
+    .idb-unit-banner-description {
+        display: -webkit-box;
+        line-clamp: 3;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: var(--idb-color-neutral-20);
+
+        > :last-child {
+            margin-bottom: 0;
+        }
+    }
+    // the edit action sits in the top right corner of the banner
+    .idb-unit-banner-edit {
+        position: absolute;
+        top: $spacer-4;
+        right: $spacer-3;
+    }
+}
+
+// "About" panel of the unit: the label of the field above its value, the
+// fields separated by thin lines
+.idb-about-panel {
+    width: 25%;
+    max-width: 100%;
+    @include media-breakpoint-down(md) {
+        --bs-offcanvas-width: 100%;
+    }
+    &:focus {
+        outline: none;
+    }
+}
+
+.idb-spec-list {
+    margin: 0;
+
+    .idb-spec-row {
+        padding: $spacer-2 0;
+        border-bottom: 1px solid var(--idb-border-color);
+
+        &:first-child {
+            padding-top: 0;
+        }
+        &:last-child {
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+    }
+
+    dt {
+        margin-bottom: 0.25rem;
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+        font-weight: $font-weight-semibold;
+        color: var(--idb-color-text-default);
+    }
+
+    dd {
+        margin: 0;
+        color: var(--idb-color-text-default);
+        overflow-wrap: anywhere;
+
+        > :last-child {
+            margin-bottom: 0;
+        }
+    }
+}
+
+// "Members" panel of the unit: the drawer, its search field, the members table
+// and the role action
+.idb-members-panel {
+    width: 25%;
+    max-width: 100%;
+    background-color: $white;
+    box-shadow: 0 1px 3px rgba(16, 24, 40, 0.1), 0 1px 2px rgba(16, 24, 40, 0.06);
+
+    &:focus {
+        outline: none;
+    }
+
+    .offcanvas-header {
+        height: 80px;
+        padding: 0 $spacer-3;
+        background-color: var(--idb-color-neutral-99);
+        border-bottom: 1px solid var(--idb-color-border-default);
+    }
+
+    .offcanvas-title {
+        font-family: var(--idb-font-family), sans-serif;
+        font-size: 1.375rem;
+        line-height: 1.75rem;
+        font-weight: $font-weight-semibold;
+        color: var(--idb-color-text-primary);
+    }
+
+    .offcanvas-body {
+        padding: $spacer-3;
+    }
+}
+
+.idb-members {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .idb-members-search {
+        position: relative;
+
+        .form-control {
+            height: 2.5rem;
+            padding: 0 $spacer-4 0 0.75rem;
+            font-family: var(--idb-font-family-inter), sans-serif;
+            font-size: var(--idb-font-size-label-large);
+            line-height: var(--idb-line-height-label-large);
+            color: var(--idb-color-text-primary);
+            background-color: $white;
+            border: 1px solid var(--idb-color-button-stroke-border);
+            border-radius: var(--idb-border-radius);
+
+            &::placeholder {
+                color: var(--idb-color-text-primary);
+            }
+        }
+
+        .fa {
+            position: absolute;
+            top: 50%;
+            right: 0.75rem;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            color: var(--idb-color-text-subtle);
+            pointer-events: none;
+        }
+    }
+
+    .table {
+        margin: 0;
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        overflow: hidden;
+        color: var(--idb-color-text-primary);
+        background-color: $white;
+        border: 1px solid var(--idb-color-border-default);
+        border-radius: var(--idb-border-radius);
+        --bs-table-bg: #{$white};
+        --bs-table-color: var(--idb-color-text-primary);
+
+        th,
+        td {
+            height: 3.125rem;
+            padding: 0.25rem 0.75rem;
+            font-family: var(--idb-font-family-inter), sans-serif;
+            font-size: var(--idb-font-size-label-large);
+            line-height: var(--idb-line-height-label-large);
+            vertical-align: middle;
+            border: none;
+            border-bottom: 1px solid var(--idb-color-border-subtle);
+        }
+
+        th {
+            font-weight: $font-weight-semibold;
+            background-color: var(--idb-color-neutral-99);
+        }
+
+        th:first-child,
+        td:first-child {
+            padding-left: $spacer-3;
+        }
+
+        th:last-child,
+        td:last-child {
+            width: 68px;
+        }
+
+        td:last-child {
+            text-align: center;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+    }
+
+    .idb-members-user {
+        display: flex;
+        align-items: center;
+        gap: $spacer-2;
+        white-space: nowrap;
+    }
+
+    .user-image,
+    .idb-members-avatar {
+        flex: none;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
+    // initials stand in for the image of a user
+    .idb-members-avatar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--idb-color-button-flat-background);
+        color: var(--idb-color-on-primary);
+        font-family: var(--idb-font-family), sans-serif;
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+    }
+
+    // pencil that opens the role of the member: quiet icon button
+    .idb-members-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        color: var(--idb-color-text-subtle);
+        text-decoration: none;
+        transition: background-color 200ms ease, color 200ms ease;
+
+        .fa {
+            font-size: 1rem;
+        }
+
+        &:hover,
+        &:focus-visible {
+            background-color: var(--idb-color-surface);
+            color: var(--idb-color-text-primary);
+        }
+    }
+
+    .idb-members-empty {
+        margin: 0;
+        color: var(--idb-color-on-surface-muted);
+        text-align: center;
+    }
+}
+
+@include media-breakpoint-down(md) {
+    .idb-unit-banner .idb-unit-banner-image {
+        width: 100%;
+        height: 100%;
+    }
+}
+
 .iadb-iar-organization-search {
     position: relative;
 
@@ -75,5 +343,80 @@
     .hierarchy-tree li.highlighted > div.node-item a {
         color: $link-color;
         text-shadow: none;
+    }
+}
+
+
+.page-organization-read {
+    .search-form {
+        display: flex;
+        justify-content: end;
+        gap: .625rem;
+        align-items: center;
+
+        h2 {
+            order: 1;
+            font-size: $h3-font-size;
+            color: var(--idb-color-secondary-40);
+            margin-bottom: 0;
+            margin-right: auto;
+        }
+
+        .search-input-group {
+            order: 2;
+            margin: 0;
+            width: fit-content;
+            height: 2.5rem;
+            .form-control {
+                padding: 0.5rem 0.75rem;
+                border: 1px solid var(--idb-color-button-stroke-border);
+                border-radius: var(--idb-border-radius) !important;
+            }
+            button {
+                padding: 0.5rem 0.75rem;
+                color: var(--idb-color-on-surface-variant);
+            }
+        }
+
+        .control-order-by {
+            order: 3;
+            margin: 0;
+            padding: 0;
+            &:focus-within {
+                box-shadow: none;
+            }
+            label {
+                display: none;
+            }
+            .form-select {
+                height: 2.5rem;
+                padding-top: var(--idb-space-xs);
+                padding-bottom: var(--idb-space-xs);
+                font-family: var(--idb-font-family), sans-serif;
+                font-size: var(--idb-font-size-text);
+                line-height: 20px;
+                font-weight: 400;
+                color: var(--idb-color-text-default);
+                vertical-align: middle;
+                --bs-form-select-bg-img: url(data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%23535354' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/></svg>);
+                background-position: right 1rem center;
+                background-size: 16px 12px;
+                width: auto;
+                padding: .5rem 3rem .5rem .75rem;
+                border: 1px solid #a6a6a8;
+                border-radius: var(--idb-border-radius-sm);
+            }
+        }
+
+        @include media-breakpoint-down(md) {
+            flex-direction: column;
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+            align-items: baseline;
+            .search-input-group,
+            #dataset-search-summary {
+                width: 100%;
+            }
+        }
     }
 }

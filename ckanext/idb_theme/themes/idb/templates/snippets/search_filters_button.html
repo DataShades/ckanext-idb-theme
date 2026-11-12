@@ -1,0 +1,22 @@
+{#
+The "Filters" button of the Datasets page and of the group and organization
+pages. On mobile it opens the filters panel as a full-screen dialog; on wider
+screens it is hidden by the styles of the panel.
+
+count - The number of the selected filters, the badge is hidden without them.
+
+Example:
+
+{% snippet "snippets/search_filters_button.html", count=filter_count %}
+
+#}
+<button type="button" class="show-filters btn">
+    {{ ui.icon('sliders', aria={"hidden": "true"}) }}
+    {{ _('Filters') }}
+    {%- if count %}
+        <span class="show-filters-count">
+            {{- count -}}
+            <span class="visually-hidden"> {{ ungettext('selected filter', 'selected filters', count) }}</span>
+        </span>
+    {%- endif %}
+</button>

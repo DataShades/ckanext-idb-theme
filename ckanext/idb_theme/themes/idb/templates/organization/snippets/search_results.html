@@ -1,0 +1,24 @@
+{#
+Results of the group and organization pages: the dataset cards and the
+pagination. Swapped out of band on htmx requests.
+
+dataset_type - The dataset type.
+page         - The page of the datasets.
+action       - The URL of the page.
+
+Example:
+
+{% snippet "organization/snippets/search_results.html", dataset_type=dataset_type, page=page, action=request.path %}
+
+#}
+<section class="module" id="search-results" hx-swap-oob="true" hx-swap="none">
+    <div class="module-content p-0">
+        {% block package_search_results_list %}
+            {% snippet 'snippets/package_list.html', packages=page.items %}
+        {% endblock %}
+    </div>
+
+    {% block page_pagination %}
+        {% snippet 'package/snippets/dataset_pagination.html', dataset_type=dataset_type, item_count=page.item_count, action=action %}
+    {% endblock %}
+</section>

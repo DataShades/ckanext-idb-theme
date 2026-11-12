@@ -9,12 +9,22 @@
 
 {# theming bridge #}
 {%- set kwargs = kwargs or {} -%}
+{%- set oob = oob | default(false) -%}
 {%- do kwargs.setdefault("attrs", {}) -%}
 {%- if form_id -%}
     {%- do kwargs["attrs"].update({"id": form_id}) -%}
 {%- endif %}
 
-{%- call ui.util.call(ui.search_form_box, use_htmx=use_htmx or true, **kwargs) -%}
+{#- oob: the page is updated by the parts of the htmx response that are swapped
+    out of band (the count, the results, the facets). The response is a fragment,
+    so swapping it into the body would replace the whole page. -#}
+{%- set hx = {"boost": "true", "disinherit": "hx-boost", "trigger": "change, submit"} -%}
+{%- if oob -%}
+    {%- do hx.update({"swap": "none"}) -%}
+{%- endif %}
+{%- do hx.update(kwargs.pop("hx", None) or {}) -%}
+
+{%- call ui.util.call(ui.search_form_box, use_htmx=use_htmx or true, hx=hx, **kwargs) -%}
     {% block search_input %}
         <div class="input-group search-input-group">
             {{ ui.search_input(name="q", label=none, value=query, placeholder=placeholder, attrs={"autocomplete": "off"}) }}
@@ -40,13 +50,15 @@
         {%- endcall %}
     {% endblock %}
 
-    {% block search_title %}
-        {{ ui.search_results_text(count=count, error=error, type=type, query=query) }}
-    {% endblock %}
-
-    {% block search_facets %}
-        {{ ui.search_active_filters(active_filters=fields, facet_titles=facets.titles if facets else {}, facets=facets.search if facets else {}, use_htmx=true) }}
-        <a class="show-filters btn btn-secondary">{{ _('Filter Results') }}</a>
+    {% block search_summary %}
+        {% snippet "snippets/search_summary.html",
+            count=count,
+            error=error,
+            type=type,
+            query=query,
+            fields=fields,
+            facets=facets
+        %}
     {% endblock %}
 {%- endcall %}
 

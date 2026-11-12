@@ -6,6 +6,8 @@ from ckan.lib.helpers import url_for
 from ckan.tests import factories
 
 pytestmark = [
+    pytest.mark.ckan_config("ckan.plugins", "theming idb_theme"),
+    pytest.mark.ckan_config("ckan.ui.theme", "idb"),
     pytest.mark.usefixtures("with_plugins", "clean_db"),
     pytest.mark.ckan_config("ckan.auth.public_user_details", False),
 ]
