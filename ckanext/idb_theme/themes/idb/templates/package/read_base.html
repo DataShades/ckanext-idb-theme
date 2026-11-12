@@ -2,6 +2,8 @@
 
 {% set default_group_type = h.default_group_type('group') %}
 
+{% block maintag %}<div class="main ds-read bg-main-grey">{% endblock %}
+
 {%- set PAGE_LAYOUT | trim  -%}
 {%- block page_layout -%}
     {{ "sidebar-end" }}

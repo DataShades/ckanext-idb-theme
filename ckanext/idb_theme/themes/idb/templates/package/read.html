@@ -22,7 +22,7 @@
                 {% endif %}
             {% endblock %}
         </h1>
-        <p class="text-idb-default mb-4">{{ _('Published by') }} {{ ui.link(pkg.organization.title or pkg.organization.name, href=h.url_for('organization.read', id=pkg.data_owner), attrs={"class": "text-idb-blue-link fw-semibold"}) }} {{ _('on') }} <span class="fw-semibold">{{ h.render_datetime(pkg.metadata_created) }}</span> · Last updated <span class="fw-semibold">{{ h.render_datetime(pkg.metadata_modified) }}</span> ({{ h.time_ago_from_timestamp(pkg.metadata_modified) }})</p>
+        <p class="text-idb-default mb-4">{{ _('Published by') }} {{ ui.link(pkg.organization.title or pkg.organization.name, href=h.url_for('organization.read', id=pkg.organization.name), attrs={"class": "text-idb-blue-link fw-semibold"}) }} {{ _('on') }} <span class="fw-semibold">{{ h.render_datetime(pkg.metadata_created) }}</span> · Last updated <span class="fw-semibold">{{ h.render_datetime(pkg.metadata_modified) }}</span> ({{ h.time_ago_from_timestamp(pkg.metadata_modified) }})</p>
 
         {% block chips scoped %}
             <ul class="dataset-chips list-unstyled d-flex flex-wrap gap-2{{ ' mb-3' if is_full }}">

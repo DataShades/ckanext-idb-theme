@@ -2,12 +2,24 @@
     font-size: 2rem !important;
 }
 
+.fs-14 {
+    font-size: 0.875rem !important;
+}
+
+.fs-18 {
+    font-size: 1.125rem !important;
+}
+
 .text-idb-default {
     color: var(--idb-color-text-default);
 }
 
 .text-idb-primary {
     color: var(--idb-color-text-primary);
+}
+
+.text-idb-primary-20 {
+    color: var(--idb-color-primary-20);
 }
 
 .text-idb-blue-link {

@@ -13,7 +13,7 @@ Example:
     {% if pkg %}
         <section id="package-info" class="module module-narrow">
             <div class="module context-info">
-                <div class="package-info">
+                <div class="package-info py-20 mb-12">
                     {% block package_info_inner %}
                         {% block nums %}
                             {% set num_followers = h.follow_count('dataset', pkg.id) %}
@@ -26,95 +26,81 @@ Example:
                                 </div>
                             {% endif %}
                         {% endblock %}
-                        {% block follow_button %}
-                            {% if current_user.is_authenticated %}
-                                {{ ui.alert(error_message, style="danger") if error_message }}
-
-                                {% if am_following %}
-                                    {{ ui.button(ui.icon("circle-minus", style="solid") ~ _("Unfollow"), style="danger", hx={"target": "#package-info", "post": h.url_for('dataset.unfollow', id=pkg.id)}) }}
-                                {% else %}
-                                    {{ ui.button(ui.icon("circle-plus", style="solid") ~ _("Follow"), style="success", hx={"target": "#package-info", "post": h.url_for('dataset.follow', id=pkg.id)}) }}
-
+                        <div class="mb-3">                            
+                            {% block follow_button %}
+                                {% if current_user.is_authenticated %}
+                                    {{ ui.alert(error_message, style="danger") if error_message }}
+    
+                                    {% if am_following %}
+                                        {{ ui.button(_("Unfollow"), style="danger fs-5 w-100 text-align-center fw-semibold", hx={"target": "#package-info", "post": h.url_for('dataset.unfollow', id=pkg.id)}) }}
+                                    {% else %}
+                                        {{ ui.button(_("Follow this dataset"), style="outline-primary fs-5 w-100 text-align-center", svg="bell-outline", icon_end=true, hx={"target": "#package-info", "post": h.url_for('dataset.follow', id=pkg.id)}) }}
+    
+                                    {% endif %}
                                 {% endif %}
-                            {% endif %}
-                        {% endblock %}
-                        <div class="">
-                            <p class="heading">{{ _('Intended Use') }}</p>
-                            <p>
+                            {% endblock %}
+                        </div>
+                        <div class="text-idb-default">
+                            <p class="fw-semibold fs-14 mb-2">{{ _('Intended Use') }}</p>
+                            <p class="fs-14 mb-0">
                                 {{ _('Standardized demographic indicators and projections to examine how populations may change under different assumptions; supports planning, research and policy analysis.')}}
                             </p>
                         </div>
                     {% endblock %}
                 </div>
             </div>
-            <div class="">
-                <p class="heading">{{ _('Key details') }}</p>
-                {% if pkg.data_owner %}
-                    <div class="">
-                        <p class="heading">{{ _('Data Owner') }}</p>
-                        <p>
-                            {{ pkg.data_owner }}
+            <div class="package-info py-20 mb-12 fs-14">
+                <p class="fs-18 fw-semibold mb-3">{{ _('Key details') }}</p>
+                {#- Fields shown in Key details, in display order. Labels and
+                    help tooltips come from the scheming schema. -#}
+                {% set key_detail_fields = [
+                    'data_owner',
+                    'data_steward',
+                    'unit_responsible',
+                    'ckan_dataset_type',
+                    'gov_category',
+                    'access_rights',
+                ] %}
+                {% set schema = h.scheming_get_dataset_schema(pkg.type) %}
+                {% set key_details = namespace(items=[]) %}
+                {% for field_name in key_detail_fields %}
+                    {% set field = h.scheming_field_by_name(schema.dataset_fields, field_name) %}
+                    {% if field and pkg.get(field_name) %}
+                        {% do key_details.items.append(field) %}
+                    {% endif %}
+                {% endfor %}
+                {% for field in key_details.items %}
+                    {% set help_text = h.scheming_language_text(field.fluent_help_text or field.help_text) %}
+                    <div class="package-key-detail">
+                        <p class="fw-semibold fs-14 mb-2 d-inline-flex align-items-center gap-1">
+                            <span>{{ h.scheming_language_text(field.label) }}</span>
+                            {{ ui.field_tooltip(help_text) if help_text }}
                         </p>
+                        <div class="mb-2"{% if field.display_property %} property="{{ field.display_property }}"{% endif %}>
+                            {% snippet 'scheming/snippets/display_field.html',
+                                field=field, data=pkg, schema=schema %}
+                        </div>
+                        {% if not loop.last %}
+                            <hr class="my-2 border-idb-border-n-variant80">
+                        {% endif %}
                     </div>
-                {% endif %}
-                {% if pkg.data_steward %}
-                    <div class="">
-                        <p class="heading">{{ _('Data Steward') }}</p>
-                        <p>
-                            {{ pkg.data_steward }}
-                        </p>
-                    </div>
-                {% endif %}
-                {% if pkg.unit_responsible %}
-                    <div class="">
-                        <p class="heading">{{ _('Organizational unit') }}</p>
-                        <p>
-                            {{ pkg.unit_responsible }}
-                        </p>
-                    </div>
-                {% endif %}
-                {% if pkg.dataset_type %}
-                    <div class="">
-                        <p class="heading">{{ _('Dataset type') }}</p>
-                        <p>
-                            {{ pkg.dataset_type }}
-                        </p>
-                    </div>
-                {% endif %}
-                {% if pkg.gov_category %}
-                    <div class="">
-                        <p class="heading">{{ _('Governance category') }}</p>
-                        <p>
-                            {{ pkg.gov_category }}
-                        </p>
-                    </div>
-                {% endif %}
-                {% if pkg.access_rights %}
-                    <div class="">
-                        <p class="heading">{{ _('Access rights') }}</p>
-                        <p>
-                            {{ pkg.access_rights }}
-                        </p>
-                    </div>
-                {% endif %}
-                <div class="">
+                {% endfor %}
+                <div class="text-center mt-3">
                     {%- set additional_info_panel_id = "package-additional-info" -%}
-                
+
                     {{ ui.offcanvas_handle(
                         _('See Additional information'),
                         id=additional_info_panel_id,
-                        style="outline-primary fs-5",
-                        svg="info-circle",
-                        icon_end=true
+                        style="outline-primary fs-5"
                     ) }}
                 </div>
             </div>
-            <div class="">
-                <p>
+            <div class="bg-light-blue p-3">
+                <p class="fs-18 text-idb-primary-20 text-center fw-semibold mb-2">
                     {{ _('Questions about this data?') }}
                 </p>
-                <p>
-                    {{ ui.button(ui.icon("envelope", style="solid") ~ _("Contact the Data Steward"), style="primary", href="mailto:info@idb.org") }}
+                <p class="text-center">
+                    {{ ui.button(_("Contact the Data Steward"), style="outline-primary fs-5", svg="envelope", icon_end=true, href="mailto:info@idb.org") }}
                 </p>
             </div>
         </section>
