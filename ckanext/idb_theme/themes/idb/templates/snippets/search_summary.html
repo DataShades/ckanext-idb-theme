@@ -1,0 +1,34 @@
+{#
+Summary of the datasets of the group and organization pages: the number of
+the found datasets, the applied filters and the "Filter Results" button. The
+summary is swapped out of band on htmx requests, so it follows the facets.
+
+count    - The number of the found datasets.
+type     - The type of the search results (dataset, group or organization).
+query    - The search query.
+error    - Whether the search failed.
+fields   - The list of active facet filters, (name, value) pairs.
+facets   - The facets of the search: the titles and the items.
+oob      - Whether the summary is swapped out of band, false by default.
+use_htmx - Whether the filters use htmx requests, true by default.
+
+Example:
+
+{% snippet "snippets/search_summary.html", count=page.item_count, type=type, query=query, fields=fields, facets=facets %}
+
+#}
+{%- set oob = oob | default(false) -%}
+{%- set use_htmx = use_htmx | default(true) -%}
+{%- set temporal = request.args.get('ext_temporal_start') or request.args.get('ext_temporal_end') -%}
+{%- set filter_count = (fields or []) | length + (1 if temporal else 0) -%}
+
+<div id="dataset-search-summary" class="d-flex flex-row-reverse justify-content-between align-items-center me-md-auto" hx-swap="none"{% if oob %} hx-swap-oob="true"{% endif %}>
+    {% block search_title %}
+        {{ ui.search_results_text(count=count, error=error, type=type, query=query) }}
+    {% endblock %}
+
+    {% block search_facets %}
+        {# {{ ui.search_active_filters(active_filters=fields, facet_titles=facets.titles if facets else {}, facets=facets.search if facets else {}, use_htmx=use_htmx) }} #}
+        {% snippet "snippets/search_filters_button.html", count=filter_count %}
+    {% endblock %}
+</div>

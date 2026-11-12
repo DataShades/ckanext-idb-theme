@@ -189,6 +189,54 @@ def idb_theme_show_followers_count(num_followers: int) -> bool:
     return num_followers > 0 or not config.hide_empty_followers()
 
 
+def idb_theme_group_members(group_id: str) -> list[dict[str, Any]]:
+    """Return the members of a group or organization.
+
+    The list feeds the "Members" panel of the group page.
+
+    :param group_id: id or name of the group
+    :type group_id: string
+
+    :returns: list of dicts with the ``id``, ``name``, ``display_name``,
+        ``initials``, ``image_url`` and ``role`` keys
+    :rtype: list
+    """
+    try:
+        members = tk.get_action("member_list")(
+            {"user": tk.current_user.name},
+            {"id": group_id, "object_type": "user"},
+        )
+    except (tk.ObjectNotFound, tk.NotAuthorized):
+        return []
+
+    result = []
+    for user_id, name, role in members:
+        user = model.User.get(user_id)
+        display_name = (user.display_name or user.name) if user else name
+        result.append(
+            {
+                "id": user_id,
+                "name": name,
+                "display_name": display_name,
+                "initials": _initials(display_name),
+                "image_url": user.image_url if user else None,
+                "role": role,
+            }
+        )
+
+    return result
+
+
+def _initials(name: str) -> str:
+    """Return the initials shown instead of the image of a user."""
+    words = name.split() or [name]
+
+    if len(words) > 1:
+        return (words[0][:1] + words[1][:1]).upper()
+
+    return words[0][:2].upper()
+
+
 def idb_theme_home_title() -> str:
     """Return the configured browser title for the portal homepage."""
     return config.home_title()
@@ -263,12 +311,17 @@ def idb_theme_datasets_per_page(options: list[int] | None = None) -> int:
 
     ``options`` are the page sizes of the dropdown, the ones of the Datasets
     page by default; other pages, e.g. the Data Projects page of
-    ckanext-iadb-iar, set their own. Unknown values fall back to the first
-    option.
+    ckanext-iadb-iar, set their own. Unknown values fall back to
+    ``ckan.datasets_per_page``, the page size the search views use, and to the
+    first option when that value is missing.
     """
     options = options or DATASETS_PER_PAGE_OPTIONS
     value = tk.request.args.get(DATASETS_PER_PAGE_PARAM, type=int) if has_request_context() else None
-    return value if value in options else options[0]
+
+    if value in options:
+        return value
+
+    return tk.config.get("ckan.datasets_per_page") or options[0]
 
 
 def idb_theme_datasets_pagination(item_count: int, options: list[int] | None = None) -> dict[str, Any]:

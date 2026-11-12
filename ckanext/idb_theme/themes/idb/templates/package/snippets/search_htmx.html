@@ -1,23 +1,61 @@
 {# required hx-swap-oob included in snippets: #}
-{% snippet "package/snippets/search_hero_filters.html",
-  fields=fields,
-  search_facets=search_facets,
-  facet_titles=facet_titles
-%}
-{% snippet "package/snippets/search_results_header.html",
-  dataset_type=dataset_type,
-  q=q,
-  sort_by_selected=sort_by_selected,
-  page=page,
-  query_error=query_error,
-  fields=fields
-%}
-{% snippet "package/snippets/dataset_search_results.html",
-  dataset_type=dataset_type,
-  page=page,
-  query_error=query_error,
-  fields=fields
-%}
+{%- if group_dict is defined -%}
+    {%- if group_dict.is_organization -%}
+        {#- the count, the applied filters and the "Filter Results" button of
+            the page live in its search form, outside the swapped results -#}
+        {% snippet "snippets/search_summary.html",
+            count=page.item_count,
+            type='dataset',
+            query=q,
+            error=query_error,
+            fields=fields,
+            facets={'titles': facet_titles, 'search': search_facets},
+            oob=true
+        %}
+        {% snippet "organization/snippets/search_results.html",
+            dataset_type=dataset_type,
+            page=page,
+            action=request.path
+        %}
+    {%- else -%}
+        {#- the results of a group page contain its search form -#}
+        {% snippet "package/snippets/search_results.html",
+            heading=group_dict.display_name,
+            dataset_type=dataset_type,
+            fields_grouped=fields_grouped,
+            search_facets=search_facets,
+            facet_titles=facet_titles,
+            translated_fields=translated_fields,
+            remove_field=remove_field,
+            q=q,
+            sort_by_selected=sort_by_selected,
+            page=page,
+            query_error=query_error,
+            fields=fields,
+            state=group_dict.state
+        %}
+    {%- endif -%}
+{%- else -%}
+    {% snippet "package/snippets/search_hero_filters.html",
+      fields=fields,
+      search_facets=search_facets,
+      facet_titles=facet_titles
+    %}
+    {% snippet "package/snippets/search_results_header.html",
+      dataset_type=dataset_type,
+      q=q,
+      sort_by_selected=sort_by_selected,
+      page=page,
+      query_error=query_error,
+      fields=fields
+    %}
+    {% snippet "package/snippets/dataset_search_results.html",
+      dataset_type=dataset_type,
+      page=page,
+      query_error=query_error,
+      fields=fields
+    %}
+{%- endif -%}
 {% snippet "package/snippets/search_facets.html",
   facet_titles=facet_titles,
   search_facets=search_facets

@@ -15,23 +15,14 @@ Example:
 {% snippet "package/snippets/search_results_header.html", dataset_type=dataset_type, q=q, sort_by_selected=sort_by_selected, page=page, query_error=query_error, fields=fields %}
 
 #}
-{%- set count = page.item_count if page else 0 -%}
+{%- set count = page.item_count or 0 -%}
 
 <div id="dataset-search-results-header" class="search-results-header col-12" hx-swap-oob="true" hx-swap="none">
     {{ ui.search_results_text(count=count, error=_('There was an error while searching. Please try again.') if query_error, type='dataset', query=q, attrs={"class": "search-results-count"}) }}
 
     {%- set temporal = request.args.get('ext_temporal_start') or request.args.get('ext_temporal_end') -%}
     {%- set filter_count = (fields or []) | length + (1 if temporal else 0) -%}
-    <button type="button" class="show-filters btn">
-        {{ ui.icon('sliders', aria={"hidden": "true"}) }}
-        {{ _('Filters') }}
-        {%- if filter_count %}
-            <span class="show-filters-count">
-                {{- filter_count -}}
-                <span class="visually-hidden"> {{ ungettext('selected filter', 'selected filters', filter_count) }}</span>
-            </span>
-        {%- endif %}
-    </button>
+    {% snippet "snippets/search_filters_button.html", count=filter_count %}
 
     {%- call ui.util.call(ui.form, action=h.url_for(dataset_type ~ '.search'), attrs={"class": "search-results-sort"}, hx={"boost": "true", "trigger": "change, submit"}) -%}
         {%- for name, value in request.args.items(multi=True) -%}

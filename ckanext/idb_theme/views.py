@@ -48,6 +48,8 @@ def _follow_group(id: str, *, is_organization: bool, follow: bool) -> str:
 
     if is_organization:
         extra_vars["organization"] = group_dict
+        # the banner of the unit page is the block the follow action belongs to
+        extra_vars["banner"] = True
         return tk.render("organization/snippets/info.html", extra_vars)
 
     extra_vars["group"] = group_dict

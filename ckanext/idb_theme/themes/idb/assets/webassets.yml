@@ -38,6 +38,7 @@ scripts:
     - javascript/modules/header-search.js
     - javascript/modules/highlights-carousel.js
     - javascript/modules/image-upload.js
+    - javascript/modules/members-filter.js
     - javascript/modules/metadata-button.js
     - javascript/modules/popover.js
     - javascript/modules/resource-form.js

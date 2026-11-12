@@ -9,13 +9,15 @@
     --bs-btn-active-shadow: none;
     --bs-btn-padding-x: 1.5rem;
     --bs-btn-padding-y: 0.5rem;
-    font-size: var(--idb-font-size-label-large);
-    line-height: var(--idb-line-height-label-large);
+    font-family: var(--idb-font-family-inter);
+    font-size: var(--idb-font-size-text);
+    font-weight: $font-weight-semibold;
+    line-height: var(--idb-line-height-text);
 }
 
 @each $name, $color in $theme-colors {
     .btn-#{$name}-outline {
-        border: solid 2px $color;
+        border: solid 1px $color;
         background-color: $white;
         color: $color;
         &:hover {
@@ -47,6 +49,106 @@
         color: $gray-800;
     }
 }
+
+// Outlined (pill) button: transparent background, thin outline and a tinted
+// state layer on hover/focus, following the Material outlined button
+.btn-primary-outlined {
+    --bs-btn-padding-x: 1.5rem;
+    --bs-btn-padding-y: 0;
+    --bs-btn-color: var(--idb-color-button-stroke-text);
+    --bs-btn-bg: transparent;
+    --bs-btn-border-color: var(--idb-color-outline);
+    --bs-btn-hover-color: var(--idb-color-button-stroke-text);
+    --bs-btn-hover-bg: color-mix(in srgb, var(--idb-color-button-stroke-text) 8%, transparent);
+    --bs-btn-hover-border-color: var(--idb-color-outline);
+    --bs-btn-active-color: var(--idb-color-button-stroke-text);
+    --bs-btn-active-bg: color-mix(in srgb, var(--idb-color-button-stroke-text) 12%, transparent);
+    --bs-btn-active-border-color: var(--idb-color-outline);
+    --bs-btn-focus-box-shadow: none;
+    min-width: 4rem;
+    height: 2.5rem;
+    border-radius: var(--idb-border-radius-lg);
+    box-shadow: none;
+    transition: background-color 280ms cubic-bezier(0.4, 0, 0.2, 1), border-color 280ms cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:focus-visible,
+     &:hover {
+        background-color: var(--bs-btn-active-bg);
+    }
+}
+
+// Text (ghost) button: no container at rest, primary label and a tinted state
+// layer on hover/focus, following the Material text button
+.btn-primary-text {
+    --bs-btn-padding-x: 0.75rem;
+    --bs-btn-padding-y: 0;
+    --bs-btn-color: var(--idb-color-button-stroke-text);
+    --bs-btn-bg: transparent;
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-color: var(--idb-color-button-stroke-text);
+    --bs-btn-hover-bg: color-mix(in srgb, var(--idb-color-button-stroke-text) 8%, transparent);
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-active-color: var(--idb-color-button-stroke-text);
+    --bs-btn-active-bg: color-mix(in srgb, var(--idb-color-button-stroke-text) 12%, transparent);
+    --bs-btn-active-border-color: transparent;
+    --bs-btn-focus-box-shadow: none;
+    min-width: 4rem;
+    height: 2.5rem;
+    border: none;
+    border-radius: var(--idb-border-radius-lg);
+    box-shadow: none;
+    transition: background-color 280ms cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover,
+    &:focus-visible {
+        background-color: var(--bs-btn-active-bg);
+    }
+}
+
+// Floating action button: circular, raised, icon only
+$idb-btn-fab-shadow: 0 3px 5px -1px rgba($black, .2), 0 6px 10px 0 rgba($black, .14), 0 1px 18px 0 rgba($black, .12);
+$idb-btn-fab-shadow-hover: 0 5px 5px -3px rgba($black, .2), 0 8px 10px 1px rgba($black, .14), 0 3px 14px 2px rgba($black, .12);
+
+.btn-fab {
+    --bs-btn-padding-x: 0;
+    --bs-btn-padding-y: 0;
+    --bs-btn-color: var(--idb-color-button-stroke-text);
+    --bs-btn-bg: #{$white};
+    --bs-btn-border-color: transparent;
+    --bs-btn-hover-color: var(--idb-color-button-stroke-text);
+    --bs-btn-hover-bg: #{$white};
+    --bs-btn-hover-border-color: transparent;
+    --bs-btn-active-color: var(--idb-color-button-stroke-text);
+    --bs-btn-active-bg: #{$white};
+    --bs-btn-active-border-color: transparent;
+    --bs-btn-focus-box-shadow: 0 0 0 2px var(--idb-color-primary-light);
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: none;
+    border-radius: 1.75rem;
+    box-shadow: $idb-btn-fab-shadow;
+    transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1), transform 270ms cubic-bezier(0, 0, 0.2, 1);
+
+    .fa,
+    > i {
+        font-size: 1.125rem;
+        line-height: 1;
+    }
+
+    &:hover,
+    &:focus-visible {
+        box-shadow: $idb-btn-fab-shadow-hover;
+        transform: translateY(-1px);
+    }
+
+    &:active {
+        box-shadow: $idb-btn-fab-shadow;
+        transform: none;
+    }
+}
+
+
 
 input[id^=lang-].btn-check + label.btn {
     &::after {

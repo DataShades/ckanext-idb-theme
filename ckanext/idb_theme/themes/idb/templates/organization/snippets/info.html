@@ -1,91 +1,286 @@
 {#
-Embeds a organization within the sidebar of a page.
+Embeds a organization within the sidebar of a page, or renders the banner of
+the organization page when `banner` is set.
 
 organization    - The organization dict.
 image_link      - Whether the organization image should include link to the
 organization page or not.
+banner          - Render the banner of the unit page instead of the sidebar
+                  card: image, name, description and the actions of the unit.
+                  The banner is also the htmx target of the follow buttons, so
+                  it is re-rendered when the follow state changes.
+am_following    - Whether the current user follows the organization.
+error_message   - Error returned by the follow action.
 
 {% snippet "organization/snippets/info.html", organization=group_dict, image_link=true %}
+{% snippet "organization/snippets/info.html", organization=group_dict, banner=true %}
 
 #}
 {% set organization = organization or group%}
 {% set url = h.url_for(organization.type + '.read', id=organization.name, ) %}
 {% set dataset_type = h.default_package_type() %}
 
-{% block info %}
-    <section id="organization-info" class="module module-narrow module-shallow">
-        <div class="module context-info">
-            <div class="module-content">
-                {% block inner %}
-                    <div class="image-container">
-                        {% block image %}
-                            <div class="image">
-                                {% if image_link %}
-                                    <a href="{{ url }}">
-                                        <img src="{{ organization.image_display_url or h.url_for_static('images/placeholder-organization.svg') }}" width="200" alt="{{ organization.name }}" />
-                                    </a>
-                                {% else %}
-                                    <img src="{{ organization.image_display_url or h.url_for_static('images/placeholder-organization.svg') }}" width="200" alt="{{ organization.name }}" />
-                                {% endif %}
-                            </div>
-                        {% endblock %}
-                        <div class="heading-container">
-                            {% block heading %}
-                                <span class="heading">{{ organization.title or organization.name }}
-                                    {% if organization.state == 'deleted' %}
-                                        [{{ _('Deleted') }}]
-                                    {% endif %}
-                                </span>
-                            {% endblock %}
-                            {% block description %}
-                                {% if organization.notes %}
-                                    <p class="description">
-                                        {{ h.markdown_extract(organization.notes, 180) }}
-                                    </p>
-                                    <p class="read-more">
-                                        {% link_for _('read more'), named_route=organization.type ~ '.about', id=organization.name %}
-                                    </p>
-                                {% else %}
-                                    {{ ui.empty(h.humanize_entity_type('organization', organization.type, 'no description') or _('There is no description for this organization')) }}
-                                {% endif %}
-                            {% endblock %}
-                        </div>
-                    </div>
-                    {% if show_nums %}
-                        {% block nums %}
-                            {% set num_followers = h.follow_count('group', organization.id) %}
-                            <div class="nums">
-                                {% if h.idb_theme_show_followers_count(num_followers) %}
-                                    <dl>
-                                        <dt>{{ _('Followers') }}</dt>
-                                        <dd>{{ h.SI_number_span(num_followers) }}</dd>
-                                    </dl>
-                                {% endif %}
-                                <dl>
-                                    <dt>{{ h.humanize_entity_type('package', dataset_type, 'facet label') or _('Datasets') }}</dt>
-                                    <dd>{{ h.SI_number_span(organization.package_count) }}</dd>
-                                </dl>
-                                <dl>
-                                    <dt>{{ _('Members') }}</dt>
-                                    <dd>{{ h.member_count(organization.id) }}</dd>
-                                </dl>
-                            </div>
-                        {% endblock %}
-                        {% block follow %}
-                            {% if current_user.is_authenticated %}
-                                {% if error_message %}
-                                    <div class="alert alert-danger">{{ error_message }}</div>
-                                {% elif am_following %}
-                                    {{ ui.button(ui.icon("circle-minus", style="solid") ~ _("Unfollow"), style="danger", hx={"target": "#organization-info", "post": h.url_for('idb_theme.organization_unfollow', id=organization.id)}) }}
-                                {% else %}
-                                    {{ ui.button(ui.icon("circle-plus", style="solid") ~ _("Follow"), style="success", hx={"target": "#organization-info", "post": h.url_for('idb_theme.organization_follow', id=organization.id)}) }}
+{% if banner %}
+    {%- set group_type = group_type or organization.type or 'organization' -%}
+    {%- set display_name = organization.display_name or organization.title or organization.name -%}
+    {%- set am_following = am_following or false -%}
+    {%- set members_panel_id = "organization-members-panel" -%}
+    {%- set about_panel_id = "organization-about-panel" -%}
+    {%- set can_manage = h.check_access(group_type ~ '_update', {'id': organization.id}) -%}
+    {%- set can_see_members = h.check_access('member_list', {'id': organization.id, 'object_type': 'user'})
+        and h.check_access('group_show', {'id': organization.id, 'object_type': 'user'}) -%}
+    {%- set members = h.idb_theme_group_members(organization.id) if can_see_members else [] -%}
 
-                                {% endif %}
-                            {% endif %}
-                        {% endblock %}
-                    {% endif %}
-                {% endblock %}
+    {% block banner %}
+        <section id="organization-info" class="idb-unit-banner border rounded-4 p-4">
+            <div class="d-flex flex-column flex-md-row flex-wrap gap-3 py-2">
+                <div class="idb-unit-banner-image overflow-hidden">
+                    <img src="{{ organization.image_display_url or h.url_for_static('images/placeholder-organization.png') }}"
+                         alt="{{ display_name }}" loading="lazy">
+                </div>
+
+                <div class="idb-unit-banner-content ms-md-3 col-md-7">
+                    <h1 class="fs-36 mb-3 text-idb-default">
+                        {{- display_name -}}
+                        {%- if organization.state == 'deleted' %} [{{ _('Deleted') }}]{% endif -%}
+                    </h1>
+
+                    {%- if organization.notes %}
+                        <div class="idb-unit-banner-description embedded-content">
+                            {{ h.render_markdown(organization.notes) }}
+                        </div>
+                    {%- endif %}
+                </div>
+
+                <div class="d-flex flex-wrap align-items-center gap-3 w-100 mt-1">
+                    {%- if current_user.is_authenticated %}
+                        {%- if error_message %}
+                            <div class="alert alert-danger w-100 mb-0">{{ error_message }}</div>
+                        {%- elif am_following %}
+                            {{ ui.button(_('Unfollow'),
+                                style="primary",
+                                icon="bookmark",
+                                icon_end=true,
+                                hx={
+                                    "post": h.url_for('idb_theme.organization_unfollow', id=organization.id),
+                                    "target": "#organization-info",
+                                    "swap": "outerHTML"
+                                }
+                            ) }}
+                        {%- else %}
+                            {{ ui.button(_('Follow'),
+                                style="primary",
+                                icon="bookmark fa-regular",
+                                icon_end=true,
+                                hx={
+                                    "post": h.url_for('idb_theme.organization_follow', id=organization.id),
+                                    "target": "#organization-info",
+                                    "swap": "outerHTML"
+                                }
+                            ) }}
+                        {%- endif %}
+                    {%- endif %}
+
+                    {%- if can_see_members %}
+                        {{ ui.offcanvas_handle(_('Members') ~ ' (' ~ members|length ~ ')',
+                            id=members_panel_id,
+                            style="primary-outlined",
+                            icon="users",
+                            icon_end=true
+                        ) }}
+                    {%- endif %}
+
+                    {{ ui.offcanvas_handle(
+                        _('About'),
+                        id=about_panel_id,
+                        style="primary-text",
+                        icon="circle-info-o",
+                        icon_end=true
+                    ) }}
+                </div>
             </div>
-        </div>
-    </section>
-{% endblock %}
+
+            {%- if can_manage %}
+                <div class="idb-unit-banner-edit">
+                    {{ ui.button(
+                        ui.icon("pencil", aria={"hidden": "true"}),
+                        href=h.url_for(group_type ~ '.edit', id=organization.name),
+                        style="fab",
+                        aria={"label": _('Edit {name}').format(name=display_name)}
+                    ) }}
+                </div>
+            {%- endif %}
+
+            {%- if can_see_members %}
+                {%- call ui.util.call(ui.offcanvas, id=members_panel_id, title=_('Members'), width="480px", _extra_class="idb-members-panel") -%}
+                    {%- if members -%}
+                        {%- set role_titles = h.roles_translated() if 'roles_translated' in h else {} -%}
+                        <div class="idb-members" data-module="idb-members-filter">
+                            <div class="idb-members-search">
+                                <input type="search" class="form-control" data-members-search
+                                       placeholder="{{ _('Search members or role') }}"
+                                       aria-label="{{ _('Search members or role') }}">
+                                {{ ui.icon("magnifying-glass", aria={"hidden": "true"}) }}
+                            </div>
+
+                            {%- call ui.util.call(ui.table, hover=true) -%}
+                                <thead>
+                                    <tr>
+                                        <th>{{ _('Member') }}</th>
+                                        <th>{{ _('Role') }}</th>
+                                        {%- if can_manage %}
+                                            <th>{{ _('Action') }}</th>
+                                        {%- endif %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {%- for member in members %}
+                                        <tr data-member>
+                                            <td>
+                                                <div class="idb-members-user">
+                                                    {%- if member.image_url -%}
+                                                        <img class="user-image" width="32" height="32" alt=""
+                                                             src="{{ h.url_for_static_or_external(member.image_url) }}">
+                                                    {%- else -%}
+                                                        <span class="idb-members-avatar" aria-hidden="true">{{ member.initials }}</span>
+                                                    {%- endif -%}
+                                                    {{ h.linked_user(member.id, maxlength=20) }}
+                                                </div>
+                                            </td>
+                                            <td>{{ role_titles.get(member.role, member.role | capitalize) }}</td>
+                                            {%- if can_manage %}
+                                                <td>
+                                                    <a class="idb-members-action"
+                                                       href="{{ h.url_for(group_type ~ '.member_new', id=organization.id, user=member.id) }}"
+                                                       aria-label="{{ _('Edit role') }}"
+                                                       data-bs-title="{{ _('Edit role') }}"
+                                                       data-bs-toggle="tooltip">
+                                                        {{ ui.icon("pencil", aria={"hidden": "true"}) }}
+                                                    </a>
+                                                </td>
+                                            {%- endif %}
+                                        </tr>
+                                    {%- endfor %}
+                                </tbody>
+                            {%- endcall %}
+
+                            <p class="idb-members-empty d-none" data-members-empty>{{ _('No members match the search') }}</p>
+                        </div>
+                    {%- else -%}
+                        {{ ui.empty(_('There are no members yet')) }}
+                    {%- endif -%}
+                {%- endcall -%}
+            {%- endif %}
+
+            {%- call ui.util.call(ui.offcanvas, id=about_panel_id, title=_('About'), _extra_class="idb-about-panel") -%}
+                {%- set organization_url = h.url_for(group_type ~ '.read', id=organization.name, qualified=true) -%}
+                {%- set image_url = organization.image_url or organization.image_display_url -%}
+                {%- set parents = h.group_tree_parents(organization.id) if 'group_tree_parents' in h else [] -%}
+                <dl class="idb-spec-list mb-0">
+                    <div class="idb-spec-row">
+                        <dt>{{ _('Name') }}</dt>
+                        <dd>{{ display_name }}</dd>
+                    </div>
+                    <div class="idb-spec-row">
+                        <dt>{{ _('URL') }}</dt>
+                        <dd>{{ organization_url | replace('https://', '') | replace('http://', '') }}</dd>
+                    </div>
+                    <div class="idb-spec-row">
+                        <dt>{{ _('Definition') }}</dt>
+                        {%- if organization.notes %}
+                            <dd>{{ h.render_markdown(organization.notes) }}</dd>
+                        {%- else %}
+                            <dd>--</dd>
+                        {%- endif %}
+                    </div>
+                    <div class="idb-spec-row">
+                        <dt>{{ _('Image URL') }}</dt>
+                        <dd>{{ (image_url | replace('https://', '') | replace('http://', '')) if image_url else '--' }}</dd>
+                    </div>
+                    <div class="idb-spec-row">
+                        <dt>{{ _('Parent organization') }}</dt>
+                        <dd>{{ (parents[-1].display_name or parents[-1].name) if parents else '--' }}</dd>
+                    </div>
+                </dl>
+            {%- endcall -%}
+        </section>
+    {% endblock %}
+{% else %}
+    {% block info %}
+        <section id="organization-info" class="module module-narrow module-shallow">
+            <div class="module context-info">
+                <div class="module-content">
+                    {% block inner %}
+                        <div class="image-container">
+                            {% block image %}
+                                <div class="image">
+                                    {% if image_link %}
+                                        <a href="{{ url }}">
+                                            <img src="{{ organization.image_display_url or h.url_for_static('images/placeholder-organization.svg') }}" width="200" alt="{{ organization.name }}" />
+                                        </a>
+                                    {% else %}
+                                        <img src="{{ organization.image_display_url or h.url_for_static('images/placeholder-organization.svg') }}" width="200" alt="{{ organization.name }}" />
+                                    {% endif %}
+                                </div>
+                            {% endblock %}
+                            <div class="heading-container">
+                                {% block heading %}
+                                    <span class="heading">{{ organization.title or organization.name }}
+                                        {% if organization.state == 'deleted' %}
+                                            [{{ _('Deleted') }}]
+                                        {% endif %}
+                                    </span>
+                                {% endblock %}
+                                {% block description %}
+                                    {% if organization.notes %}
+                                        <p class="description">
+                                            {{ h.markdown_extract(organization.notes, 180) }}
+                                        </p>
+                                        <p class="read-more">
+                                            {% link_for _('read more'), named_route=organization.type ~ '.about', id=organization.name %}
+                                        </p>
+                                    {% else %}
+                                        {{ ui.empty(h.humanize_entity_type('organization', organization.type, 'no description') or _('There is no description for this organization')) }}
+                                    {% endif %}
+                                {% endblock %}
+                            </div>
+                        </div>
+                        {% if show_nums %}
+                            {% block nums %}
+                                {% set num_followers = h.follow_count('group', organization.id) %}
+                                <div class="nums">
+                                    {% if h.idb_theme_show_followers_count(num_followers) %}
+                                        <dl>
+                                            <dt>{{ _('Followers') }}</dt>
+                                            <dd>{{ h.SI_number_span(num_followers) }}</dd>
+                                        </dl>
+                                    {% endif %}
+                                    <dl>
+                                        <dt>{{ h.humanize_entity_type('package', dataset_type, 'facet label') or _('Datasets') }}</dt>
+                                        <dd>{{ h.SI_number_span(organization.package_count) }}</dd>
+                                    </dl>
+                                    <dl>
+                                        <dt>{{ _('Members') }}</dt>
+                                        <dd>{{ h.member_count(organization.id) }}</dd>
+                                    </dl>
+                                </div>
+                            {% endblock %}
+                            {% block follow %}
+                                {% if current_user.is_authenticated %}
+                                    {% if error_message %}
+                                        <div class="alert alert-danger">{{ error_message }}</div>
+                                    {% elif am_following %}
+                                        {{ ui.button(ui.icon("circle-minus", style="solid") ~ _("Unfollow"), style="danger", hx={"target": "#organization-info", "post": h.url_for('idb_theme.organization_unfollow', id=organization.id)}) }}
+                                    {% else %}
+                                        {{ ui.button(ui.icon("circle-plus", style="solid") ~ _("Follow"), style="success", hx={"target": "#organization-info", "post": h.url_for('idb_theme.organization_follow', id=organization.id)}) }}
+
+                                    {% endif %}
+                                {% endif %}
+                            {% endblock %}
+                        {% endif %}
+                    {% endblock %}
+                </div>
+            </div>
+        </section>
+    {% endblock %}
+{% endif %}

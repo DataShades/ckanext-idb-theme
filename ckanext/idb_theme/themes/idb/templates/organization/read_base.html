@@ -2,11 +2,21 @@
 {% set dataset_type = h.default_package_type() %}
 {% set organization = group_dict %}
 
+{% block maintag %}<div class="main pt-2 pb-5">{% endblock %}
+
 {% block subtitle -%}
     {{ ui.subtitle_item(group_dict.display_name) if group_dict }}
     {{- ui.subtitle_item(h.humanize_entity_type('organization', group_type, 'page title') or _('Organizations')) }}
     {{- super() }}
 {%- endblock %}
+
+{% block toolbar %}
+    <div class="toolbar py-1 mb-2" role="navigation" aria-label="{{ _('Breadcrumb') }}">
+        {% block breadcrumb -%}
+           {{ super() }}
+        {% endblock %}
+    </div>
+{% endblock %}
 
 {% block breadcrumb_content -%}
     {{ ui.breadcrumb(h.humanize_entity_type('organization', group_type, 'breadcrumb') or _('Organizations'), href=h.url_for(group_type+'.index')) }}
@@ -19,19 +29,20 @@
 {%- endblock %}
 
 {% block content_action -%}
-    {{ ui.content_action(h.humanize_entity_type('package', dataset_type, 'add link') or _("Add Dataset"), href=h.url_for(dataset_type ~ '.new', owner_org=group_dict.id), icon="plus-square") if h.check_access('package_create', {'owner_org': group_dict.id}) }}
-    {{- ui.content_action(_('Manage'), href=h.url_for(group_type+'.edit', id=group_dict.name), icon="wrench", style="secondary") if h.check_access('organization_update', {'id': group_dict.id}) }}
+    {{ ui.content_action(h.humanize_entity_type('package', dataset_type, 'add link') or _("Add Dataset"), href=h.url_for(dataset_type ~ '.new', owner_org=group_dict.id), icon="post-add-o") if h.check_access('package_create', {'owner_org': group_dict.id}) }}
 {%- endblock %}
 
 {% block content_primary_nav -%}
-    {{ ui.content_nav_item(h.humanize_entity_type('package', dataset_type, 'content tab') or _('Datasets'), href=h.url_for(group_type + '.read', id=group_dict.name), icon='sitemap', active=request.endpoint == group_type ~ ".read") }}
-    {{- ui.content_nav_item(_('Members'), href=h.url_for(group_type + '.members', id=group_dict.name), icon='users', active=request.endpoint == group_type ~ ".members") if h.check_access('member_list', {'id': group_dict.id, 'object_type': 'user'}) and h.check_access('group_show', {'id': group_dict.id, 'object_type': 'user'}) }}
-    {{- ui.content_nav_item(_('About'), href=h.url_for(group_type + '.about', id=group_dict.name), icon='info-circle', active=request.endpoint == group_type ~ ".about") }}
 {%- endblock %}
 
-{% block secondary_content %}
-    {% snippet 'organization/snippets/info.html', organization=group_dict, show_nums=true, group_type=group_type, am_following=am_following %}
-    {% block organization_facets %}{% endblock %}
+{#- the unit info lives in the banner (info.html) now, so the sidebar only exists
+    on pages that add facets to it (the dataset tab of the unit) -#}
+{% block secondary %}
+    <aside class="secondary col-md-4 col-lg-3">
+        {% block secondary_content %}
+            {% block organization_facets %}{% endblock %}
+        {% endblock %}
+    </aside>
 {% endblock %}
 
 {% block links %}

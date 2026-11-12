@@ -14,7 +14,7 @@ Example:
 
 #}
 <section class="search-results" id="search-results" hx-swap-oob="true" hx-swap="none">
-    {% if page and page.item_count %}
+    {% if page.item_count %}
         {% block package_search_results_list %}
             {% snippet 'snippets/package_list.html', packages=page.items %}
         {% endblock %}
