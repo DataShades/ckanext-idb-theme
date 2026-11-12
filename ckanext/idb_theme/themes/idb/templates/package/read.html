@@ -1,15 +1,17 @@
 {% extends "package/read_base.html" %}
 
 {% block primary_content_inner %}
+    {% set card = h.idb_theme_dataset_card(pkg) %}
+    {% set is_full = true %}
     {{ super() }}
-    {% block package_description %}
+    {% block package_description scoped %}
         {% if pkg.private %}
             <span class="dataset-private badge badge-inverse">
                 {{ ui.icon("lock") }}
                 {{ _('Private') }}
             </span>
         {% endif %}
-        <h1 class="page-heading">
+        <h1 class="page-heading fs-36 text-idb-default mb-3">
             {% block page_heading %}
                 {{ h.dataset_display_name(pkg) }}
                 {% if pkg.state.startswith('draft') %}
@@ -20,35 +22,73 @@
                 {% endif %}
             {% endblock %}
         </h1>
+        <p class="text-idb-default mb-4">{{ _('Published by') }} {{ ui.link(pkg.organization.title or pkg.organization.name, href=h.url_for('organization.read', id=pkg.data_owner), attrs={"class": "text-idb-blue-link fw-semibold"}) }} {{ _('on') }} <span class="fw-semibold">{{ h.render_datetime(pkg.metadata_created) }}</span> · Last updated <span class="fw-semibold">{{ h.render_datetime(pkg.metadata_modified) }}</span> ({{ h.time_ago_from_timestamp(pkg.metadata_modified) }})</p>
+
+        {% block chips scoped %}
+            <ul class="dataset-chips list-unstyled d-flex flex-wrap gap-2{{ ' mb-3' if is_full }}">
+                {% for theme in card.themes %}
+                    {{ ui.chip(theme, style="info") }}
+                {% endfor %}
+
+                {% if card.units %}
+                    {{ ui.chip(card.units | join(", "), style="secondary") }}
+                {% endif %}
+
+                {% if card.countries %}
+                    {%- if card.countries | length <= 2 -%}
+                        {%- set countries_label = card.countries | join(" & ") -%}
+                    {%- else -%}
+                        {%- set countries_label = _("{country} & {count} more").format(country=card.countries[0], count=card.countries | length - 1) -%}
+                    {%- endif -%}
+                    {{ ui.chip(countries_label, style="success", icon="earth-americas", title=card.countries | join(", ")) }}
+                {% endif %}
+
+                {% if card.coverage %}
+                    {{ ui.chip(card.coverage | join(" - ") ~ " (" ~ _("Coverage") ~ ")", style="info", svg="calendar") }}
+                {% endif %}
+
+                {% if card.governance %}
+                    {{ ui.chip(card.governance, style="info", svg="governance", title=card.governance, hide_label=not is_full) }}
+                {% endif %}
+            </ul>
+        {% endblock %}
         {% block package_notes %}
             {% if pkg.notes %}
-                <div class="notes embedded-content">
+                <div class="notes embedded-content text-iadb-netural-black">
                     {{ h.render_markdown(h.get_translated(pkg, 'notes')) }}
                 </div>
             {% endif %}
         {% endblock %}
     {% endblock %}
 
+    {% block package_tags scoped %}
+        <ul class="dataset-tags list-unstyled d-flex flex-wrap gap-2 mb-4" data-module="idb-tag-overflow">
+            {% for tag in card.tags %}
+                <li class="badge bg-secondary-subtle text-secondary-emphasis">{{ tag }}</li>
+            {% endfor %}
+            <li class="badge bg-secondary-subtle text-secondary-emphasis d-none" data-overflow-counter></li>
+        </ul>
+    {% endblock %}
+    
+    {%- set additional_info_panel_id = "package-additional-info" -%}
+
+    {%- set schema = schema or h.scheming_get_dataset_schema(dataset_type) -%}
+    <div class="mb-5">
+        {{ ui.offcanvas_handle(
+            _('See Additional information'),
+            id=additional_info_panel_id,
+            style="outline-primary fs-5",
+            svg="info-circle",
+            icon_end=true
+        ) }}
+    </div>
+
     {% block package_resources %}
         {% snippet "package/snippets/resources_list.html", pkg=pkg, resources=pkg.resources,
       can_edit=h.check_access('package_update', {'id':pkg.id }) %}
     {% endblock %}
 
-    {% block package_tags %}
-        {% snippet "package/snippets/tags.html", tags=pkg.tags %}
-    {% endblock %}
 
-    {%- set additional_info_panel_id = "package-additional-info" -%}
-
-    {%- set schema = schema or h.scheming_get_dataset_schema(dataset_type) -%}
-
-    {{ ui.offcanvas_handle(
-        _('See Additional information'),
-        id=additional_info_panel_id,
-        style="outline-primary",
-        icon="info-circle",
-        icon_end=true
-    ) }}
 
     {% snippet "snippets/offcanvas_panel.html",
         id=additional_info_panel_id,

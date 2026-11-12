@@ -15,13 +15,6 @@ Example:
 {% set is_full = variant != "short" %}
 {% set card = h.idb_theme_dataset_card(package) %}
 
-{% macro chip(style, icon=none, svg=none, hide_label=false) -%}
-    <li class="badge border bg-{{ style }}-subtle border-{{ style }}-subtle text-{{ style }}-emphasis d-inline-flex align-items-center gap-1" {{ ui.util.attrs(kwargs) }}>
-        {%- if svg %}{% snippet "svg/" ~ svg ~ ".svg" %}{% elif icon %}{{ ui.icon(icon, aria={"hidden": "true"}) }}{% endif -%}
-        <span {% if hide_label %}class="visually-hidden"{% endif %}>{{ caller() }}</span>
-    </li>
-{%- endmacro %}
-
 {% macro meta(svg, label, value, hide_label=false) -%}
     <li {{ ui.util.attrs(kwargs, {"class": "align-items-center d-flex gap-1"}) }}>
         {% snippet "svg/" ~ svg ~ ".svg" %}
@@ -65,30 +58,29 @@ Example:
                     <ul class="dataset-chips list-unstyled d-flex flex-wrap gap-2{{ ' mb-4' if is_full }}">
                         {% if is_full %}
                             {% for theme in card.themes %}
-                                {% call chip("info") %}{{ theme }}{% endcall %}
+                                {{ ui.chip(theme, style="info") }}
                             {% endfor %}
                         {% endif %}
 
                         {% if card.units %}
-                            {% call chip("secondary") %}{{ card.units | join(", ") }}{% endcall %}
+                            {{ ui.chip(card.units | join(", "), style="secondary") }}
                         {% endif %}
 
                         {% if card.countries %}
-                            {% call chip("success", icon="earth-americas", title=card.countries | join(", ")) %}
-                                {%- if card.countries | length <= 2 -%}
-                                    {{ card.countries | join(" & ") }}
-                                {%- else -%}
-                                    {{ _("{country} & {count} more").format(country=card.countries[0], count=card.countries | length - 1) }}
-                                {%- endif -%}
-                            {% endcall %}
+                            {%- if card.countries | length <= 2 -%}
+                                {%- set countries_label = card.countries | join(" & ") -%}
+                            {%- else -%}
+                                {%- set countries_label = _("{country} & {count} more").format(country=card.countries[0], count=card.countries | length - 1) -%}
+                            {%- endif -%}
+                            {{ ui.chip(countries_label, style="success", icon="earth-americas", title=card.countries | join(", ")) }}
                         {% endif %}
 
                         {% if card.coverage %}
-                            {% call chip("info", svg="calendar") %}{{ card.coverage | join(" - ") }} ({{ _("Coverage") }}){% endcall %}
+                            {{ ui.chip(card.coverage | join(" - ") ~ " (" ~ _("Coverage") ~ ")", style="info", svg="calendar") }}
                         {% endif %}
 
                         {% if card.governance %}
-                            {% call chip("info", svg="governance", title=card.governance, hide_label=not is_full) %}{{ card.governance }}{% endcall %}
+                            {{ ui.chip(card.governance, style="info", svg="governance", title=card.governance, hide_label=not is_full) }}
                         {% endif %}
                     </ul>
                 {% endblock %}

@@ -2,6 +2,12 @@
 
 {% set default_group_type = h.default_group_type('group') %}
 
+{%- set PAGE_LAYOUT | trim  -%}
+{%- block page_layout -%}
+    {{ "sidebar-end" }}
+{%- endblock %}
+{%- endset -%}
+
 {% block subtitle -%}
     {{ ui.subtitle_item(h.dataset_display_name(pkg)) }}
     {{- super() }}
@@ -21,10 +27,7 @@
     {%- endif %}
 {%- endblock %}
 
-{% block content_primary_nav -%}
-    {{ ui.content_nav_item(_('Dataset'), href=h.url_for(dataset_type ~ '.read', id=pkg.name), icon='sitemap', active=request.endpoint==dataset_type ~ '.read') }}
-    {{- ui.content_nav_item(h.humanize_entity_type('group', default_group_type, 'content tab') or _('Groups'), href=h.url_for(dataset_type ~ '.groups', id=pkg.name), icon='users', active=request.endpoint==dataset_type ~ '.groups') }}
-    {{- ui.content_nav_item(_('Activity Stream'), href=h.url_for('activity.package_activity', id=pkg.id if is_activity_archive else pkg.name), icon='clock', active=request.endpoint == 'activity.package_activity') if h.plugin_loaded('activity') }}
+{% block page_header -%}
 {%- endblock %}
 
 {% block secondary_content %}
@@ -34,30 +37,5 @@
     {% block package_info %}
         {% snippet 'package/snippets/info.html', pkg=pkg, am_following=am_following %}
     {% endblock %}
-
-    {% block package_organization %}
-        {% if pkg.organization %}
-            {% set org = h.get_organization(pkg.organization.id) %}
-            {% snippet "organization/snippets/info.html", organization=org, show_nums=false, am_following=am_following, image_link=true %}
-        {% endif %}
-    {% endblock %}
-
-    {% block package_social %}
-        {% snippet "snippets/social.html" %}
-    {% endblock %}
-
-    {% block package_license %}
-        {% snippet "snippets/license.html", pkg_dict=pkg %}
-    {% endblock %}
-
-    {%- set additional_info_panel_id = "package-additional-info" -%}
-
-    {{ ui.offcanvas_handle(
-        _('See Additional information'),
-        id=additional_info_panel_id,
-        style="outline-primary",
-        icon="info-circle",
-        icon_end=true
-    ) }}
 
 {% endblock %}

@@ -13,13 +13,6 @@ Example:
     {% if pkg %}
         <section id="package-info" class="module module-narrow">
             <div class="module context-info">
-                <div>
-                    <div class="module-heading">
-                        {% block heading %}
-                            <h2 class="heading">{{ h.dataset_display_name(pkg) }}</h2>
-                        {% endblock %}
-                    </div>
-                </div>
                 <div class="package-info">
                     {% block package_info_inner %}
                         {% block nums %}
@@ -45,8 +38,84 @@ Example:
                                 {% endif %}
                             {% endif %}
                         {% endblock %}
+                        <div class="">
+                            <p class="heading">{{ _('Intended Use') }}</p>
+                            <p>
+                                {{ _('Standardized demographic indicators and projections to examine how populations may change under different assumptions; supports planning, research and policy analysis.')}}
+                            </p>
+                        </div>
                     {% endblock %}
                 </div>
+            </div>
+            <div class="">
+                <p class="heading">{{ _('Key details') }}</p>
+                {% if pkg.data_owner %}
+                    <div class="">
+                        <p class="heading">{{ _('Data Owner') }}</p>
+                        <p>
+                            {{ pkg.data_owner }}
+                        </p>
+                    </div>
+                {% endif %}
+                {% if pkg.data_steward %}
+                    <div class="">
+                        <p class="heading">{{ _('Data Steward') }}</p>
+                        <p>
+                            {{ pkg.data_steward }}
+                        </p>
+                    </div>
+                {% endif %}
+                {% if pkg.unit_responsible %}
+                    <div class="">
+                        <p class="heading">{{ _('Organizational unit') }}</p>
+                        <p>
+                            {{ pkg.unit_responsible }}
+                        </p>
+                    </div>
+                {% endif %}
+                {% if pkg.dataset_type %}
+                    <div class="">
+                        <p class="heading">{{ _('Dataset type') }}</p>
+                        <p>
+                            {{ pkg.dataset_type }}
+                        </p>
+                    </div>
+                {% endif %}
+                {% if pkg.gov_category %}
+                    <div class="">
+                        <p class="heading">{{ _('Governance category') }}</p>
+                        <p>
+                            {{ pkg.gov_category }}
+                        </p>
+                    </div>
+                {% endif %}
+                {% if pkg.access_rights %}
+                    <div class="">
+                        <p class="heading">{{ _('Access rights') }}</p>
+                        <p>
+                            {{ pkg.access_rights }}
+                        </p>
+                    </div>
+                {% endif %}
+                <div class="">
+                    {%- set additional_info_panel_id = "package-additional-info" -%}
+                
+                    {{ ui.offcanvas_handle(
+                        _('See Additional information'),
+                        id=additional_info_panel_id,
+                        style="outline-primary fs-5",
+                        svg="info-circle",
+                        icon_end=true
+                    ) }}
+                </div>
+            </div>
+            <div class="">
+                <p>
+                    {{ _('Questions about this data?') }}
+                </p>
+                <p>
+                    {{ ui.button(ui.icon("envelope", style="solid") ~ _("Contact the Data Steward"), style="primary", href="mailto:info@idb.org") }}
+                </p>
             </div>
         </section>
     {% endif %}
