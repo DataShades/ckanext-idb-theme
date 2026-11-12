@@ -9,6 +9,8 @@
  *     [data-form-field-required]         field counts toward completion
  *     [data-form-field-required-when]    ...while that field has one of [data-form-field-required-values]
  *     [data-form-field-also]             other inputs that must be filled as well
+ *     [data-form-field-counted]          optional field that counts in the section counter
+ *                                        (not in the progress bar or the [data-form-next] check)
  *     a required mark (requiredSelector) also makes a field required; in a repeating
  *     row (rowSelector) with any value, the row's marked subfields are required
  *   [data-form-section-counter="<id>"]   text "{done}/{total}" for a section (data-template);
@@ -169,6 +171,9 @@ this.ckan.module('form-sections', function ($) {
         return {required: true, complete: rows.every(this._rowComplete, this)};
       }
       if (!required) {
+        if (wrapper.hasAttribute('data-form-field-counted')) {
+          return {required: false, counted: true, complete: this._filled(name, wrapper)};
+        }
         return {required: false, complete: false};
       }
 
@@ -212,13 +217,13 @@ this.ckan.module('form-sections', function ($) {
         if (state.required) {
           total += 1;
           done += state.complete ? 1 : 0;
-          if (stats) {
-            stats.total += 1;
-            stats.done += state.complete ? 1 : 0;
-          }
+        }
+        if ((state.required || state.counted) && stats) {
+          stats.total += 1;
+          stats.done += state.complete ? 1 : 0;
         }
 
-        wrapper.classList.toggle('is-complete', state.required && state.complete);
+        wrapper.classList.toggle('is-complete', (state.required || state.counted) && state.complete);
         this._each('[data-form-progress-item="' + name + '"]', function (item) {
           item.hidden = !state.required;
           item.classList.toggle('is-complete', state.complete);

@@ -1,0 +1,293 @@
+// Create and Edit Data Project pages (ckanext-iadb-iar group/new.html, group/edit.html).
+// The header, toolbar, section card and completion badge come from _form-layout.scss;
+// the members table reuses the dashboard table (.dashboard-table in _dashboard.scss).
+
+.main.data-project-page {
+    background-color: #F9F9FA;
+
+    // .main .primary is white (see _layout.scss)
+    .primary {
+        background-color: transparent;
+    }
+}
+
+.form-page-header__description {
+    margin: calc(-1 * var(--idb-space-sm) + 4px) 0 var(--idb-space-sm);
+    color: var(--idb-color-text-default);
+    font-size: var(--idb-font-size-label-large);
+    line-height: var(--idb-line-height-label-large);
+}
+
+// the toolbar holds only the submit button, on the right
+.data-project-form-page .form-page-toolbar {
+    justify-content: flex-end;
+    min-height: 82px;
+}
+
+.data-project-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+    align-items: start;
+    margin-bottom: var(--idb-space-lg);
+
+    @include media-breakpoint-up(lg) {
+        grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+
+        // the Edit page: the members table needs a wider column
+        &:has(.data-project-members) {
+            grid-template-columns: minmax(0, 3fr) minmax(320px, 2fr);
+        }
+    }
+
+    &__main,
+    &__aside {
+        min-width: 0;
+    }
+
+    &__aside {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+}
+
+
+// Preview card ///////////////////////////////////////////////////////////////
+
+.data-project-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 20px 16px;
+    border: 1px solid var(--idb-color-border-n-variant80);
+    border-radius: var(--idb-border-radius);
+    background: var(--idb-color-neutral-99);
+
+    &__title {
+        margin: 0;
+        color: var(--idb-color-primary-20);
+        font-size: 1rem;
+        line-height: 1.5rem;
+        font-weight: 600;
+    }
+
+    // the homepage card (.home-data-project-card in _homepage.scss) as is; it's
+    // not a link here, so it has no hover effect
+    &__card.home-data-project-card {
+        height: auto;
+
+        &:hover {
+            box-shadow: none;
+
+            .home-data-project-title {
+                text-decoration: none;
+            }
+        }
+    }
+
+    // no cover image: the IDB logo, in the same 2:1 frame
+    .home-data-project-image--logo {
+        padding: var(--idb-space-md);
+        object-fit: contain;
+        object-position: left center;
+    }
+
+    .home-data-project-title.is-placeholder {
+        color: var(--idb-color-text-placeholder);
+    }
+
+    .home-data-project-description {
+        overflow-wrap: anywhere;
+    }
+
+    // Edit page: no box, the title and the card centered above the members table
+    &--plain {
+        // the 18px gap is the Create page's; the Edit page keeps 16px
+        gap: 16px;
+        padding: 0;
+        border: 0;
+        background: none;
+
+        .data-project-preview__title {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .data-project-preview__card.home-data-project-card {
+            max-width: 340px;
+            margin: 0 auto;
+            box-shadow: 0 0 10px 0 #0000001A;
+
+            &:hover {
+                box-shadow: 0 0 10px 0 #0000001A;
+            }
+        }
+    }
+}
+
+
+// Keys and values (CKAN extras) //////////////////////////////////////////////
+
+// the title, the help text and the rows are 20px apart (design)
+.data-project-extras {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+    border: 0;
+
+    > .form-text {
+        margin: 0;
+        color: #5C5A5A;
+        font-family: var(--idb-font-family-inter), sans-serif;
+        font-size: 13px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+    }
+
+    // a centered label on a line, as in the design
+    &__title {
+        display: flex;
+        align-items: center;
+        gap: var(--idb-space-sm);
+        float: none;
+        width: 100%;
+        // a <legend> is not a flex item of its fieldset, so the gap doesn't apply to it
+        margin: 0 0 20px;
+        color: #00854D;
+        font-family: var(--idb-font-family-inter), sans-serif;
+        font-size: 10.5px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+
+        &::before,
+        &::after {
+            content: "";
+            flex: 1 1 auto;
+            height: 1px;
+            background: #E4E4E4;
+        }
+    }
+
+    &__row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+
+        .form-group {
+            margin-bottom: 0;
+        }
+
+        // taller inputs than the other fields, Body/Large text (design)
+        .form-control {
+            padding: 16px 12px;
+            border: 1px solid var(--border-control, #AEAEAD);
+            border-radius: var(--small, 8px);
+            font-family: var(--idb-font-family-inter), sans-serif;
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: 24px;
+
+            // the design shows the placeholder ("e.g. 2022") in text-subtlest
+            &::placeholder {
+                color: var(--text-subtlest, #939292);
+                opacity: 1;
+            }
+        }
+
+        // design: Label/Large SemiBold, text-primary (the theme's --idb-color-text-primary)
+        .form-label {
+            margin-bottom: 8px;
+            color: var(--idb-color-text-primary, #272626);
+            font-family: var(--idb-font-family-inter), sans-serif;
+            font-size: 14px;
+            font-style: normal;
+            font-weight: 600;
+            line-height: 20px;
+        }
+
+        > .error-inline {
+            grid-column: 1 / -1;
+        }
+
+        @include media-breakpoint-down(sm) {
+            grid-template-columns: minmax(0, 1fr);
+            padding-bottom: 20px;
+            border-bottom: 1px dashed var(--idb-color-border-n-variant95);
+        }
+    }
+}
+
+
+// Members table //////////////////////////////////////////////////////////////
+
+// no margin around the table: more specific than the dashboard table rule
+// (.data-project-page .dashboard-table ... .tabulator-container in _dashboard.scss)
+.data-project-page .data-project-members.dashboard-table .tabulator-wrapper .tabulator.tabulator-container {
+    margin: 0;
+}
+
+.data-project-members {
+    // no search, filters or buttons: the empty control bar is not shown
+    .table-control {
+        display: none !important;
+    }
+
+
+    .table-member {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--idb-space-xs);
+        min-width: 0;
+
+        &__avatar {
+            flex: 0 0 auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--idb-color-secondary-60);
+            color: var(--idb-color-on-primary);
+            font-size: 0.625rem;
+            line-height: 1;
+            font-weight: 600;
+        }
+
+        &__name {
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: var(--idb-color-text-default);
+            font-size: var(--idb-font-size-label);
+        }
+    }
+
+    // a narrow column: the footer wraps on two lines instead of overflowing
+    .tabulator-footer .tabulator-footer-contents {
+        @include media-breakpoint-down(sm) {
+            gap: var(--idb-space-sm) !important;
+        }
+    }
+}
+
+
+// CKAN's slug preview hides the URL field (inline display: none) and shows
+// "URL: /group/<name> Edit" under the name instead: the empty wrapper, with its
+// divider, goes too
+.data-project-form .form-section-field:has(> .form-group[style*="display: none"]) {
+    display: none;
+}
+
+// the URL field belongs to the name: no divider between them (edit state of the slug preview)
+.data-project-form .form-section-field#form-field-name {
+    padding-top: 0;
+    border-top: 0;
+}

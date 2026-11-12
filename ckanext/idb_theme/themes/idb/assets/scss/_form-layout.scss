@@ -658,7 +658,7 @@
     &__content {
         display: flex;
         flex-direction: column;
-        gap: 18px;
+        gap: 20px;
         padding: 0 40px 20px;
 
         > * {
@@ -692,18 +692,311 @@
 .form-section-field {
     scroll-margin-top: var(--idb-space-sm);
 
+    // the spacing comes from the section gap and the field padding; only the
+    // per-language inputs of a translated field keep a margin between them
     .form-group {
-        margin-bottom: var(--idb-space-sm);
+        margin-bottom: 0;
     }
 
-    // per-language inputs of a translated field
     .multilingual-field-group .form-group {
         margin-bottom: 20px;
     }
 
     // spacing above the divider comes from the gap of .form-section__content
     & + & {
-        padding-top: var(--idb-space-sm);
+        padding-top: 20px;
         border-top: 1px dashed var(--idb-color-border-n-variant95);
+    }
+}
+
+
+// Static (not collapsible) section: same header, no toggle
+.form-section--static {
+    .form-section__toggle {
+        cursor: default;
+    }
+
+    .form-section__title {
+        display: block;
+        margin: 0;
+    }
+}
+
+
+// Markdown editor: toolbar and character counter ////////////////////////////
+
+.markdown-editor {
+    &__toolbar {
+        display: inline-flex;
+        align-self: flex-start;
+        margin-bottom: var(--idb-space-xs);
+        overflow: hidden;
+        border: 1px solid #A6A6A8;
+        border-radius: 100px;
+
+        &[hidden] {
+            display: none;
+        }
+    }
+
+    &__button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 13px;
+        border: 0;
+        background: var(--idb-color-on-primary);
+        color: #535354;
+        font-size: 0.6875rem;
+        line-height: 1;
+
+        & + & {
+            border-left: 1px solid #A6A6A8;
+        }
+
+        // the solid icons are the heaviest Font Awesome Free weight: a thin
+        // stroke in the icon colour makes them bolder
+        i {
+            font-weight: 900;
+            -webkit-text-stroke: 0.5px currentColor;
+        }
+
+        &:hover,
+        &:focus-visible {
+            background: var(--idb-color-interaction-selected);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--idb-color-button-flat-background);
+            outline-offset: -2px;
+        }
+    }
+
+    &__input {
+        min-height: 72px;
+        resize: vertical;
+    }
+
+    // design: Body/Small, MD3 on-surface-variant (the theme's --idb-color-on-surface-variant)
+    &__counter {
+        margin-top: 4px;
+        color: var(--idb-color-on-surface-variant, #535354);
+        text-align: right;
+        font-family: var(--idb-font-family), sans-serif;
+        font-size: 12px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 16px;
+    }
+}
+
+// keeps the toolbar, the textarea and the counter in their order (see _forms.scss)
+.form-group.markdown-editor {
+    display: flex;
+    flex-direction: column;
+}
+
+
+// Image drop zone ////////////////////////////////////////////////////////////
+
+.image-dropzone {
+    display: flex;
+    flex-direction: column;
+
+    &__area {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        // spacing via the margins of the icon and the text (design)
+        gap: 0;
+        padding: 24px 16px;
+        // design: the border stays #A6A6A8 in every state (errors show in the status row)
+        border: 1px dashed #A6A6A8;
+        border-radius: var(--idb-border-radius);
+        background: var(--idb-color-on-primary);
+        text-align: center;
+        transition: background-color 0.15s ease-in-out;
+
+        &.is-dragover {
+            background: var(--idb-color-interaction-selected);
+        }
+
+        // keyboard focus only: the module focuses the input after Remove and dismiss
+        &:has(.image-dropzone__input:focus-visible) {
+            outline: 2px solid var(--idb-color-button-flat-background);
+            outline-offset: 1px;
+        }
+    }
+
+    // the whole area opens the file dialog and takes the dropped files
+    &__input {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    // design: a 40px circle with a ⋮ icon
+    &__icon {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border: 1px solid #AEAEAD;
+        border-radius: 50%;
+        margin-bottom: 16px;
+        color: #5C5A5A;
+        font-size: 1rem;
+    }
+
+    &__text {
+        margin-bottom: 8px;
+        color: #272626;
+        font-family: var(--idb-font-family-inter), sans-serif;
+        font-size: 1rem;
+        line-height: 1.5rem;
+        font-weight: 600;
+    }
+
+    &__link {
+        color: #007EB6;
+    }
+
+    &__hint {
+        color: #5C5A5A;
+        font-family: var(--idb-font-family-inter), sans-serif;
+        font-size: 0.75rem;
+        line-height: 1rem;
+        font-weight: 600;
+        letter-spacing: 0;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    // the chosen file under the drop area: uploading, success or error
+    &__status {
+        display: flex;
+        align-items: center;
+        gap: var(--idb-space-xs);
+        min-height: 52px;
+        margin-top: var(--idb-space-sm);
+        padding: 6px var(--idb-space-sm);
+        border-left: 4px solid #004E70;
+        border-radius: var(--idb-border-radius-sm);
+        background: var(--idb-color-alert-info-bg);
+        color: #004E70;
+        font-family: var(--idb-font-family-inter), sans-serif;
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+
+        &[hidden] {
+            display: none;
+        }
+
+        // design: 4px #A31F37 accent, #FCF0F0 background
+        &[data-state="error"] {
+            border-left: 4px solid #A31F37;
+            border-radius: 4px;
+            background: #FCF0F0;
+            color: var(--idb-color-error-40);
+        }
+    }
+
+    &__status-icon {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        font-size: 1.25rem;
+
+        svg {
+            width: 20px;
+            height: 20px;
+        }
+    }
+
+    // the info icon of the uploading and success states (design: #004E70)
+    &__status-icon--file {
+        color: #004E70;
+    }
+
+    // the icon of the error state (design: #A31F37)
+    &__status-icon--error {
+        color: #A31F37;
+    }
+
+    &__status-text {
+        flex: 1 1 auto;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    // an error message wraps instead of being cut
+    &__status[data-state="error"] &__status-text {
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    &__spinner {
+        flex: 0 0 auto;
+        width: 18px;
+        height: 18px;
+        margin: 0 var(--idb-space-xs);
+        border-width: 2px;
+        border-right-color: transparent;
+        color: var(--idb-color-button-flat-background);
+    }
+
+    &__action {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: none;
+        color: var(--idb-color-primary-dark);
+        font-size: 1.125rem;
+
+        &:hover,
+        &:focus-visible {
+            background: rgba(0, 0, 0, 0.06);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--idb-color-button-flat-background);
+            outline-offset: -2px;
+        }
+
+        svg {
+            width: 14px;
+            height: 18px;
+        }
+    }
+
+    &__status[data-state="error"] &__action {
+        color: var(--idb-color-error-40);
+    }
+
+    // one icon and one control per state
+    &__status:not([data-state="error"]) &__status-icon--error,
+    &__status[data-state="error"] &__status-icon--file,
+    &__status:not([data-state="uploading"]) &__spinner,
+    &__status:not([data-state="success"]) &__action--remove,
+    &__status:not([data-state="error"]) &__action--dismiss {
+        display: none;
     }
 }
