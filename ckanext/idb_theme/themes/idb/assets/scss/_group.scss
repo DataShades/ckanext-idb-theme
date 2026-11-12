@@ -371,6 +371,10 @@
                 padding: 0.5rem 0.75rem;
                 border: 1px solid var(--idb-color-button-stroke-border);
                 border-radius: var(--idb-border-radius) !important;
+                // no browser clear button in the search field
+                &::-webkit-search-cancel-button {
+                    display: none;
+                }
             }
             button {
                 padding: 0.5rem 0.75rem;
