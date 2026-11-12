@@ -15,14 +15,13 @@
     {%- do kwargs["attrs"].update({"id": form_id}) -%}
 {%- endif %}
 
-{#- oob: the page is updated by the parts of the htmx response that are swapped
-    out of band (the count, the results, the facets). The response is a fragment,
-    so swapping it into the body would replace the whole page. -#}
-{%- set hx = {"boost": "true", "disinherit": "hx-boost", "trigger": "change, submit"} -%}
+{%- set hx = kwargs.pop("hx", None) -%}
+{%- if not hx -%}
+    {%- set hx = {"boost": "true", "disinherit": "hx-boost", "trigger": "change, submit"} -%}
+{%- endif %}
 {%- if oob -%}
     {%- do hx.update({"swap": "none"}) -%}
 {%- endif %}
-{%- do hx.update(kwargs.pop("hx", None) or {}) -%}
 
 {%- call ui.util.call(ui.search_form_box, use_htmx=use_htmx or true, hx=hx, **kwargs) -%}
     {% block search_input %}
