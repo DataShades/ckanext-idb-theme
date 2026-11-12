@@ -63,7 +63,7 @@
 
     <div class="lang-select">
         {%- if label -%}
-            <span class="lang-select-label">{{ ui.icon(icon, style="solid", aria={"hidden": "true"}) ~ label }}</span>
+            <span class="lang-select-label">{{ ui.icon(icon, style="solid fa-lg", aria={"hidden": "true"}) ~ label }}</span>
         {%- endif -%}
         {%- call ui.util.call(ui.dropdown, title=(ns.current_name[:3] | upper) ~ ui.icon("plus"), style="link", menu_class="dropdown-menu-end", aria={"label": _('Change language, current language is {language}').format(language=ns.current_name)}) -%}
             {%- for locale in locales -%}

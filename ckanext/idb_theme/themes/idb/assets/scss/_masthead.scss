@@ -261,7 +261,7 @@ $notificationsBg: #CF1322;
             gap: $spacer-1;
             padding: $spacer-1 $spacer;
             font-size: $font-size-base * .75;
-            font-weight: $font-weight-semibold;
+            font-weight: $font-weight-bold;
             color: var(--idb-color-button-stroke-text);
             text-decoration: none;
 
@@ -534,6 +534,8 @@ $notificationsBg: #CF1322;
 
 @include media-breakpoint-down(lg) {
     .masthead {
+        border-bottom: 1px solid var(--idb-color-border-n-variant95);
+
         .navbar {
             align-items: flex-start;
             gap: $spacer !important;
@@ -570,6 +572,19 @@ $notificationsBg: #CF1322;
         }
 
         .main-navbar {
+            position: relative;
+            padding-top: $spacer-3;
+
+            &::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 50%;
+                width: 100vw;
+                transform: translateX(-50%);
+                border-top: 1px solid var(--idb-color-border-n-variant95);
+            }
+
             // the bar above already renders these actions
             .header-nav-actions {
                 gap: $spacer-1 !important;
@@ -586,6 +601,7 @@ $notificationsBg: #CF1322;
                     order: 1;
                     width: 100%;
                     padding: $spacer-2 0 !important;
+                    margin-left: 0;
                     justify-content: flex-start !important;
                     gap: $spacer-2;
                     color: var(--idb-color-neutral-60);
@@ -654,7 +670,7 @@ $notificationsBg: #CF1322;
                     flex-direction: column;
                     gap: $spacer-1;
                     position: static;
-                    padding: 0;
+                    padding: .625rem 0 !important;
                     margin: 0;
                     border: 0;
                     background: transparent;
@@ -668,13 +684,19 @@ $notificationsBg: #CF1322;
                         border-radius: 0;
                         font-size: $font-size-sm;
                         font-weight: $font-weight-normal;
-                        color: var(--idb-color-neutral-60);
+                        color: var(--idb-color-neutral-60) !important;
                         white-space: normal;
 
                         &:hover,
                         &:focus {
                             background-color: transparent;
                             color: var(--idb-color-button-stroke-text);
+                        }
+
+                        &.active {
+                            background-color: transparent;
+                            color: var(--idb-color-button-stroke-text) !important;
+                            font-weight: $font-weight-semibold;
                         }
                     }
                 }
@@ -686,6 +708,7 @@ $notificationsBg: #CF1322;
                 align-items: center;
                 justify-content: space-between;
                 width: 100%;
+                margin-left: 0;
 
                 .lang-select-label {
                     display: inline-flex;
