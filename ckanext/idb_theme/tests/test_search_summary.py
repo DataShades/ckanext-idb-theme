@@ -42,8 +42,10 @@ def test_organization_page_updates_the_count_on_htmx_requests(app):
 
     assert _count(page) == "1 dataset found"
     assert "hx-swap-oob" in _summary_attrs(page)
-    # the applied filters and the filters button follow the facets as well
-    assert "Remove applied filter: PDF" in page
+    # the applied filter stays selected in the swapped facets and the filters
+    # button follows it as well
+    assert 'class="facet-item active' in page
+    assert "show-filters-count" in page
 
 
 def test_organization_page_renders_the_filters_button(app):

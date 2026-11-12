@@ -13,7 +13,7 @@ THEME_PLUGINS = "theming idb_theme"
 PER_PAGE = 3
 
 
-class TestDatasetsPageSearchParams(object):
+class TestDatasetsPageSearchParams:
     """The page size of the "Items per page" dropdown applies to the search."""
 
     def test_dataset_search_gets_the_page_size(self, app):
@@ -66,18 +66,22 @@ class TestDatasetsPageSearchParams(object):
 @pytest.mark.ckan_config("ckan.ui.theme", "idb")
 @pytest.mark.ckan_config("ckan.datasets_per_page", PER_PAGE)
 @pytest.mark.usefixtures("with_plugins", "clean_db", "clean_index")
-class TestOrganizationPagePagination(object):
+class TestOrganizationPagePagination:
     """The organization page paginates its datasets as the Datasets page does."""
 
     def test_page_shows_its_own_datasets(self, app):
         org, names = _organization_with_datasets(5)
+        first = app.get(f"/organization/{org['name']}").get_data(as_text=True)
 
         page = app.get(f"/organization/{org['name']}?page=2").get_data(as_text=True)
 
-        assert names[3] in page
-        assert names[4] in page
+        # the search sorts the datasets, so the pages are compared by their
+        # content instead of the creation order
+        first_names = _datasets_on(first, names)
+
+        assert len(first_names) == PER_PAGE
         # the datasets of the first page are not repeated
-        assert names[0] not in page
+        assert set(_datasets_on(page, names)) == set(names) - set(first_names)
         assert "No datasets match your search" not in page
 
     def test_page_size_of_the_dropdown_is_honoured(self, app):
@@ -90,6 +94,7 @@ class TestOrganizationPagePagination(object):
 
     def test_htmx_request_swaps_the_results_only(self, app):
         org, names = _organization_with_datasets(5)
+        first = app.get(f"/organization/{org['name']}").get_data(as_text=True)
 
         page = app.get(f"/organization/{org['name']}?page=2", headers={"HX-Request": "true"}).get_data(
             as_text=True
@@ -97,7 +102,8 @@ class TestOrganizationPagePagination(object):
 
         assert 'id="search-results"' in page
         assert 'id="search-facets"' in page
-        assert names[3] in page
+        first_names = _datasets_on(first, names)
+        assert set(_datasets_on(page, names)) == set(names) - set(first_names)
         # the dataset page only parts must not be rendered on this page
         assert "dataset-search-hero-filters" not in page
         assert "dataset-search-results-header" not in page
@@ -110,11 +116,14 @@ class TestOrganizationPagePagination(object):
 def test_datasets_page_shows_the_results_of_its_pages(app):
     """The results of the page after the first one are rendered (see `page` checks)."""
     org, names = _organization_with_datasets(5)
+    first = app.get(f"/dataset?organization={org['name']}").get_data(as_text=True)
 
     page = app.get(f"/dataset?organization={org['name']}&page=2&_per_page={PER_PAGE}").get_data(as_text=True)
 
-    assert names[3] in page
-    assert names[4] in page
+    first_names = _datasets_on(first, names)
+
+    assert len(first_names) == PER_PAGE
+    assert set(_datasets_on(page, names)) == set(names) - set(first_names)
     assert "No datasets match your search" not in page
 
 
@@ -132,3 +141,8 @@ def _organization_with_datasets(count: int) -> tuple[dict[str, Any], list[str]]:
         names.append(dataset["name"])
 
     return org, names
+
+
+def _datasets_on(html: str, names: list[str]) -> list[str]:
+    """Return the datasets of the page, in their creation order."""
+    return [name for name in names if name in html]
