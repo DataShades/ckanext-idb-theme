@@ -5,6 +5,7 @@
 {% import "macros/idb/element.html" as element %}
 {% import "macros/idb/feedback.html" as feedback%}
 {% import "macros/idb/form.html" as _form%}
+{% import "macros/idb/form_layout.html" as _form_layout %}
 {% import "macros/idb/handle.html" as _handle%}
 {% import "macros/idb/meta.html" as meta%}
 {% import "macros/idb/nav.html" as _nav%}
@@ -68,6 +69,7 @@
 {% set tooltip = tooltip | default(feedback.tooltip) %}
 
 {% set badge = badge | default(element.badge) %}
+{% set chip = chip | default(element.chip) %}
 {% set empty = empty | default(element.empty) %}
 {% set button = button | default(element.button) %}
 {% set icon = icon | default(element.icon) %}
@@ -83,6 +85,8 @@
 {% set field_errors = field_errors | default(_form.field_errors) %}
 {% set file_input = file_input | default(_form.file_input) %}
 {% set field_info = field_info | default(_form.field_info) %}
+{% set form_label = form_label | default(_form.form_label) %}
+{% set field_tooltip = field_tooltip | default(_form.field_tooltip) %}
 {% set form_errors = form_errors | default(_form.form_errors) %}
 {% set form_annotation = form_annotation | default(_form.form_annotation) %}
 {% set input = input | default(_form.input) %}
@@ -139,3 +143,19 @@
 {% set user_menu = user_menu | default(meta.user_menu) %}
 {% set dashboard_nav = dashboard_nav | default(_wrapper.dashboard_nav) %}
 {% set dashboard_nav_item = dashboard_nav_item | default(_nav.dashboard_nav_item) %}
+
+{#  FORM LAYOUT COMPONENTS (multi-step / multi-section entity forms) #}
+{% set stepper = stepper | default(_form_layout.stepper) %}
+{% set stepper_step = stepper_step | default(_form_layout.stepper_step) %}
+{% set form_status = form_status | default(_form_layout.form_status) %}
+{% set info_banner = info_banner | default(_form_layout.info_banner) %}
+{% set completion_badge = completion_badge | default(_form_layout.completion_badge) %}
+{% set form_section = form_section | default(_form_layout.form_section) %}
+{% set form_section_field = form_section_field | default(_form_layout.form_section_field) %}
+{% set form_section_nav = form_section_nav | default(_form_layout.form_section_nav) %}
+{% set form_section_nav_item = form_section_nav_item | default(_form_layout.form_section_nav_item) %}
+{% set form_progress = form_progress | default(_form_layout.form_progress) %}
+{% set form_progress_item = form_progress_item | default(_form_layout.form_progress_item) %}
+{% set help_card = help_card | default(_form_layout.help_card) %}
+{% set markdown_editor = markdown_editor | default(_form_layout.markdown_editor) %}
+{% set image_dropzone = image_dropzone | default(_form_layout.image_dropzone) %}

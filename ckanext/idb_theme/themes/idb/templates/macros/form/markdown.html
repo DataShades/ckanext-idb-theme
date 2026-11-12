@@ -17,8 +17,8 @@ Examples:
 {{ form.markdown('desc', id='field-description', label=_('Description'), value=data.desc, error=errors.desc) }}
 
 #}
-{% macro markdown(name, id='', label='', value='', placeholder='', error="", classes=[], attrs={}, is_required=false) %}
+{% macro markdown(name, id='', label='', value='', placeholder='', error="", classes=[], attrs={}, is_required=false, tooltip=none) %}
     {%- set extra_html = caller() if caller -%}
-    {{ ui.markdown(extra_html, name=name, id=id, label=label, value=value, placeholder=placeholder, errors=error, attrs=attrs, required=is_required) }}
+    {{ ui.markdown(extra_html, name=name, id=id, label=label, value=value, placeholder=placeholder, errors=error, attrs=attrs, required=is_required, tooltip=tooltip) }}
 
 {% endmacro %}

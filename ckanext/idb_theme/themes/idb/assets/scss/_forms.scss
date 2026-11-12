@@ -85,8 +85,62 @@ textarea {
     width: 100%;
 }
 
+// Title/Medium SemiBold. Order: text, required mark, tooltip button.
+.form-label {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+    color: var(--idb-color-primary-20);
+    font-size: 1.125rem;
+    line-height: 1.5rem;
+    font-weight: 600;
+
+    // the design has no colon after labels
+    &::after {
+        content: none;
+    }
+}
+
+// Help text under a field. Body/Medium
+.form-text {
+    margin-top: 0;
+    margin-bottom: 8px;
+    color: var(--idb-color-text-default);
+    font-size: var(--idb-font-size-label-large);
+    line-height: var(--idb-line-height-label-large);
+    font-weight: 400;
+}
+
+.field-tooltip {
+    display: flex;
+    flex: 0 0 auto;
+    justify-content: center;
+    align-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: var(--idb-border-radius-sm);
+    background: var(--idb-color-adornment-blue-bg);
+    color: var(--idb-color-alert-info-fg);
+    cursor: help;
+
+    svg {
+        width: 16px;
+        height: 16px;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--idb-color-button-flat-background);
+        outline-offset: 1px;
+    }
+}
+
 .control-required {
-    color: $errorBorder;
+    color: var(--idb-color-error-40);
+    font-size: 1.125rem;
+    line-height: 1.5rem;
+    font-weight: 600;
 }
 
 .form-actions {
@@ -561,17 +615,83 @@ select[data-module="autocomplete"] {
     margin-bottom: 0;
 }
 
-// Slug Preview Field
+// Slug preview: the URL under the name or title, with an "Edit" button that
+// shows the URL field (javascript/modules/slug-preview.js)
 .slug-preview {
-    font-size: 14px;
-    line-height: 1.5;
-    margin-top: 5px;
-    margin-left: 10px;
-}
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-sizing: border-box;
+    min-height: 64px;
+    margin-top: var(--idb-space-xs);
+    padding: 12px 18px;
+    // design tokens --alert-info-border / --alert-info-bg are the theme's --idb-color-alert-info-*
+    border: 1px solid var(--idb-color-alert-info-border, #B6CFDE);
+    border-radius: 4px;
+    background: var(--idb-color-alert-info-bg, #F0F4F7);
+    color: var(--idb-color-alert-info-fg);
+    font-family: var(--idb-font-family-inter), sans-serif;
 
-.slug-preview-value {
-    background-color: #faedcf;
-    margin-right: 3px;
+    &__icon {
+        flex: 0 0 auto;
+        display: inline-flex;
+        font-size: 1.25rem;
+    }
+
+    &__text {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    // design: Body/Medium SemiBold
+    &__label {
+        margin-bottom: 4px;
+        color: var(--idb-color-alert-info-fg, #004E70);
+        font-family: var(--idb-font-family-inter), sans-serif;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: 20px;
+    }
+
+    // design: Body/Medium; a long address wraps instead of widening the form
+    &__url {
+        color: var(--idb-color-alert-info-fg, #004E70);
+        font-family: var(--idb-font-family-inter), sans-serif;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 20px;
+        overflow-wrap: anywhere;
+    }
+
+    &__edit {
+        flex: 0 0 auto;
+        padding: var(--idb-space-xs) 12px;
+        border: 0;
+        border-radius: var(--idb-border-radius-lg);
+        background: none;
+        // design: Body/Medium Bold
+        color: var(--idb-color-alert-info-fg, #004E70);
+        text-align: center;
+        font-family: var(--idb-font-family-inter), sans-serif;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 20px;
+
+        &:hover,
+        &:focus-visible {
+            background: rgba(0, 0, 0, 0.06);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--idb-color-button-flat-background);
+            outline-offset: -2px;
+        }
+    }
 }
 
 // Select2
@@ -863,7 +983,14 @@ select[data-module="autocomplete"] {
 
 
 // IDB customization //////////////////////////////////////////////////////////
+// design: MD3 outline border (the theme's --idb-color-outline), xsmall radius, default surface
 .form-control {
+    padding: 8px var(--spacing-12px, 12px);
+    border: 1px solid var(--idb-color-outline, #A6A6A8);
+    border-radius: var(--xsmall, 4px);
+    background: var(--surface-default, #FFF);
+    color: var(--idb-color-text-default, #232222);
+
     &.ts-wrapper {
         padding: 0;
         border: unset;
@@ -881,7 +1008,7 @@ select[data-module="autocomplete"] {
     }
 }
 
-:is(#dataset-edit, #resource-edit, .dataset-form, [data-module~="resource-form"])
+:is(#dataset-edit, #resource-edit, #data-project-edit, .dataset-form, [data-module~="resource-form"])
     .form-group:not(.form-check):has(> .form-text, > .error-inline) {
     display: flex;
     flex-direction: column;
@@ -903,7 +1030,7 @@ select[data-module="autocomplete"] {
     }
 }
 
-:is(#dataset-edit, #resource-edit, .dataset-form, [data-module~="resource-form"])
+:is(#dataset-edit, #resource-edit, #data-project-edit, .dataset-form, [data-module~="resource-form"])
     .form-group
     .controls:has(> .form-text, > .error-block, > .error-inline) {
     display: flex;
@@ -919,7 +1046,7 @@ select[data-module="autocomplete"] {
     }
 }
 
-:is(#dataset-edit, #resource-edit, .dataset-form, [data-module~="resource-form"])
+:is(#dataset-edit, #resource-edit, #data-project-edit, .dataset-form, [data-module~="resource-form"])
     .multilingual-field-group:has(> .multilingual-field-error) {
     display: flex;
     flex-direction: column;

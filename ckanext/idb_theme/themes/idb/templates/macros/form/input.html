@@ -18,7 +18,7 @@ Examples:
 {{ form.input('title', label=_('Title'), value=data.title, error=errors.title) }}
 
 #}
-{% macro input(name, id='', label='', value='', placeholder='', type='text', icon="", error="", classes=[], attrs={}, is_required=false) %}
+{% macro input(name, id='', label='', value='', placeholder='', type='text', icon="", error="", classes=[], attrs={}, is_required=false, tooltip=none) %}
     {%- set extra_html = caller() if caller -%}
-    {{ ui.input(extra_html, name=name, id=id, label=label, value=value, placeholder=placeholder, type=type, icon=icon, errors=error, attrs=attrs, required=is_required) }}
+    {{ ui.input(extra_html, name=name, id=id, label=label, value=value, placeholder=placeholder, type=type, icon=icon, errors=error, attrs=attrs, required=is_required, tooltip=tooltip) }}
 {% endmacro %}

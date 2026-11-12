@@ -1,0 +1,136 @@
+// Modals ////////////////////////////////////////////////////////////////////
+//
+// Every modal of the site is a Bootstrap one (macros/idb/feedback.html,
+// src/modal.ts, confirm-action.js, the ckanext-tables dialogs, ...), so they
+// are all styled here: a white card with no dividers, a dark title, grey text
+// and pill buttons at the bottom right, in the middle of the screen.
+
+.modal {
+    --bs-modal-padding: 24px;
+    --bs-modal-border-width: 1px;
+    --bs-modal-border-color: #E4E4E4;
+    --bs-modal-border-radius: 8px;
+    --bs-modal-inner-border-radius: 7px;
+    --bs-modal-box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --bs-modal-header-padding: 18px 24px 0;
+    --bs-modal-header-border-width: 0;
+    --bs-modal-footer-border-width: 0;
+    --bs-modal-footer-gap: 8px;
+    --bs-modal-title-line-height: 1.5rem;
+    --bs-modal-color: #5C5A5A;
+    --bs-modal-bg: #{$white};
+}
+
+// in the middle of the screen, not at the top (what .modal-dialog-centered
+// does, for every modal). A fullscreen one fills the screen anyway.
+.modal-dialog:not(.modal-fullscreen) {
+    display: flex;
+    align-items: center;
+    min-height: calc(100% - var(--bs-modal-margin) * 2);
+}
+
+.modal-content {
+    box-shadow: var(--bs-modal-box-shadow);
+}
+
+.modal-header {
+    gap: 12px;
+
+    // ckanext-tables' confirm paints the header (bg-danger text-white, ...)
+    // with !important utilities: the design has a plain white one
+    &[class*="bg-"] {
+        background-color: transparent !important;
+        color: inherit !important;
+    }
+
+    // its icon slot is empty unless an icon is passed
+    .modal-icon:empty {
+        display: none;
+    }
+
+    .btn-close {
+        flex-shrink: 0;
+        width: 10px;
+        height: 10px;
+        margin: 0 0 0 auto;
+        padding: 6px; // a larger click target around the 10px icon
+        background-size: 10px;
+        // Bootstrap's close icon, filled with #5C5A5A
+        --bs-btn-close-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%235C5A5A'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e");
+        --bs-btn-close-opacity: 1;
+        --bs-btn-close-hover-opacity: 1;
+        opacity: 1;
+
+        // the header is white, so the close button stays dark
+        &.btn-close-white {
+            filter: none;
+        }
+    }
+}
+
+.modal-title {
+    color: #272626;
+    font-family: "Inter", sans-serif;
+    font-size: 1.125rem;
+    line-height: 1.5rem;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.modal-body {
+    padding: 24px 24px 0;
+    color: #5C5A5A;
+    font-family: "Inter", sans-serif;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.modal-footer {
+    gap: 8px;
+    padding: 32px 24px 20px;
+
+    // Bootstrap puts a margin around each button, the gap spaces them instead
+    > * {
+        margin: 0;
+    }
+
+    .btn {
+        padding: 8px 16px;
+        font-family: "Inter", sans-serif;
+        font-size: 0.75rem;
+        line-height: 1rem;
+        font-weight: 600;
+        letter-spacing: 0;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    // the cancel / dismiss button: outlined
+    .btn-secondary,
+    .btn-default,
+    .btn-light {
+        color: var(--idb-color-button-stroke-text);
+        background-color: $white;
+        border: 1px solid var(--idb-color-button-stroke-border);
+
+        &:hover,
+        &:focus-visible {
+            color: var(--idb-color-button-stroke-text);
+            background-color: #F2F2F2 !important; // over .btn-secondary:hover in _buttons.scss
+            border: 1px solid var(--idb-color-button-stroke-border);
+        }
+    }
+
+    // a destructive action: filled red
+    .btn-danger {
+        --bs-btn-color: #{$white};
+        --bs-btn-bg: #C53030;
+        --bs-btn-border-color: #C53030;
+        --bs-btn-hover-color: #{$white};
+        --bs-btn-hover-bg: #{darken(#C53030, 8%)};
+        --bs-btn-hover-border-color: #{darken(#C53030, 8%)};
+        --bs-btn-active-color: #{$white};
+        --bs-btn-active-bg: #{darken(#C53030, 8%)};
+        --bs-btn-active-border-color: #{darken(#C53030, 8%)};
+    }
+}

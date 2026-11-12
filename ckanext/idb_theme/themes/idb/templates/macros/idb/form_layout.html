@@ -1,0 +1,321 @@
+{#
+Components for multi-step, multi-section entity forms (create/edit pages).
+
+They only render markup. The `form-sections` JS module (javascript/modules/form-sections.js)
+adds the behaviour: completion counters, the progress bar, navigation, and enabling
+the "next" button. The module looks only at data attributes, so any entity form can
+use these components.
+
+Example:
+
+    {%- call ui.util.call(ui.stepper) -%}
+        {{ ui.stepper_step(_("Create Dataset"), 1, "active") }}
+        {{ ui.stepper_step(_("Add data"), 2) }}
+    {%- endcall %}
+
+    {%- call ui.util.call(ui.form_section, title=_("Overview"), id="overview", total=3, open=true) -%}
+        {%- call ui.util.call(ui.form_section_field, name="title", required=true) -%}...{%- endcall %}
+    {%- endcall %}
+#}
+
+{#- Horizontal list of steps. Steps wrap to the next line on narrow screens. -#}
+{%- macro stepper(content) -%}
+    <ol {{ ui.util.attrs(kwargs, {"class": "stepper"}) }}>
+        {{- content -}}
+    </ol>
+{%- endmacro %}
+
+
+{#-
+A single step of the stepper.
+
+status - one of "active", "complete", "pending". CKAN's "uncomplete" is treated as "pending".
+-#}
+{%- macro stepper_step(label, index, status="pending") -%}
+    {%- set status = "pending" if status in (none, "", "uncomplete") else status -%}
+    {%- set status_labels = {"active": _("In progress"), "complete": _("Completed"), "pending": _("Pending")} -%}
+    <li {{ ui.util.attrs(kwargs, {"class": "stepper-step stepper-step--" ~ status}) }} {{ 'aria-current="step"' | safe if status == "active" }}>
+        <span class="stepper-step__index" aria-hidden="true">
+            {%- if status == "complete" -%}{{ ui.icon("check") }}{%- else -%}{{ index }}{%- endif -%}
+        </span>
+        <span class="stepper-step__text">
+            <span class="stepper-step__label">{{ label }}</span>
+            <span class="stepper-step__status">{{ status_labels.get(status, status) }}</span>
+        </span>
+    </li>
+{%- endmacro %}
+
+
+{#- Small status pill, e.g. "Draft saved 15 minutes ago". -#}
+{%- macro form_status(content, icon="clock-rotate-left") -%}
+    <span {{ ui.util.attrs(kwargs, {"class": "form-status"}) }}>
+        {%- if icon %}<span aria-hidden="true">{{ ui.icon(icon) }}</span>{% endif %}
+        <span>{{ content }}</span>
+    </span>
+{%- endmacro %}
+
+
+{#-
+Full-width informational banner with an icon.
+
+svg  - name of a template from templates/svg (default: "info")
+icon - Font Awesome icon, used instead of `svg` when given
+-#}
+{%- macro info_banner(content, svg="info", icon=none, style="info") -%}
+    {%- set icon_markup = ui.icon(icon) if icon else (h.snippet("svg/" ~ svg ~ ".svg") if svg else "") -%}
+    <div {{ ui.util.attrs(kwargs, {"class": "info-banner info-banner--" ~ style, "role": "note"}) }}>
+        {%- if icon_markup %}<span class="info-banner__icon" aria-hidden="true">{{ icon_markup }}</span>{% endif %}
+        <div class="info-banner__content">{{ content }}</div>
+    </div>
+{%- endmacro %}
+
+
+{#-
+Completion badge, e.g. "0/8 completed", or "Optional" while the section has no required fields.
+The form-sections module keeps it up to date (fields can become required later, e.g. conditional ones)
+and turns it green once a required field is filled.
+-#}
+{%- macro completion_badge(id, total=0, optional=false) -%}
+    {%- set is_optional = optional or not total -%}
+    <span {{ ui.util.attrs(kwargs, {"class": "completion-badge" ~ (" is-optional" if is_optional else "")}) }} data-form-section-counter="{{ id }}" data-template="{{ _('{done}/{total} completed') }}" data-optional-label="{{ _('Optional') }}">
+        {{- _("Optional") if is_optional else _("{done}/{total} completed").format(done=0, total=total) -}}
+    </span>
+{%- endmacro %}
+
+
+{#-
+Collapsible form section.
+
+id          - unique id of the section, used by navigation and counters
+total       - number of required fields in the section
+optional    - show "Optional" instead of a counter
+open        - expanded on page load
+collapsible - false renders a plain card: the header has no toggle and the fields are always shown
+-#}
+{%- macro form_section(content, title, id, subtitle=none, total=0, optional=false, open=false, collapsible=true) -%}
+    {%- set body_id = "form-section-body-" ~ id -%}
+    {%- if not collapsible -%}
+    <section {{ ui.util.attrs(kwargs, {"class": "form-section form-section--static is-open", "id": "form-section-" ~ id}) }} data-form-section="{{ id }}">
+        <div class="form-section__header form-section__toggle">
+            <span class="form-section__heading">
+                <h2 class="form-section__title">{{ title }}</h2>
+                {%- if subtitle %}<span class="form-section__subtitle">{{ subtitle }}</span>{% endif %}
+            </span>
+            {{ ui.completion_badge(id, total, optional) }}
+        </div>
+        <div id="{{ body_id }}" class="form-section__body">
+            <div class="form-section__content">
+                {{ content }}
+            </div>
+        </div>
+    </section>
+    {%- else -%}
+    <section {{ ui.util.attrs(kwargs, {"class": "form-section" ~ (" is-open" if open else ""), "id": "form-section-" ~ id}) }} data-form-section="{{ id }}">
+        <h2 class="form-section__header">
+            <button class="form-section__toggle {{ 'collapsed' if not open }}" type="button" data-bs-toggle="collapse" data-bs-target="#{{ body_id }}" aria-expanded="{{ 'true' if open else 'false' }}" aria-controls="{{ body_id }}">
+                <span class="form-section__heading">
+                    <span class="form-section__title">{{ title }}</span>
+                    {%- if subtitle %}<span class="form-section__subtitle">{{ subtitle }}</span>{% endif %}
+                </span>
+                {{ ui.completion_badge(id, total, optional) }}
+                <span class="form-section__chevron" aria-hidden="true">{{ ui.icon("chevron-down") }}</span>
+            </button>
+        </h2>
+        <div id="{{ body_id }}" class="form-section__body collapse {{ 'show' if open }}">
+            <div class="form-section__content">
+                {{ content }}
+            </div>
+        </div>
+    </section>
+    {%- endif -%}
+{%- endmacro %}
+
+
+{#-
+Wraps one field inside a form section, so the JS module can track it.
+
+name     - field name. The module reads inputs named `name` or `name-<primary lang>`
+           and falls back to any named control inside the wrapper.
+required - the field counts toward completion. Fields whose label shows a required mark
+           (e.g. conditional fields while active) and filled repeating rows count too.
+also     - names of other inputs in the wrapper that must be filled as well (e.g. the URL of a title)
+required_when - (field, values): required while that field has one of the values,
+           e.g. ("gov_category", ["INS"])
+counted  - an optional field that still counts in the section counter (e.g. "0/4 completed"
+           with an optional image); it never keeps the "next" button disabled
+-#}
+{%- macro form_section_field(content, name, required=false, also=[], required_when=none, counted=false) -%}
+    <div {{ ui.util.attrs(kwargs, {"class": "form-section-field", "id": "form-field-" ~ name}) }} data-form-field="{{ name }}"
+        {%- if required %} data-form-field-required="true"{% endif %}
+        {%- if counted and not required %} data-form-field-counted="true"{% endif %}
+        {%- if also %} data-form-field-also="{{ also | join(',') }}"{% endif %}
+        {%- if required_when %} data-form-field-required-when="{{ required_when[0] }}" data-form-field-required-values="{{ required_when[1] | join(',') }}"{% endif %}>
+        {{ content }}
+    </div>
+{%- endmacro %}
+
+
+{#- Side card with a list of sections. -#}
+{%- macro form_section_nav(content, title) -%}
+    <nav {{ ui.util.attrs(kwargs, {"class": "form-side-card form-section-nav"}) }} aria-label="{{ title }}">
+        <h2 class="form-side-card__title">{{ title }}</h2>
+        <ul class="form-section-nav__list">
+            {{ content }}
+        </ul>
+    </nav>
+{%- endmacro %}
+
+
+{%- macro form_section_nav_item(title, target, total=0, optional=false, active=false) -%}
+    <li {{ ui.util.attrs(kwargs, {"class": "form-section-nav__item" ~ (" is-active" if active else "")}) }}>
+        <a class="form-section-nav__link" href="#form-section-{{ target }}" data-form-section-link="{{ target }}" {{ 'aria-current="true"' | safe if active }}>
+            <span class="form-section-nav__text">
+                <span class="form-section-nav__title">{{ title }}</span>
+                {%- set is_optional = optional or not total %}
+                <span class="form-section-nav__meta" data-form-section-counter="{{ target }}" data-template="{{ _('{done}/{total} required completed') }}" data-optional-label="{{ _('Optional') }}">
+                    {{- _("Optional") if is_optional else _("{done}/{total} required completed").format(done=0, total=total) -}}
+                </span>
+            </span>
+            <span class="form-section-nav__chevron" aria-hidden="true">{{ ui.icon("chevron-down") }}</span>
+        </a>
+    </li>
+{%- endmacro %}
+
+
+{#- Side card with a progress bar and a list of required fields. -#}
+{%- macro form_progress(content, title, total=0, hint=none) -%}
+    <div {{ ui.util.attrs(kwargs, {"class": "form-side-card form-progress"}) }}>
+        <h2 class="form-side-card__title">{{ title }}</h2>
+        {%- if hint %}<p class="form-progress__hint">{{ hint }}</p>{% endif %}
+        <div class="form-progress__bar" role="progressbar" aria-valuemin="0" aria-valuemax="{{ total }}" aria-valuenow="0" data-form-progress-bar>
+            <div class="form-progress__bar-fill" style="width: 0%"></div>
+        </div>
+        <p class="form-progress__summary" data-form-progress-summary data-template="{{ _('{done} of {total} required fields complete') }}">
+            {{- _("{done} of {total} required fields complete").format(done=0, total=total) -}}
+        </p>
+        <ul class="form-progress__list">
+            {{ content }}
+        </ul>
+    </div>
+{%- endmacro %}
+
+
+{#- hidden - start hidden; the form-sections module shows the item while the field is required -#}
+{%- macro form_progress_item(label, target, hidden=false) -%}
+    <li {{ ui.util.attrs(kwargs, {"class": "form-progress__item"}) }} data-form-progress-item="{{ target }}"{% if hidden %} hidden{% endif %}>
+        <a class="form-progress__link" href="#form-field-{{ target }}" data-form-field-link="{{ target }}">
+            <span class="form-progress__check" aria-hidden="true">{{ h.snippet("svg/check.svg") }}</span>
+            <span class="form-progress__label">{{ label }}</span>
+            <span class="visually-hidden" data-form-progress-state data-done="{{ _('completed') }}" data-pending="{{ _('not completed') }}">{{ _("not completed") }}</span>
+        </a>
+    </li>
+{%- endmacro %}
+
+
+{#-
+Side card with help text and a link, e.g. "Need help?".
+
+link_label - text of the link
+href       - link target
+-#}
+{%- macro help_card(content, title, link_label=none, href="#") -%}
+    <aside {{ ui.util.attrs(kwargs, {"class": "help-card"}) }}>
+        <h2 class="help-card__title">{{ title }}</h2>
+        {%- if content %}<p class="help-card__text">{{ content }}</p>{% endif %}
+        {%- if link_label %}<a class="help-card__link" href="{{ href }}">{{ link_label }}</a>{% endif %}
+    </aside>
+{%- endmacro %}
+
+
+{#-
+Markdown textarea with a formatting toolbar (bold, italic, list, link) and a
+character counter. The `markdown-editor` JS module adds the behaviour; without
+JS it's a plain textarea that still stops at `max_length`.
+
+max_length - maximum number of characters (the markdown source is counted)
+-#}
+{%- macro markdown_editor(name, id, label, value="", placeholder="", required=false, errors=[], help=none, tooltip=none, max_length=none) -%}
+    {%- set field_id = id or "field-" ~ name -%}
+    {%- set help_id = field_id ~ "-help" -%}
+    {%- set counter_id = field_id ~ "-counter" -%}
+    <div {{ ui.util.attrs(kwargs, {"class": "form-group markdown-editor"}) }} data-module="markdown-editor">
+        {{ ui.form_label(label, field_id=field_id, required=required, tooltip=tooltip) }}
+        {%- if help %}<div class="form-text" id="{{ help_id }}">{{ help }}</div>{% endif %}
+        <div class="markdown-editor__toolbar" role="toolbar" aria-label="{{ _('Formatting') }}" aria-controls="{{ field_id }}" hidden>
+            <button type="button" class="markdown-editor__button" data-markdown-format="bold" title="{{ _('Bold') }}" aria-label="{{ _('Bold') }}">{{ ui.icon("bold") }}</button>
+            <button type="button" class="markdown-editor__button" data-markdown-format="italic" title="{{ _('Italic') }}" aria-label="{{ _('Italic') }}">{{ ui.icon("italic") }}</button>
+            <button type="button" class="markdown-editor__button" data-markdown-format="list" title="{{ _('Bulleted list') }}" aria-label="{{ _('Bulleted list') }}">{{ ui.icon("list-ul") }}</button>
+            <button type="button" class="markdown-editor__button" data-markdown-format="link" title="{{ _('Link') }}" aria-label="{{ _('Link') }}" data-link-prompt="{{ _('Link URL') }}">{{ ui.icon("link") }}</button>
+        </div>
+        <textarea class="form-control markdown-editor__input{{ ' is-invalid' if errors }}" id="{{ field_id }}" name="{{ name }}" rows="3"
+            {%- if placeholder %} placeholder="{{ placeholder }}"{% endif %}
+            {%- if max_length %} maxlength="{{ max_length }}"{% endif %}
+            {%- if required %} required{% endif %}
+            {%- if errors %} aria-invalid="true"{% endif %}
+            aria-describedby="{{ (help_id ~ ' ') if help }}{{ counter_id if max_length }}">{{ value or "" }}</textarea>
+        {%- if max_length %}
+            <div class="markdown-editor__counter" id="{{ counter_id }}" data-markdown-counter data-max="{{ max_length }}" data-template="{{ _('{count}/{max} characters') }}" aria-live="polite">
+                {{- _("{count}/{max} characters").format(count=(value or "") | length, max=max_length) -}}
+            </div>
+        {%- endif %}
+        {{ ui.field_errors(errors) if errors }}
+    </div>
+{%- endmacro %}
+
+
+{#-
+Image upload with a drag and drop area, for CKAN's image fields (image_url,
+image_upload, clear_upload). The `image-dropzone` JS module adds the drag and
+drop, checks the type and size of the file, and shows the chosen image.
+
+The current image is kept in a text input named `field_url` (hidden from view),
+so it counts as filled while it has a value.
+
+accept   - MIME types the input accepts
+max_size - maximum file size, in MB
+-#}
+{%- macro image_dropzone(data, errors, label, help=none, tooltip=none, field_url="image_url", field_upload="image_upload", field_clear="clear_upload", accept="image/png,image/jpeg", formats="PNG, JPEG", max_size=5) -%}
+    {%- set field_id = "field-" ~ field_upload | replace("_", "-") -%}
+    {%- set current = data.get(field_url) or "" -%}
+    {%- set field_errors = (errors.get(field_url) or []) + (errors.get(field_upload) or []) -%}
+    <div {{ ui.util.attrs(kwargs, {"class": "form-group image-dropzone" ~ (" has-image" if current else "")}) }}
+        data-module="image-dropzone"
+        data-module-max-size="{{ max_size }}"
+        data-module-accept="{{ accept }}"
+        data-module-type-error="{{ _('File type not accepted. Use {formats}.').format(formats=formats) }}"
+        data-module-size-error="{{ _('File size exceeds limit.') }}"
+        data-module-read-error="{{ _('The file is not a valid image.') }}">
+        {{ ui.form_label(label, field_id=field_id, tooltip=tooltip) }}
+        {%- if help %}<div class="form-text">{{ help }}</div>{% endif %}
+
+        <input type="text" class="image-dropzone__current" name="{{ field_url }}" value="{{ current }}" hidden aria-hidden="true" tabindex="-1">
+        <input type="hidden" name="{{ field_clear }}" value="" data-image-dropzone-clear>
+
+        <div class="image-dropzone__area{{ ' is-invalid' if field_errors }}" data-image-dropzone-area>
+            <input class="image-dropzone__input" type="file" id="{{ field_id }}" name="{{ field_upload }}" accept="{{ accept }}">
+            {#- the ⋮ icon of the row actions of the dashboard tables (ckanext-tables actions.html) #}
+            <span class="image-dropzone__icon" aria-hidden="true"><i class="fa fa-ellipsis-v"></i></span>
+            <span class="image-dropzone__text">
+                <span class="image-dropzone__link">{{ _("Click to upload") }}</span>
+                {{ _("or drag and drop files here") }}
+            </span>
+            <span class="image-dropzone__hint">{{ _("Accepted formats: {formats} (Max: {size}MB)").format(formats=formats, size=max_size) }}</span>
+        </div>
+
+        {#- the chosen file and its state, see image-dropzone.js:
+            uploading - the browser reads and checks the image
+            success   - the image is ready, the trash button removes it
+            error     - the file is refused, the close button dismisses the message -#}
+        {%- set state = "error" if field_errors else ("success" if current else "") -%}
+        <div class="image-dropzone__status" data-image-dropzone-status data-state="{{ state }}" role="status" aria-live="polite"{% if not state %} hidden{% endif %}>
+            <span class="image-dropzone__status-icon image-dropzone__status-icon--file" aria-hidden="true">{{ h.snippet("svg/info.svg") }}</span>
+            <span class="image-dropzone__status-icon image-dropzone__status-icon--error" aria-hidden="true">{{ ui.icon("circle-exclamation") }}</span>
+            <span class="image-dropzone__status-text" data-image-dropzone-text>
+                {{- field_errors | join(", ") if field_errors else current.split("/")[-1] -}}
+            </span>
+            <span class="image-dropzone__spinner spinner-border" aria-hidden="true"></span>
+            <button type="button" class="image-dropzone__action image-dropzone__action--remove" data-image-dropzone-remove aria-label="{{ _('Remove image') }}" title="{{ _('Remove image') }}">{{ h.snippet("svg/trash.svg") }}</button>
+            <button type="button" class="image-dropzone__action image-dropzone__action--dismiss" data-image-dropzone-dismiss aria-label="{{ _('Dismiss') }}" title="{{ _('Dismiss') }}">{{ ui.icon("xmark") }}</button>
+        </div>
+    </div>
+{%- endmacro %}

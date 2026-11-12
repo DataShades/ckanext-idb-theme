@@ -109,11 +109,24 @@
     }
 }
 
+// every dashboard tab (user/dashboard.html) has a light grey page, the cards
+// and tables on it stay white
+.main.dashboard-page {
+    background-color: #F9F9FA;
+
+    // .main .primary is white (see _layout.scss)
+    .primary {
+        background-color: transparent;
+    }
+}
+
 .dashboard-page .toolbar {
     margin-bottom: 30px;
 }
 
-.dashboard-layout {
+// the Data Project edit page reuses the dashboard table for its members
+.dashboard-layout,
+.data-project-page {
     .dashboard-sidebar {
         margin-bottom: var(--idb-space-md);
 
@@ -443,16 +456,29 @@
         .table-search {
             flex: 0 1 272px;
 
+            // tablet and down: full row, the quick filters wrap below
+            @include media-breakpoint-down(lg) {
+                flex-basis: 100%;
+            }
+
+            @include media-breakpoint-up(lg) {
+                min-width: 309px;
+            }
+
             i {
                 right: 20px;
                 left: auto;
                 color: #535354;
             }
 
+            // the magnifier and the browser's clear (×) button sit at the same
+            // place: the magnifier shows only while the search is empty
+            &:has(.form-control:not(:placeholder-shown)) i {
+                display: none;
+            }
+
             .form-control {
                 padding: 10px 16px;
-                // room for the magnifier icon
-                padding-inline-end: 44px;
                 font-family: "Open Sans", sans-serif;
                 font-size: 0.875rem;
                 line-height: 1.25rem;
@@ -466,15 +492,23 @@
             }
         }
 
+        // its search placeholder is longer than on the other tables
+        &.dashboard-org-users .table-search {
+            @include media-breakpoint-up(lg) {
+                min-width: 369px;
+            }
+        }
+
         .table-quick-filters {
             gap: 10px;
 
             .form-select {
-                min-width: 196px;
+                width: auto;
+                field-sizing: content;
                 max-width: 100%;
                 padding: 8px 12px;
-                // room for the chevron
-                padding-inline-end: 36px;
+                padding-inline-end: 48px;
+                background-position: right 18px center;
                 font-size: 0.75rem;
                 line-height: 1rem;
                 font-weight: 400;
@@ -484,9 +518,9 @@
                 --bs-form-select-bg-img: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%235C5A5A' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/></svg>");
             }
 
-            // searchable select (Tom Select): the wrapper keeps the `.form-select`
-            // border and chevron, the control inside it is plain text
             .ts-wrapper.form-select {
+                // the padding goes on .ts-control: Tom Select opens only on a
+                // click inside it, so the whole box (arrow included) is clickable
                 padding: 0;
 
                 &.focus {
@@ -494,7 +528,12 @@
                 }
 
                 .ts-control {
-                    padding: 8px 36px 8px 12px;
+                    padding: 8px 12px;
+                    // Tom Select sets the end padding with !important from these
+                    // variables, so the room for the arrow goes through them
+                    --ts-pr-min: 48px;
+                    --ts-pr-caret: 0px;
+                    --ts-pr-clear-button: 0px;
                     font-size: inherit;
                     line-height: inherit;
                     font-weight: inherit;
@@ -512,7 +551,8 @@
                 .ts-dropdown {
                     min-width: 100%;
                     width: max-content;
-                    max-width: 320px;
+                    // never wider than the viewport, minus the page gutters
+                    max-width: min(320px, calc(100vw - 2rem));
                     margin-top: 4px;
                     font-size: var(--idb-font-size-label-large);
                     border: 1px solid var(--idb-border-color);
@@ -523,6 +563,18 @@
                         padding: 6px 12px;
                         font-size: inherit;
                         border-bottom: 1px solid var(--idb-border-color);
+                    }
+
+                    // set by iadb-iar-quick-filter-select.js when the dropdown
+                    // would overflow the right edge of the viewport
+                    &.ts-dropdown-end {
+                        left: auto;
+                        right: 0;
+                    }
+
+                    // a label longer than the max width wraps instead of overflowing
+                    .option {
+                        overflow-wrap: anywhere;
                     }
 
                     .option.active {
@@ -557,6 +609,15 @@
             background-color: #F0F4F7;
             border: 1px solid #B6CFDE;
             border-radius: 4px;
+
+            // the "+N more" badge of the labels over the limit, its title lists them
+            &--more {
+                flex-shrink: 0;
+                color: #272626;
+                background-color: transparent;
+                border-style: dashed;
+                cursor: help;
+            }
         }
 
         // the publication status of a dataset

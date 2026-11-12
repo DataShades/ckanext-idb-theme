@@ -181,9 +181,10 @@
 .package-info {
     padding: 16px;
     border: 1px solid $gray-100;
-    border-radius: $border-radius;
-    margin: 6px 0;
-    border: 1px solid $gray-300;
+    border-radius: .5rem;
+    margin: 0;
+    border: 1px solid var(--idb-color-border-n-variant80);
+    background-color: $white;
     .nums {
         dt {
             font-size: 16px;

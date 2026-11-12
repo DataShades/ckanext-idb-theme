@@ -5,6 +5,18 @@
     </span>
 {%- endmacro %}
 
+{%- macro chip(content, style="secondary", icon=none, svg=none, hide_label=false) -%}
+    {%- set class = "badge border bg-" ~ style ~ "-subtle border-" ~ style ~ "-subtle text-" ~ style ~ "-emphasis d-inline-flex align-items-center gap-1" -%}
+    <li {{ ui.util.attrs(kwargs, {"class": class}) }}>
+        {%- if svg -%}
+            {% snippet "svg/" ~ svg ~ ".svg" %}
+        {%- elif icon -%}
+            {{ ui.icon(icon, aria={"hidden": "true"}) }}
+        {%- endif -%}
+        <span {% if hide_label %}class="visually-hidden"{% endif %}>{{ content }}</span>
+    </li>
+{%- endmacro %}
+
 {%- macro button(content, href, icon, size, type="button", style="primary", icon_end=false, svg=none) -%}
     {%- set icon_markup = h.snippet("svg/" ~ svg ~ ".svg") if svg else (ui.icon(icon) if icon else "") -%}
     {%- set prefix = icon_markup if not icon_end else "" -%}

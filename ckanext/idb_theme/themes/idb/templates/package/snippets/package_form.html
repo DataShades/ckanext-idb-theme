@@ -21,7 +21,7 @@ then itself be extended to add/remove blocks of functionality. #}
     </div>
 
     {% block form_actions %}
-        {{ ui.form_annotation() }}
+        {% block form_annotation %}{{ ui.form_annotation() }}{% endblock %}
 
         {%- call ui.util.call(ui.form_actions) -%}
             {% block disclaimer %}

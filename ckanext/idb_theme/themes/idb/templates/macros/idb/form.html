@@ -77,17 +77,14 @@
     {% endif %}
 {%- endmacro %}
 
-{%- macro input(content, name, id, label, value, required, placeholder, type, icon, errors=[], group_class="form-group") -%}
+{%- macro input(content, name, id, label, value, required, placeholder, type, icon, errors=[], group_class="form-group", tooltip=none) -%}
     {%- set field_id = id or (name and "field-" ~ name) or (label and ui.util.id()) or "" -%}
     {%- set aria_attrs = kwargs.setdefault("aria", {}) -%}
     {%- if errors  %}{%- do aria_attrs.setdefault("invalid", "true") -%}{%- endif -%}
 
     <div class="{{ group_class }}">
         {%- if label -%}
-            <label class="form-label" for="{{ field_id }}">
-                {%- if required -%}<span class="control-required">*</span>{%- endif %}
-                {{- label -}}
-            </label>
+            {{ ui.form_label(label, field_id=field_id, required=required, tooltip=tooltip) }}
         {%- endif %}
         <div class="controls">
             {%- if icon -%}
@@ -108,9 +105,36 @@
     </div>
 {%- endmacro %}
 
-{%- macro field_info(content, icon="info-circle") -%}
+{#-
+Field label: text, then the required mark, then an optional tooltip button.
+
+field_id - id of the labelled control
+tooltip  - text of the tooltip button next to the label
+-#}
+{%- macro form_label(content, field_id, required=false, tooltip=none) -%}
+    <label {{ ui.util.attrs(kwargs, {"class": "form-label", "for": field_id}) }}>
+        <span class="form-label__text">
+            {{- content -}}
+            {%- if required %} <span class="control-required" title="{{ _('This field is required') }}">*</span>{%- endif -%}
+        </span>
+        {{- ui.field_tooltip(tooltip) if tooltip -}}
+    </label>
+{%- endmacro %}
+
+{#-
+Small info button that shows a tooltip on hover and focus.
+It's a focusable span, not a <button>: a button can't sit inside a <label>.
+-#}
+{%- macro field_tooltip(content, svg="info") -%}
+    <span {{ ui.util.attrs(kwargs, {"class": "field-tooltip", "role": "button", "tabindex": "0", "aria-label": _("More information"), "data-bs-toggle": "tooltip", "data-bs-title": content}) }}>
+        {{- h.snippet("svg/" ~ svg ~ ".svg") -}}
+    </span>
+{%- endmacro %}
+
+{#- Help text under a field. icon - optional icon before the text (none by default). -#}
+{%- macro field_info(content, icon=none) -%}
     <div {{ ui.util.attrs(kwargs, {"class": "form-text"}) }}>
-        {{- ui.icon("info-circle") if icon }}
+        {{- ui.icon(icon) if icon }}
         {{ content -}}
     </div>
 {%- endmacro %}
@@ -192,7 +216,7 @@
 {%- endmacro %}
 
 
-{%- macro markdown(content, name, id, label, value, placeholder, required, errors=[], group_class="form-group control-full") -%}
+{%- macro markdown(content, name, id, label, value, placeholder, required, errors=[], group_class="form-group control-full", tooltip=none) -%}
     {%- set field_id = id or (name and "field-" ~ name) or (label and ui.util.id()) or "" -%}
     {% set popover_id = ui.util.id() %}
 
@@ -203,10 +227,7 @@
 
     <div class="{{ group_class }}">
         {%- if label -%}
-            <label class="form-label" for="{{ field_id }}">
-                {%- if required -%}<span class="control-required">*</span>{%- endif %}
-                {{- label -}}
-            </label>
+            {{ ui.form_label(label, field_id=field_id, required=required, tooltip=tooltip) }}
         {%- endif %}
         <div class="controls editor">
             <textarea
@@ -265,14 +286,11 @@
     {%- endcall %}
 {%- endmacro %}
 
-{%- macro select_box(content, nested_content, name, id, label, multiple, required, errors=[], group_class="form-group") -%}
+{%- macro select_box(content, nested_content, name, id, label, multiple, required, errors=[], group_class="form-group", tooltip=none) -%}
     {%- set field_id = id or (name and "field-" ~ name) or (label and ui.util.id()) or "" -%}
     <div class="{{ group_class }}">
         {%- if label -%}
-            <label class="form-label" for="{{ field_id }}">
-                {%- if required -%}<span class="control-required">*</span>{%- endif %}
-                {{- label -}}
-            </label>
+            {{ ui.form_label(label, field_id=field_id, required=required, tooltip=tooltip) }}
         {%- endif %}
         <select
             {{ ui.util.attrs(kwargs, {"class": "form-select" ~ (' is-invalid' if errors else "")}) }}
@@ -289,15 +307,12 @@
     </div>
 {%- endmacro %}
 
-{%- macro textarea(content, name, id, label, value, placeholder, required, errors=[], group_class="form-group control-full") -%}
+{%- macro textarea(content, name, id, label, value, placeholder, required, errors=[], group_class="form-group control-full", tooltip=none) -%}
     {%- set field_id = id or (name and "field-" ~ name) or (label and ui.util.id()) or "" -%}
 
     <div class="{{ group_class }}">
         {%- if label -%}
-            <label class="form-label" for="{{ field_id }}">
-                {%- if required -%}<span class="control-required">*</span>{%- endif %}
-                {{- label -}}
-            </label>
+            {{ ui.form_label(label, field_id=field_id, required=required, tooltip=tooltip) }}
         {%- endif %}
         <div class="controls editor">
             <textarea
