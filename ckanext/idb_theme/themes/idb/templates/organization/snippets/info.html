@@ -32,7 +32,7 @@ error_message   - Error returned by the follow action.
     {%- set members = h.idb_theme_group_members(organization.id) if can_see_members else [] -%}
 
     {% block banner %}
-        <section id="organization-info" class="idb-unit-banner border rounded-4 p-4">
+        <section id="organization-info" class="idb-unit-banner bg-white border rounded-4 p-4">
             <div class="d-flex flex-column flex-md-row flex-wrap gap-3 py-2">
                 <div class="idb-unit-banner-image overflow-hidden">
                     <img src="{{ organization.image_display_url or h.url_for_static('images/placeholder-organization.png') }}"

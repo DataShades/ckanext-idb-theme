@@ -2,7 +2,7 @@
 {% set dataset_type = h.default_package_type() %}
 {% set organization = group_dict %}
 
-{% block maintag %}<div class="main pt-2 pb-5">{% endblock %}
+{% block maintag %}<div class="main bg-main-grey pt-2 pb-5">{% endblock %}
 
 {% block subtitle -%}
     {{ ui.subtitle_item(group_dict.display_name) if group_dict }}
