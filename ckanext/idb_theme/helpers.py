@@ -33,6 +33,15 @@ DEFAULT_DATASET_SORT = "modified"
 DATASETS_PER_PAGE_OPTIONS = [8, 16, 24, 48]
 DATASETS_PER_PAGE_PARAM = "_per_page"
 
+# Dataset resource list (HTMX panel on the dataset read page).
+RESOURCE_LIMIT_OPTIONS = [4, 8, 12, 24]
+DEFAULT_RESOURCE_LIMIT = RESOURCE_LIMIT_OPTIONS[0]
+DEFAULT_RESOURCE_SORT = DEFAULT_DATASET_SORT
+RESOURCE_SORT_PARAM = "sort"
+RESOURCE_LIMIT_PARAM = "limit"
+RESOURCE_OFFSET_PARAM = "offset"
+RESOURCE_Q_PARAM = "q"
+
 # Solr fields of the advanced search dropdowns. The composite search plugin
 # must treat them as keywords (`ckanext.composite_search.plugin.default.keyword_fields`).
 ADVANCED_SEARCH_ORGANIZATION_FIELD = "organization"
@@ -352,6 +361,266 @@ def idb_theme_datasets_pagination(item_count: int, options: list[int] | None = N
         "next_url": url(page + 1) if page < last_page else None,
         "last_url": url(last_page) if page < last_page else None,
     }
+
+
+def idb_theme_resource_sort_options() -> list[dict[str, str]]:
+    """Return the sort options of the dataset resources HTMX panel.
+
+    Reuses the Explore Highlights / Datasets labels and option names, applied
+    to resources of the current dataset.
+    """
+    return idb_theme_highlights_sort_options()
+
+
+def idb_theme_package_resources(
+    pkg: dict[str, Any],
+    sort: str | None = None,
+    limit: int | None = None,
+    offset: int | None = None,
+    q: str | None = None,
+) -> dict[str, Any]:
+    """Return a filtered, sorted, offset/limit page of resources for the dataset read panel.
+
+    Unknown sort/limit values fall back to the defaults. ``offset`` is snapped
+    down to the start of the last page when it would land past the end.
+    """
+    sort_values = {option["value"] for option in idb_theme_resource_sort_options()}
+    if has_request_context():
+        if sort is None:
+            sort = tk.request.args.get(RESOURCE_SORT_PARAM)
+        if limit is None:
+            limit = tk.request.args.get(RESOURCE_LIMIT_PARAM, type=int)
+        if offset is None:
+            offset = tk.request.args.get(RESOURCE_OFFSET_PARAM, type=int)
+        if q is None:
+            q = tk.request.args.get(RESOURCE_Q_PARAM)
+
+    if sort not in sort_values:
+        sort = DEFAULT_RESOURCE_SORT
+    if limit not in RESOURCE_LIMIT_OPTIONS:
+        limit = DEFAULT_RESOURCE_LIMIT
+    offset = max(offset or 0, 0)
+    q = (q or "").strip()
+
+    resources = _attach_resource_download_counts(
+        _filter_package_resources(pkg.get("resources") or [], q),
+        pkg.get("id"),
+    )
+    resources = _sorted_package_resources(resources, sort)
+    item_count = len(resources)
+    if item_count and offset >= item_count:
+        offset = ((item_count - 1) // limit) * limit
+
+    page_resources = resources[offset : offset + limit]
+    last_offset = ((item_count - 1) // limit) * limit if item_count else 0
+    pkg_id = pkg.get("name") or pkg.get("id")
+
+    def page_url(next_offset: int) -> str:
+        params: dict[str, Any] = {
+            "id": pkg_id,
+            "sort": sort,
+            "limit": limit,
+            "offset": next_offset,
+        }
+        if q:
+            params["q"] = q
+        return tk.h.url_for("idb_theme.package_resources", **params)
+
+    return {
+        "sort": sort,
+        "sort_param": RESOURCE_SORT_PARAM,
+        "limit": limit,
+        "limit_param": RESOURCE_LIMIT_PARAM,
+        "limit_options": RESOURCE_LIMIT_OPTIONS,
+        "offset": offset,
+        "offset_param": RESOURCE_OFFSET_PARAM,
+        "q": q,
+        "q_param": RESOURCE_Q_PARAM,
+        "item_count": item_count,
+        "resources": page_resources,
+        "first_item": min(offset + 1, item_count) if item_count else 0,
+        "last_item": min(offset + limit, item_count),
+        "endpoint": tk.h.url_for("idb_theme.package_resources", id=pkg_id),
+        "first_url": page_url(0) if offset > 0 else None,
+        "previous_url": page_url(max(offset - limit, 0)) if offset > 0 else None,
+        "next_url": page_url(offset + limit) if offset + limit < item_count else None,
+        "last_url": page_url(last_offset) if offset < last_offset else None,
+    }
+
+
+def idb_theme_resource_card(pkg: dict[str, Any], resource: dict[str, Any]) -> dict[str, Any]:
+    """Collect the values displayed on a dataset resource card."""
+    title = tk.h.get_translated(resource, "name") or resource.get("name") or resource.get("id")
+    description = tk.h.get_translated(resource, "description") or resource.get("description") or ""
+    fmt = (resource.get("format") or "").strip()
+    start, end = _year(resource.get("temporal_start")), _year(resource.get("temporal_end"))
+    coverage = [year for year in dict.fromkeys([start, end]) if year]
+    size_bytes = resource.get("byteSize") if resource.get("byteSize") not in (None, "") else resource.get("size")
+    size_label = None
+    try:
+        if size_bytes not in (None, ""):
+            size_label = tk.h.localised_filesize(int(size_bytes))
+    except (TypeError, ValueError):
+        size_label = None
+
+    preview_url = tk.h.url_for(
+        f"{pkg['type']}_resource.read",
+        id=pkg["name"],
+        resource_id=resource["id"],
+    )
+    download_url = _resource_download_url(pkg, resource)
+
+    return {
+        "title": title,
+        "description": description,
+        "format": fmt.upper() if fmt else None,
+        "coverage": coverage,
+        "coverage_label": (
+            _("{period} (Coverage)").format(period=" - ".join(coverage)) if coverage else None
+        ),
+        "downloads": resource.get("num_downloads") or 0,
+        "size": size_label,
+        "preview_url": preview_url,
+        "download_url": download_url,
+        "format_tip": _resource_format_tip(fmt),
+    }
+
+
+def _resource_download_url(pkg: dict[str, Any], resource: dict[str, Any]) -> str | None:
+    """Return the download or external URL for a resource."""
+    if resource.get("url_type") == "upload":
+        filename = (resource.get("url") or "").rsplit("/", 1)[-1] or None
+        return tk.h.url_for(
+            f"{pkg['type']}_resource.download",
+            id=pkg["name"],
+            resource_id=resource["id"],
+            filename=filename,
+        )
+
+    url = resource.get("url")
+    return url if url and tk.h.is_url(url) else None
+
+
+def _resource_format_tip(fmt: str) -> str | None:
+    """Hint text shown under a resource card for known formats."""
+    key = (fmt or "").strip().upper()
+    tips = {
+        # Data files
+        "CSV": _(
+            "CSV file. Opens in Excel, Google Sheets, R, Python (pandas) or any statistical software."
+        ),
+        "XLSX": _("Excel file. Opens in Excel, Google Sheets or LibreOffice."),
+        "XLS": _("Excel file. Opens in Excel, Google Sheets or LibreOffice."),
+        "XLSM": _("Excel file with macros. Opens in Excel. Macros may need to be enabled."),
+        "DTA": _("Stata file. Opens in Stata, R (haven) or Python (pandas)."),
+        "SAV": _("SPSS file. Opens in SPSS, R (haven) or Python (pandas)."),
+        "JSON": _("JSON file. For developers. Opens in a text editor or any programming language."),
+        "XML": _("XML file. For developers. Opens in a text editor or any programming language."),
+        # Code files
+        "DO": _("Stata script. Opens in Stata or any text editor."),
+        "R": _("R script. Opens in R, RStudio or any text editor."),
+        "PY": _("Python script. Opens in Python or any text editor."),
+        # Documents
+        "PDF": _("PDF document. Opens in any PDF reader or web browser."),
+        "DOCX": _("Word document. Opens in Word, Google Docs or LibreOffice."),
+        "DOC": _("Word document. Opens in Word, Google Docs or LibreOffice."),
+        "PPT": _("PowerPoint presentation. Opens in PowerPoint, Google Slides or LibreOffice."),
+        "PPTX": _("PowerPoint presentation. Opens in PowerPoint, Google Slides or LibreOffice."),
+        "HTML": _("Web page. Opens in any web browser."),
+        # Images
+        "PNG": _("Image file. Opens in any image viewer or web browser."),
+        "JPEG": _("Image file. Opens in any image viewer or web browser."),
+        "JPG": _("Image file. Opens in any image viewer or web browser."),
+        "GIF": _("Image file. Opens in any image viewer or web browser."),
+        "BMP": _("Image file. Opens in any image viewer or web browser."),
+        # Archives
+        "ZIP": _("ZIP archive. Unzip it to see the files inside."),
+        "RAR": _("RAR archive. Unzip it with a tool such as 7-Zip or WinRAR."),
+        "GZ": _("Compressed file. Unzip it with a tool such as 7-Zip."),
+        # Links
+        "LINK": _("Link to an external website. Opens in a new tab."),
+    }
+    return tips.get(key)
+
+
+def _filter_package_resources(resources: list[dict[str, Any]], q: str) -> list[dict[str, Any]]:
+    """Filter resources by a free-text query against name, description and format."""
+    if not q:
+        return list(resources)
+
+    needle = q.lower()
+    matched = []
+    for resource in resources:
+        name = (tk.h.get_translated(resource, "name") or resource.get("name") or "").lower()
+        description = (
+            tk.h.get_translated(resource, "description") or resource.get("description") or ""
+        ).lower()
+        fmt = (resource.get("format") or "").lower()
+        if needle in name or needle in description or needle in fmt:
+            matched.append(resource)
+    return matched
+
+
+def _attach_resource_download_counts(
+    resources: list[dict[str, Any]], package_id: str | None
+) -> list[dict[str, Any]]:
+    """Stamp ``num_downloads`` on resources for the panel (one query per render).
+
+    Loaded only here — not on every ``package_show`` — via tracking's
+    package-scoped aggregate. Missing tracking / package id leaves counts at 0.
+    """
+    downloads: dict[str, int] = {}
+    if package_id and p.plugin_loaded("iadb_iar_tracking"):
+        try:
+            from ckanext.iadb_iar_tracking.tracking import EventReader
+        except ImportError:
+            EventReader = None  # type: ignore[misc, assignment]
+        if EventReader is not None:
+            downloads = EventReader().get_downloads_for_package_resources(package_id)
+
+    return [
+        {**resource, "num_downloads": downloads.get(resource["id"], 0)}
+        if resource.get("id")
+        else resource
+        for resource in resources
+    ]
+
+
+def _sorted_package_resources(resources: list[dict[str, Any]], sort: str) -> list[dict[str, Any]]:
+    """Return a new list of resources sorted by the chosen option.
+
+    Option names match ``idb_theme_highlights_sort_options``:
+    ``data`` (temporal coverage), ``downloads``, ``created``, ``modified``.
+    """
+    items = list(resources)
+
+    def modified_key(resource: dict[str, Any]) -> str:
+        return resource.get("last_modified") or resource.get("metadata_modified") or resource.get("created") or ""
+
+    if sort == "data":
+        items.sort(
+            key=lambda resource: (
+                _year(resource.get("temporal_end")) or "",
+                _year(resource.get("temporal_start")) or "",
+                modified_key(resource),
+            ),
+            reverse=True,
+        )
+    elif sort == "downloads":
+        items.sort(
+            key=lambda resource: (
+                resource.get("num_downloads") or 0,
+                modified_key(resource),
+            ),
+            reverse=True,
+        )
+    elif sort == "created":
+        items.sort(key=lambda resource: resource.get("created") or "", reverse=True)
+    else:
+        # ``modified`` (default): recently added or updated resources.
+        items.sort(key=modified_key, reverse=True)
+
+    return items
 
 
 def idb_theme_data_projects(limit: int = 4) -> dict[str, Any]:

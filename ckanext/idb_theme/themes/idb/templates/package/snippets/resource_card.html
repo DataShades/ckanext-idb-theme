@@ -1,0 +1,71 @@
+{#
+Resource card for the dataset resources HTMX panel.
+
+pkg      - The package dict that owns the resource.
+resource - A resource dict (may include num_downloads).
+
+Example:
+
+{% snippet 'package/snippets/resource_card.html', pkg=pkg, resource=resource %}
+
+#}
+{% set card = h.idb_theme_resource_card(pkg, resource) %}
+
+<li class="resource-card mb-20" data-id="{{ resource.id }}">
+    <div class="resource-card-header">
+        <h3 class="resource-card-title">
+            <a href="{{ card.preview_url }}" class="resource-card-title-link">
+                {{ card.title }}
+            </a>
+        </h3>
+        <div class="resource-card-actions">
+            {% if card.download_url %}
+                {{ ui.button(
+                    _('Download'),
+                    href=card.download_url,
+                    style="primary",
+                    svg="res-download",
+                    blank=true,
+                    icon_end=true
+                ) }}
+            {% endif %}
+            {{ ui.button(
+                _('Preview'),
+                href=card.preview_url,
+                style="outline-primary",
+                svg="res-preview",
+                icon_end=true
+            ) }}
+        </div>
+    </div>
+
+    <ul class="resource-card-chips d-flex gap-2 list-unstyled dataset-chips">
+        {% if card.format %}
+            {{ ui.chip(card.format, style="secondary") }}
+        {% endif %}
+        {% if card.coverage_label %}
+            {{ ui.chip(card.coverage_label, style="secondary", svg="calendar") }}
+        {% endif %}
+        {{ ui.chip(
+            ungettext('{number} download', '{number} downloads', card.downloads).format(number=h.localised_number(card.downloads)),
+            style="secondary",
+            svg="download"
+        ) }}
+        {% if card.size %}
+            {{ ui.chip(card.size, style="secondary") }}
+        {% endif %}
+    </ul>
+
+    {% if card.description %}
+        <p class="resource-card-description">
+            {{ h.markdown_extract(card.description, extract_length=220) }}
+        </p>
+    {% endif %}
+
+    {% if card.format_tip %}
+        <div class="resource-card-tip" role="note">
+            {% snippet "svg/info.svg" %}
+            <span>{{ card.format_tip }}</span>
+        </div>
+    {% endif %}
+</li>

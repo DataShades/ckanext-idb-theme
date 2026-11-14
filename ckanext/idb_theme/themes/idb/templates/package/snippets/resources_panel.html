@@ -1,0 +1,90 @@
+{#
+HTMX panel of dataset resources: search, sort, items-per-page, offset pagination.
+
+pkg    - The package dict that owns the resources.
+sort   - Sort option name, see h.idb_theme_resource_sort_options().
+limit  - Page size, see RESOURCE_LIMIT_OPTIONS in helpers.
+offset - Zero-based index of the first resource on the page.
+q      - Free-text search query.
+
+Example:
+
+{% snippet 'package/snippets/resources_panel.html', pkg=pkg %}
+
+#}
+{% set panel = h.idb_theme_package_resources(
+    pkg,
+    sort=sort if sort is defined else none,
+    limit=limit if limit is defined else none,
+    offset=offset if offset is defined else none,
+    q=q if q is defined else none,
+) %}
+
+{% set total_resources = pkg.resources | length %}
+<section id="dataset-resources" class="resources">
+    <div class="resources-panel-header d-flex flex-wrap align-items-end justify-content-between column-gap-4 row-gap-3 mb-20">
+        <div class="resources-panel-title">
+            {{ ui.heading(_('Data and Resources'), level=2, attrs={"class": "h3 mb-1"}) }}
+            <p class="resources-panel-count mb-0">
+                {{ ungettext(
+                    '{number} resource available on this Dataset',
+                    '{number} resources available on this Dataset',
+                    total_resources
+                ).format(number=h.localised_number(total_resources)) }}
+            </p>
+        </div>
+
+        <div class="resources-panel-controls d-flex flex-wrap align-items-center column-gap-3 row-gap-2">
+            <div class="resources-search">
+                <label for="resources-q" class="visually-hidden">{{ _('Search resources') }}</label>
+                <input id="resources-q" class="form-control resources-search-input" type="search" name="{{ panel.q_param }}"
+                    value="{{ panel.q }}" placeholder="{{ _('Search resources') }}"
+                    aria-label="{{ _('Search resources') }}" autocomplete="off"
+                    hx-get="{{ panel.endpoint }}"
+                    hx-trigger="keyup changed delay:300ms, search"
+                    hx-target="#dataset-resources"
+                    hx-select="#dataset-resources"
+                    hx-swap="outerHTML"
+                    hx-include="#resources-sort, #resources-limit">
+                <span class="resources-search-icon" aria-hidden="true">
+                    {% snippet "svg/res-loop.svg" %}
+                </span>
+            </div>
+
+            <div>
+                <label for="resources-sort" class="visually-hidden">{{ _("Order by") }}</label>
+                <select id="resources-sort" name="{{ panel.sort_param }}" class="form-select" data-module="idb-select"
+                    hx-get="{{ panel.endpoint }}"
+                    hx-trigger="change"
+                    hx-target="#dataset-resources"
+                    hx-select="#dataset-resources"
+                    hx-swap="outerHTML"
+                    hx-include="#resources-limit, #resources-q">
+                    {% for option in h.idb_theme_resource_sort_options() %}
+                        <option value="{{ option.value }}"{% if option.value == panel.sort %} selected{% endif %}>{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+    </div>
+
+    {% if panel.item_count %}
+        <ul class="resource-card-list list-unstyled">
+            {% for resource in panel.resources %}
+                {% snippet "package/snippets/resource_card.html", pkg=pkg, resource=resource %}
+            {% endfor %}
+        </ul>
+
+        {% snippet "package/snippets/resource_pagination.html", pkg=pkg, panel=panel %}
+    {% elif panel.q %}
+        {{ ui.empty(_('No resources match your search.')) }}
+    {% else %}
+        {%- call ui.util.call(ui.empty) -%}
+            {% if h.check_access('resource_create', {'package_id': pkg['id']}) %}
+                {% trans url=h.url_for(pkg.type ~ '_resource.new', id=pkg.name) %}This dataset has no data, <a href="{{ url }}">why not add some?</a>{% endtrans %}
+            {% else %}
+                {{ _('This dataset has no data') }}
+            {% endif %}
+        {%- endcall %}
+    {% endif %}
+</section>

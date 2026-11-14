@@ -1,0 +1,61 @@
+{#
+Pagination of the dataset resources HTMX panel: items-per-page, range and
+first/previous/next/last buttons. Navigation uses offset query params.
+
+pkg   - The package dict (for the HTMX endpoint id).
+panel - Result of h.idb_theme_package_resources(...).
+
+Example:
+
+{% snippet 'package/snippets/resource_pagination.html', pkg=pkg, panel=panel %}
+
+#}
+{% set icons = {
+    "first": "M18.41 16.59L13.82 12l4.59-4.59L17 6l-6 6 6 6zM6 6h2v12H6z",
+    "previous": "M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z",
+    "next": "M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z",
+    "last": "M5.59 7.41L10.18 12l-4.59 4.59L7 18l6-6-6-6zM16 6h2v12h-2z",
+} %}
+
+{% macro page_button(url, icon, label) -%}
+    {%- set svg -%}
+        <svg class="dataset-pagination-icon" viewBox="0 0 24 24" width="24" height="24" focusable="false" aria-hidden="true"><path d="{{ icons[icon] }}"></path></svg>
+    {%- endset -%}
+    {%- if url -%}
+        <a class="dataset-pagination-button btn" href="{{ url }}" aria-label="{{ label }}" title="{{ label }}"
+            hx-get="{{ url }}"
+            hx-target="#dataset-resources"
+            hx-select="#dataset-resources"
+            hx-swap="outerHTML">{{ svg }}</a>
+    {%- else -%}
+        <span class="dataset-pagination-button btn disabled" aria-disabled="true" aria-label="{{ label }}" title="{{ label }}">{{ svg }}</span>
+    {%- endif -%}
+{%- endmacro %}
+
+<nav class="dataset-pagination mt-0" aria-label="{{ _('Pagination') }}">
+    <div class="dataset-pagination-size d-flex align-items-center gap-2">
+        <label for="resources-limit">{{ _('Items per page') }}</label>
+        <select id="resources-limit" name="{{ panel.limit_param }}" class="form-select" data-module="idb-select"
+            hx-get="{{ panel.endpoint }}"
+            hx-trigger="change"
+            hx-target="#dataset-resources"
+            hx-select="#dataset-resources"
+            hx-swap="outerHTML"
+            hx-include="#resources-sort, #resources-q">
+            {% for option in panel.limit_options %}
+                <option value="{{ option }}"{% if option == panel.limit %} selected{% endif %}>{{ option }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <span class="dataset-pagination-range">
+        {{ _('{first} – {last} of {total}').format(first=h.localised_number(panel.first_item), last=h.localised_number(panel.last_item), total=h.localised_number(panel.item_count)) }}
+    </span>
+
+    <div class="dataset-pagination-buttons">
+        {{ page_button(panel.first_url, "first", _('First page')) }}
+        {{ page_button(panel.previous_url, "previous", _('Previous page')) }}
+        {{ page_button(panel.next_url, "next", _('Next page')) }}
+        {{ page_button(panel.last_url, "last", _('Last page')) }}
+    </div>
+</nav>
