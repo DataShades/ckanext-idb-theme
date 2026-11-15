@@ -52,7 +52,7 @@
                 {% endif %}
             </ul>
         {% endblock %}
-        {% block package_notes %}
+        {% block idb_theme_package_notes %}
             {% if pkg.notes %}
                 <div class="notes embedded-content text-iadb-netural-black">
                     {{ h.render_markdown(h.get_translated(pkg, 'notes')) }}
