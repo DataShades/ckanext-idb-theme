@@ -90,6 +90,9 @@
 .idb-about-panel {
     width: 25%;
     max-width: 100%;
+    .offcanvas-header {
+        padding: $spacer * 1.5;
+    }
     @include media-breakpoint-down(md) {
         --bs-offcanvas-width: 100%;
     }
@@ -124,6 +127,7 @@
 
     dd {
         margin: 0;
+        font-size: var(--idb-font-size-label-large);
         color: var(--idb-color-text-default);
         overflow-wrap: anywhere;
 
