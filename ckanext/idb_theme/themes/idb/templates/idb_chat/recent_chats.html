@@ -1,0 +1,14 @@
+{% if recent.sessions %}
+  <div class="ka-suggested-queries idb-chat-recent">
+    {% for session in recent.sessions %}
+      <div class="idb-chat-recent-row d-flex align-items-center" data-session-id="{{ session.session_id }}">
+        {{ ui.button(session.title, attrs={"class": "idb-chat-recent-open ka-session-open flex-grow-1 p-0 border-0 bg-transparent text-start text-truncate"}) }}
+        <time class="idb-chat-recent-time" datetime="{{ session.last_active_at }}"></time>
+        {{ ui.button("", attrs={"class": "idb-chat-recent-delete ka-session-delete d-flex align-items-center justify-content-center border-0 bg-transparent"}, aria={"label": _('Delete')}) }}
+      </div>
+    {% endfor %}
+    {% if recent.has_more %}
+      {{ ui.button(_('View all chats'), attrs={"class": "idb-chat-view-all ka-history-show align-self-start p-0 border-0 bg-transparent"}) }}
+    {% endif %}
+  </div>
+{% endif %}

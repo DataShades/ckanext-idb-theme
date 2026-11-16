@@ -1,0 +1,8 @@
+<div class="idb-chat-overlay" data-module="idb-chat" aria-hidden="true"></div>
+{% if current_user.is_authenticated %}
+  {% snippet "idb_chat/fab.html", pkg=pkg, res=res %}
+  {% snippet "idb_chat/widget_authenticated.html", pkg=pkg, res=res %}
+{% else %}
+  {% snippet "idb_chat/fab.html", module="ka-chat-login" %}
+  {% snippet "idb_chat/widget_anon.html" %}
+{% endif %}

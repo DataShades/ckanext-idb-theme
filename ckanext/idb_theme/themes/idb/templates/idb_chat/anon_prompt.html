@@ -1,0 +1,5 @@
+<div class="ka-login-prompt text-center m-auto d-flex flex-column align-items-center gap-3">
+  <i class="fa fa-sign-out fs-3 text-primary"></i>
+  <p class="m-0">{{ _('Log in to ask AI about this data.') }}</p>
+  {{ ui.button(_('Log in'), href=h.url_for('user.login', came_from=request.path)) }}
+</div>

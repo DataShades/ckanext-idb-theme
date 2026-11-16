@@ -1,0 +1,18 @@
+{% set data = {"module": module or "ka-chat"} %}
+{% if pkg is defined and pkg %}
+  {% do data.update({"module-package-id": pkg.id}) %}
+{% endif %}
+{% if res is defined and res %}
+  {% do data.update({"module-resource-id": res.id}) %}
+{% endif %}
+{% set content %}
+  <span class="idb-chat-fab-arrow d-inline-flex align-items-center">{{ ui.icon('chevron-left') }}</span>
+  <span class="idb-chat-fab-label d-flex flex-column">
+    <span class="idb-chat-fab-label-top d-flex align-items-center gap-1">
+      {{ _('Ask the') }}
+      {{ ui.image(h.url_for_static('images/sparkle.svg'), alt="", attrs={"class": "idb-chat-fab-sparkle"}) }}
+    </span>
+    <span class="idb-chat-fab-label-main">DataHub</span>
+  </span>
+{% endset %}
+{{ ui.button(content, attrs={"id": "ka-fab", "class": "ka-fab justify-content-start gap-2"}, data=data, aria={"label": _('Ask the DataHub')}) }}
