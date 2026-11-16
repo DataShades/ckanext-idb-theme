@@ -1,0 +1,85 @@
+<div id="knowledge-assistant-modal" class="idb-chat" data-busy-placeholder="{{ _('Awaiting response…') }}">
+  {% snippet "idb_chat/header.html" %}
+
+  <div class="idb-chat-history-head align-items-center">
+    {{ ui.button(ui.icon('arrow-left'), attrs={"class": "ka-back-btn idb-chat-history-back align-items-center justify-content-center p-0 border-0 bg-transparent"}, aria={"label": _('Back to chat')}) }}
+    <span class="idb-chat-history-title">{{ _('Chat history') }}</span>
+  </div>
+
+  <template id="ka-thinking-template">
+    {% snippet "idb_chat/thinking.html" %}
+  </template>
+
+  <template id="idb-chat-answer-template">
+    <div class="idb-chat-steps-bar idb-chat-cot d-flex align-items-center" aria-disabled="true" title="{{ _('Coming soon') }}">
+      <span class="idb-chat-steps-title flex-grow-1">{{ _('Chain of Thought') }}</span>
+      <span class="idb-chat-steps-chip">{{ _('Steps') }}</span>
+      <span class="idb-chat-steps-chevron d-flex">{{ ui.icon('chevron-down') }}</span>
+    </div>
+    <div class="idb-chat-answer-actions d-flex align-items-center justify-content-between">
+      {{ ui.button(ui.icon('copy', style='regular') ~ _('Copy response'), attrs={"class": "idb-chat-copy d-inline-flex align-items-center p-0 border-0 bg-transparent"}, data={"module": "copy-into-buffer"}) }}
+      <span class="idb-chat-feedback d-flex">
+        {{ ui.button(ui.icon('thumbs-up', style='regular'), attrs={"class": "idb-chat-feedback-btn p-0 border-0 bg-transparent", "tabindex": "-1", "title": _('Coming soon')}, aria={"disabled": "true", "label": _('Helpful')}) }}
+        {{ ui.button(ui.icon('thumbs-down', style='regular'), attrs={"class": "idb-chat-feedback-btn p-0 border-0 bg-transparent", "tabindex": "-1", "title": _('Coming soon')}, aria={"disabled": "true", "label": _('Not helpful')}) }}
+      </span>
+    </div>
+  </template>
+
+  {% if res %}
+    {% set label = _('Ask this resource a question:') %}
+    {% set options = [
+      _('Give me an overview of this resource.'),
+      _('What are the variables/indicators of the resource?'),
+      _('What is the geographical coverage of this resource?'),
+      _('What is the temporal coverage?'),
+    ] %}
+  {% elif pkg %}
+    {% set label = _('Ask this dataset a question:') %}
+    {% set options = [
+      _('Give me an overview of this dataset.'),
+      _('What are the variables/indicators of the dataset?'),
+      _('What is the geographical coverage of this dataset?'),
+      _('What is the temporal coverage?'),
+    ] %}
+  {% else %}
+    {% set label = _('Ask a question:') %}
+    {% set options = [] %}
+  {% endif %}
+
+  <div class="idb-chat-start flex-column">
+    <div class="idb-chat-start-label">{{ label }}</div>
+
+    <div class="ka-input-area">
+      <input type="text" class="ka-input" placeholder="{{ _('What is…') }}" aria-label="{{ label }}">
+      {{ ui.button(h.snippet("knowledge_assistant/svg/send-arrow.svg"), attrs={"class": "ka-send-btn"}, aria={"label": _('Send')}) }}
+    </div>
+
+    {% if options %}
+      <div class="idb-chat-options">
+        <div class="idb-chat-options-label d-flex align-items-center">
+          {{ ui.image(h.url_for_static('images/options.svg'), alt="", attrs={"class": "idb-chat-options-icon"}) }}
+          {{ _('Try one of these options:') }}
+        </div>
+        <div class="idb-chat-options-buttons d-flex flex-wrap">
+          {% for query in options %}
+            {{ ui.button(query, style="primary-outlined", _extra_class="idb-chat-option ka-suggested-query-btn-trigger", data={"query": query}) }}
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="ka-chat-history"></div>
+  </div>
+
+  <div class="ka-history-list" style="display: none;"></div>
+
+  <div class="idb-chat-footer">
+    <div class="idb-chat-footer-actions justify-content-end">
+      {{ ui.button(_('New Chat'), icon="plus", style="primary-outlined", _extra_class="idb-chat-pill ka-new-chat-btn") }}
+      {% if options %}
+        {{ ui.button(_('Overview'), icon="file-lines", style="primary-outlined", _extra_class="idb-chat-pill ka-suggested-query-btn-trigger", data={"query": options[0]}) }}
+      {% endif %}
+    </div>
+    {% snippet "idb_chat/terms.html" %}
+  </div>
+</div>

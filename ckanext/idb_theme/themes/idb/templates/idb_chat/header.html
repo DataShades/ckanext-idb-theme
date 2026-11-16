@@ -1,0 +1,17 @@
+<div class="idb-chat-header position-relative d-flex align-items-start">
+  {{ ui.button(ui.icon('xmark'), attrs={"class": "ka-close-btn idb-chat-circle position-absolute d-flex align-items-center justify-content-center p-0 rounded-circle"}, aria={"label": _('Close')}) }}
+  <div class="idb-chat-title d-flex flex-column">
+    <span class="idb-chat-title-top d-flex align-items-center">
+      {{ _('Ask the') }}
+      <span class="idb-chat-sparkle">{{ ui.image(h.url_for_static('images/sparkle.svg'), alt="") }}</span>
+    </span>
+    <span class="idb-chat-title-main">DataHub</span>
+  </div>
+  <div class="idb-chat-powered d-flex flex-column">
+    <span>{{ _('Powered') }}</span>
+    <span>
+      {{ _('by') }}
+      {{ ui.image(h.url_for_static('images/idb-logo.svg'), alt="IDB", width=55, height=21, attrs={"class": "idb-chat-logo"}) }}
+    </span>
+  </div>
+</div>

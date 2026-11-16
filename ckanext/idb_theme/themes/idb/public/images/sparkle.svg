@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="124 57.3886 22 22" fill="none">
+    <defs>
+        <linearGradient id="idb-chat-sparkle-gradient" x1="141.394" y1="61.6314" x2="122.583" y2="76.8767" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#007EB6"/>
+            <stop offset="1" stop-color="#003750"/>
+        </linearGradient>
+    </defs>
+    <path fill="url(#idb-chat-sparkle-gradient)" d="M142 65.3886L143.25 62.6386L146 61.3886L143.25 60.1386L142 57.3886L140.75 60.1386L138 61.3886L140.75 62.6386L142 65.3886ZM134.5 65.8886L132 60.3886L129.5 65.8886L124 68.3886L129.5 70.8886L132 76.3886L134.5 70.8886L140 68.3886L134.5 65.8886ZM142 71.3886L140.75 74.1386L138 75.3886L140.75 76.6386L142 79.3886L143.25 76.6386L146 75.3886L143.25 74.1386L142 71.3886Z"/>
+</svg>

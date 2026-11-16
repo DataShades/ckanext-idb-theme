@@ -101,6 +101,11 @@ textarea {
     &::after {
         content: none;
     }
+
+    .btn.ka-suggest-btn {
+        position: static;
+        margin-left: 0;
+    }
 }
 
 // Help text under a field. Body/Medium
