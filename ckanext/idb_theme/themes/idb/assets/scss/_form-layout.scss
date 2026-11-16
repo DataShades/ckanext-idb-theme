@@ -269,8 +269,7 @@
         background: #fff;
     }
 
-    // at least one required field filled (N/X with N > 0), complete included
-    &.is-started,
+    // all required fields filled (N/N)
     &.is-complete {
         border-color: var(--idb-form-success-border);
         background: var(--idb-form-success-bg);
@@ -360,7 +359,7 @@
     &__list {
         display: flex;
         flex-direction: column;
-        gap: 4px;
+        gap: 12px;
         margin: 0;
         padding: 0;
         list-style: none;
