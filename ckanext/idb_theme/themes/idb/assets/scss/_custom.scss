@@ -79,7 +79,8 @@ a.open-data {
     }
 }
 
-#package-additional-info {
+#package-additional-info,
+#package-change-history {
     border-left: none;
 
     @include media-breakpoint-down(md) {

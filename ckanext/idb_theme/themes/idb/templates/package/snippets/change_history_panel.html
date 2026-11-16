@@ -1,0 +1,55 @@
+{#
+HTMX panel of dataset change history for the offcanvas drawer.
+
+pkg           - The package dict that owns the activities.
+activity_type - Optional activity type filter value.
+limit         - Page size, see ACTIVITY_LIMIT_OPTIONS in helpers.
+offset        - Zero-based index of the first activity on the page.
+
+Example:
+
+{% snippet 'package/snippets/change_history_panel.html', pkg=pkg %}
+
+#}
+{% set panel = h.idb_theme_package_activity(
+    pkg,
+    activity_type=activity_type if activity_type is defined else none,
+    limit=limit if limit is defined else none,
+    offset=offset if offset is defined else none,
+) %}
+
+<section id="dataset-change-history" class="change-history-panel">
+    <div class="change-history-filter mb-4">
+        <label for="change-history-activity-type" class="form-label">{{ _('Activity type') }}</label>
+        <select id="change-history-activity-type" name="{{ panel.activity_type_param }}" class="form-select" data-module="idb-select"
+            hx-get="{{ panel.endpoint }}"
+            hx-trigger="change"
+            hx-target="#dataset-change-history"
+            hx-select="#dataset-change-history"
+            hx-swap="outerHTML"
+            hx-include="#change-history-limit">
+            <option value=""{% if not panel.activity_type %} selected{% endif %}>{{ _('All activity types') }}</option>
+            {% for option in h.idb_theme_activity_type_options() %}
+                <option value="{{ option.value }}"{% if option.value == panel.activity_type %} selected{% endif %}>{{ option.label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    {% if panel.activities %}
+        {% snippet 'package/snippets/change_history_stream.html',
+            activity_stream=panel.activities,
+            id=pkg.name or pkg.id %}
+    {% else %}
+        <p class="change-history-empty mb-0">
+            {% if panel.activity_type %}
+                {{ _('No activity found for this type') }}
+            {% else %}
+                {{ _('No activity found') }}
+            {% endif %}
+        </p>
+    {% endif %}
+
+    {% if panel.item_count %}
+        {% snippet 'package/snippets/change_history_pagination.html', pkg=pkg, panel=panel %}
+    {% endif %}
+</section>

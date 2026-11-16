@@ -2,9 +2,11 @@ from __future__ import annotations
 
 import datetime
 import math
+import re
 from typing import Any
 
 from flask import has_request_context
+from markupsafe import Markup, escape
 
 import ckan.plugins as p
 import ckan.plugins.toolkit as tk
@@ -41,6 +43,13 @@ RESOURCE_SORT_PARAM = "sort"
 RESOURCE_LIMIT_PARAM = "limit"
 RESOURCE_OFFSET_PARAM = "offset"
 RESOURCE_Q_PARAM = "q"
+
+# Dataset change-history offcanvas (HTMX panel on the dataset read page).
+ACTIVITY_LIMIT_OPTIONS = [9, 18, 27, 45]
+DEFAULT_ACTIVITY_LIMIT = ACTIVITY_LIMIT_OPTIONS[0]
+ACTIVITY_TYPE_PARAM = "activity_type"
+ACTIVITY_LIMIT_PARAM = "limit"
+ACTIVITY_OFFSET_PARAM = "offset"
 
 # Solr fields of the advanced search dropdowns. The composite search plugin
 # must treat them as keywords (`ckanext.composite_search.plugin.default.keyword_fields`).
@@ -372,6 +381,152 @@ def idb_theme_resource_sort_options() -> list[dict[str, str]]:
     return idb_theme_highlights_sort_options()
 
 
+def idb_theme_activity_type_options() -> list[dict[str, str]]:
+    """Return activity-type filter options for the change-history panel."""
+    try:
+        from ckanext.activity.logic.validators import VALIDATORS_PACKAGE_ACTIVITY_TYPES
+    except ImportError:
+        return []
+
+    return [
+        {"value": activity_type, "label": activity_type.replace("_", " ").title()}
+        for activity_type in VALIDATORS_PACKAGE_ACTIVITY_TYPES
+    ]
+
+
+def idb_theme_user_initials(user_ref: str | None) -> str:
+    """Return up to two initials for a user avatar.
+
+    Prefers ``fullname`` (first letter of the first and last words). Falls back
+    to the first two characters of ``name`` when fullname is empty.
+    """
+    if not user_ref:
+        return "?"
+
+    user = model.User.get(user_ref)
+    if not user:
+        return str(user_ref)[:2].upper() or "?"
+
+    fullname = (user.fullname or "").strip()
+    if fullname:
+        words = [word for word in re.split(r"[\s,]+", fullname) if word]
+        if len(words) == 1:
+            return words[0][:2].upper()
+        return f"{words[0][0]}{words[-1][0]}".upper()
+
+    name = (user.name or "").strip()
+    if name:
+        return name[:2].upper()
+    return "?"
+
+
+def idb_theme_activity_item_html(item_html: str | Markup, initials: str) -> Markup:
+    """Swap the CKAN fa-stack icon for a blue initials avatar.
+
+    Works on a plain string so Markup-aware ``replace`` cannot escape the
+    injected HTML (that was breaking the change-history list).
+    """
+    avatar = (
+        f'<span class="change-history-avatar" aria-hidden="true">'
+        f"{escape(initials)}</span>"
+    )
+    text = re.sub(
+        r'<span class="fa-stack fa-lg">.*?</span>',
+        avatar,
+        str(item_html),
+        count=1,
+        flags=re.DOTALL,
+    )
+    return Markup(text)
+
+
+def idb_theme_package_activity(
+    pkg: dict[str, Any],
+    activity_type: str | None = None,
+    limit: int | None = None,
+    offset: int | None = None,
+) -> dict[str, Any]:
+    """Return a filtered, offset/limit page of package activities for the offcanvas panel.
+
+    Unknown limit values fall back to the default (9). ``offset`` is snapped
+    down to the start of the last page when it would land past the end.
+    """
+    type_values = {option["value"] for option in idb_theme_activity_type_options()}
+    if has_request_context():
+        if activity_type is None:
+            activity_type = tk.request.args.get(ACTIVITY_TYPE_PARAM)
+        if limit is None:
+            limit = tk.request.args.get(ACTIVITY_LIMIT_PARAM, type=int)
+        if offset is None:
+            offset = tk.request.args.get(ACTIVITY_OFFSET_PARAM, type=int)
+
+    if activity_type not in type_values:
+        activity_type = ""
+    if limit not in ACTIVITY_LIMIT_OPTIONS:
+        limit = DEFAULT_ACTIVITY_LIMIT
+    offset = max(offset or 0, 0)
+
+    pkg_id = pkg.get("id") or ""
+    pkg_name = pkg.get("name") or pkg_id
+    activities: list[dict[str, Any]] = []
+    item_count = 0
+
+    if pkg_id and p.plugin_loaded("activity"):
+        context: dict[str, Any] = {"user": tk.current_user.name, "auth_user_obj": tk.current_user}
+        data_dict: dict[str, Any] = {"id": pkg_id, "limit": limit, "offset": offset}
+        if activity_type:
+            data_dict["activity_types"] = [activity_type]
+        try:
+            activities = tk.get_action("package_activity_list")(context, data_dict)
+            item_count = _package_activity_count(pkg_id, activity_type or None)
+        except (tk.ObjectNotFound, tk.NotAuthorized, tk.ValidationError):
+            activities = []
+            item_count = 0
+
+    if item_count and offset >= item_count:
+        offset = ((item_count - 1) // limit) * limit
+        if pkg_id and p.plugin_loaded("activity"):
+            context = {"user": tk.current_user.name, "auth_user_obj": tk.current_user}
+            data_dict = {"id": pkg_id, "limit": limit, "offset": offset}
+            if activity_type:
+                data_dict["activity_types"] = [activity_type]
+            try:
+                activities = tk.get_action("package_activity_list")(context, data_dict)
+            except (tk.ObjectNotFound, tk.NotAuthorized, tk.ValidationError):
+                activities = []
+
+    last_offset = ((item_count - 1) // limit) * limit if item_count else 0
+
+    def page_url(next_offset: int) -> str:
+        params: dict[str, Any] = {
+            "id": pkg_name,
+            "limit": limit,
+            "offset": next_offset,
+        }
+        if activity_type:
+            params["activity_type"] = activity_type
+        return tk.h.url_for("idb_theme.package_activity", **params)
+
+    return {
+        "activity_type": activity_type,
+        "activity_type_param": ACTIVITY_TYPE_PARAM,
+        "limit": limit,
+        "limit_param": ACTIVITY_LIMIT_PARAM,
+        "limit_options": ACTIVITY_LIMIT_OPTIONS,
+        "offset": offset,
+        "offset_param": ACTIVITY_OFFSET_PARAM,
+        "item_count": item_count,
+        "activities": activities,
+        "first_item": min(offset + 1, item_count) if item_count else 0,
+        "last_item": min(offset + limit, item_count),
+        "endpoint": tk.h.url_for("idb_theme.package_activity", id=pkg_name),
+        "first_url": page_url(0) if offset > 0 else None,
+        "previous_url": page_url(max(offset - limit, 0)) if offset > 0 else None,
+        "next_url": page_url(offset + limit) if offset + limit < item_count else None,
+        "last_url": page_url(last_offset) if offset < last_offset else None,
+    }
+
+
 def idb_theme_package_resources(
     pkg: dict[str, Any],
     sort: str | None = None,
@@ -559,6 +714,27 @@ def _filter_package_resources(resources: list[dict[str, Any]], q: str) -> list[d
         if needle in name or needle in description or needle in fmt:
             matched.append(resource)
     return matched
+
+
+def _package_activity_count(package_id: str, activity_type: str | None = None) -> int:
+    """Return the number of public activities about a package."""
+    try:
+        from ckanext.activity.logic.action import _get_user_permission_labels
+        from ckanext.activity.model.activity import (
+            _filter_activitites_from_type,
+            _filter_activitites_from_users,
+            _filter_activities_by_permission_labels,
+            _package_activity_query,
+        )
+    except ImportError:
+        return 0
+
+    context: dict[str, Any] = {"user": tk.current_user.name, "auth_user_obj": tk.current_user}
+    query = _filter_activitites_from_users(_package_activity_query(package_id))
+    if activity_type:
+        query = _filter_activitites_from_type(query, include=True, types=[activity_type])
+    query = _filter_activities_by_permission_labels(query, _get_user_permission_labels(context))
+    return int(query.count())
 
 
 def _attach_resource_download_counts(

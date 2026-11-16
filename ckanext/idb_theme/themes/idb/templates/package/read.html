@@ -71,9 +71,10 @@
     {% endblock %}
     
     {%- set additional_info_panel_id = "package-additional-info" -%}
+    {%- set change_history_panel_id = "package-change-history" -%}
 
     {%- set schema = schema or h.scheming_get_dataset_schema(dataset_type) -%}
-    <div class="mb-5">
+    <div class="dataset-panel-actions d-flex flex-wrap align-items-center gap-3 mb-5">
         {{ ui.offcanvas_handle(
             _('See Additional information'),
             id=additional_info_panel_id,
@@ -81,13 +82,20 @@
             svg="info-circle",
             icon_end=true
         ) }}
+        {% if h.plugin_loaded('activity') %}
+            {{ ui.offcanvas_handle(
+                _('Change history'),
+                id=change_history_panel_id,
+                style="link fs-5",
+                svg="history",
+                icon_end=true
+            ) }}
+        {% endif %}
     </div>
 
     {% block package_resources %}
         {% snippet "package/snippets/resources_panel.html", pkg=pkg %}
     {% endblock %}
-
-
 
     {% snippet "snippets/offcanvas_panel.html",
         id=additional_info_panel_id,
@@ -101,5 +109,15 @@
             "show_heading": false
         }
     %}
+
+    {% if h.plugin_loaded('activity') %}
+        {% snippet "snippets/offcanvas_panel.html",
+            id=change_history_panel_id,
+            title=_('Change history'),
+            width="min(56.25rem, 92vw)",
+            content_snippet="package/snippets/change_history_panel.html",
+            content_data={"pkg": pkg}
+        %}
+    {% endif %}
 
 {% endblock %}

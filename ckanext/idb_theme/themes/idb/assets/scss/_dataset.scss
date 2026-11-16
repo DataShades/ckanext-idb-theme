@@ -611,6 +611,111 @@
   clear: both;
 }
 
+.dataset-panel-actions {
+    .btn-link {
+        --bs-btn-color: var(--idb-color-link-default);
+        --bs-btn-hover-color: var(--idb-color-link-default);
+        text-decoration: none;
+        font-weight: 600;
+
+        svg {
+            width: 1.25rem;
+            height: 1.25rem;
+            vertical-align: -0.2rem;
+        }
+    }
+}
+
+.change-history-panel {
+    .change-history-filter {
+        max-width: 20rem;
+
+        .form-label {
+            color: var(--idb-color-text-default);
+            font-size: var(--idb-font-size-label-large);
+            line-height: var(--idb-line-height-label-large);
+            font-weight: 500;
+        }
+
+        .form-select {
+            min-height: 2.5rem;
+            border: 1px solid var(--idb-color-outline);
+            border-radius: var(--idb-border-radius);
+            font-size: var(--idb-font-size-label-large);
+        }
+    }
+
+    .activity {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        border-top: 1px solid var(--idb-color-border-subtle, #e4e7ec);
+    }
+
+    .activity .item {
+        position: relative;
+        margin: 0;
+        padding: 1rem 1rem 1rem 3.75rem;
+        border: 0;
+        border-bottom: 1px solid var(--idb-color-border-subtle, #e4e7ec);
+        background: transparent;
+        color: var(--idb-color-text-default);
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+
+        &:nth-child(even) {
+            background: var(--idb-color-main-grey-background);
+        }
+
+        .change-history-avatar {
+            position: absolute;
+            top: 1rem;
+            left: 0.75rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: 50%;
+            background: var(--idb-color-link-default);
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+        }
+
+        .fa-stack {
+            display: none;
+        }
+
+        a {
+            color: var(--idb-color-link-default);
+            font-weight: 600;
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+
+        .date {
+            display: block;
+            margin-top: 0.35rem;
+            color: var(--idb-color-on-surface-muted, #5c5a5a);
+            font-size: var(--idb-font-size-label);
+            line-height: var(--idb-line-height-label);
+        }
+    }
+
+    .change-history-empty {
+        color: var(--idb-color-on-surface-muted);
+        font-size: var(--idb-font-size-label-large);
+    }
+
+}
+
 
 /* diff styles */
 table.diff {

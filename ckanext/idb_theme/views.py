@@ -85,6 +85,28 @@ def package_resources(id: str) -> str:
     )
 
 
+@bp.get("/dataset/<id>/activity")
+def package_activity(id: str) -> str:
+    """Render the HTMX change-history panel for a dataset."""
+    try:
+        pkg = tk.get_action("package_show")(
+            {"user": current_user.name, "auth_user_obj": current_user},
+            {"id": id},
+        )
+    except (tk.ObjectNotFound, tk.NotAuthorized):
+        tk.abort(404, tk._("Dataset not found"))
+
+    return tk.render(
+        "package/snippets/change_history_panel.html",
+        {
+            "pkg": pkg,
+            "activity_type": tk.request.args.get("activity_type"),
+            "limit": tk.request.args.get("limit", type=int),
+            "offset": tk.request.args.get("offset", type=int),
+        },
+    )
+
+
 @bp.post("/group/follow/<id>")
 def group_follow(id: str) -> str:
     return _follow_group(id, is_organization=False, follow=True)
