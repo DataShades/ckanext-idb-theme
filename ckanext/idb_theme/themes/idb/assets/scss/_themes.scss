@@ -106,10 +106,6 @@
             font-size: var(--idb-font-size-label);
             line-height: var(--idb-line-height-label);
         }
-
-        &-count {
-            font-weight: 600;
-        }
     }
 
     @include media-breakpoint-down(lg) {

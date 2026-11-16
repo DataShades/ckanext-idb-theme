@@ -71,14 +71,18 @@ icon - Font Awesome icon, used instead of `svg` when given
 
 
 {#-
-Completion badge, e.g. "0/8 completed", or "Optional" while the section has no required fields.
-The form-sections module keeps it up to date (fields can become required later, e.g. conditional ones)
-and turns it green once a required field is filled.
+Completion badge, e.g. "0/8 completed" (all fields of the section), or "Optional" while the
+section has no required fields. The form-sections module keeps it up to date (fields can become
+required later, e.g. conditional ones) and turns it green once all required fields are filled,
+e.g. "4/5 completed" when the last field is optional.
+
+total  - number of required fields in the section
+fields - number of all fields in the section (default: `total`)
 -#}
-{%- macro completion_badge(id, total=0, optional=false) -%}
+{%- macro completion_badge(id, total=0, optional=false, fields=none) -%}
     {%- set is_optional = optional or not total -%}
-    <span {{ ui.util.attrs(kwargs, {"class": "completion-badge" ~ (" is-optional" if is_optional else "")}) }} data-form-section-counter="{{ id }}" data-template="{{ _('{done}/{total} completed') }}" data-optional-label="{{ _('Optional') }}">
-        {{- _("Optional") if is_optional else _("{done}/{total} completed").format(done=0, total=total) -}}
+    <span {{ ui.util.attrs(kwargs, {"class": "completion-badge" ~ (" is-optional" if is_optional else "")}) }} data-form-section-counter="{{ id }}" data-form-section-counter-scope="all" data-template="{{ _('{done}/{total} completed') }}" data-optional-label="{{ _('Optional') }}">
+        {{- _("Optional") if is_optional else _("{done}/{total} completed").format(done=0, total=fields or total) -}}
     </span>
 {%- endmacro %}
 
@@ -88,11 +92,12 @@ Collapsible form section.
 
 id          - unique id of the section, used by navigation and counters
 total       - number of required fields in the section
+fields      - number of all fields in the section, shown in the badge (default: `total`)
 optional    - show "Optional" instead of a counter
 open        - expanded on page load
 collapsible - false renders a plain card: the header has no toggle and the fields are always shown
 -#}
-{%- macro form_section(content, title, id, subtitle=none, total=0, optional=false, open=false, collapsible=true) -%}
+{%- macro form_section(content, title, id, subtitle=none, total=0, fields=none, optional=false, open=false, collapsible=true) -%}
     {%- set body_id = "form-section-body-" ~ id -%}
     {%- if not collapsible -%}
     <section {{ ui.util.attrs(kwargs, {"class": "form-section form-section--static is-open", "id": "form-section-" ~ id}) }} data-form-section="{{ id }}">
@@ -101,7 +106,7 @@ collapsible - false renders a plain card: the header has no toggle and the field
                 <h2 class="form-section__title">{{ title }}</h2>
                 {%- if subtitle %}<span class="form-section__subtitle">{{ subtitle }}</span>{% endif %}
             </span>
-            {{ ui.completion_badge(id, total, optional) }}
+            {{ ui.completion_badge(id, total, optional, fields) }}
         </div>
         <div id="{{ body_id }}" class="form-section__body">
             <div class="form-section__content">
@@ -117,7 +122,7 @@ collapsible - false renders a plain card: the header has no toggle and the field
                     <span class="form-section__title">{{ title }}</span>
                     {%- if subtitle %}<span class="form-section__subtitle">{{ subtitle }}</span>{% endif %}
                 </span>
-                {{ ui.completion_badge(id, total, optional) }}
+                {{ ui.completion_badge(id, total, optional, fields) }}
                 <span class="form-section__chevron" aria-hidden="true">{{ ui.icon("chevron-down") }}</span>
             </button>
         </h2>
@@ -141,13 +146,12 @@ required - the field counts toward completion. Fields whose label shows a requir
 also     - names of other inputs in the wrapper that must be filled as well (e.g. the URL of a title)
 required_when - (field, values): required while that field has one of the values,
            e.g. ("gov_category", ["INS"])
-counted  - an optional field that still counts in the section counter (e.g. "0/4 completed"
-           with an optional image); it never keeps the "next" button disabled
+Optional fields count only in the section badge ("4/5 completed"); they never keep
+the "next" button disabled.
 -#}
-{%- macro form_section_field(content, name, required=false, also=[], required_when=none, counted=false) -%}
+{%- macro form_section_field(content, name, required=false, also=[], required_when=none) -%}
     <div {{ ui.util.attrs(kwargs, {"class": "form-section-field", "id": "form-field-" ~ name}) }} data-form-field="{{ name }}"
         {%- if required %} data-form-field-required="true"{% endif %}
-        {%- if counted and not required %} data-form-field-counted="true"{% endif %}
         {%- if also %} data-form-field-also="{{ also | join(',') }}"{% endif %}
         {%- if required_when %} data-form-field-required-when="{{ required_when[0] }}" data-form-field-required-values="{{ required_when[1] | join(',') }}"{% endif %}>
         {{ content }}

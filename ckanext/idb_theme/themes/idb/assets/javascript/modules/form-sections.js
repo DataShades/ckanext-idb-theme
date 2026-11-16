@@ -9,12 +9,13 @@
  *     [data-form-field-required]         field counts toward completion
  *     [data-form-field-required-when]    ...while that field has one of [data-form-field-required-values]
  *     [data-form-field-also]             other inputs that must be filled as well
- *     [data-form-field-counted]          optional field that counts in the section counter
- *                                        (not in the progress bar or the [data-form-next] check)
  *     a required mark (requiredSelector) also makes a field required; in a repeating
  *     row (rowSelector) with any value, the row's marked subfields are required
- *   [data-form-section-counter="<id>"]   text "{done}/{total}" for a section (data-template);
- *                                        gets .is-started when done > 0 and .is-complete when done == total
+ *   [data-form-section-counter="<id>"]   text "{done}/{total}" of the section's required fields (data-template),
+ *                                        or "Optional" (data-optional-label) while it has none
+ *     [data-form-section-counter-scope="all"]  counts all fields of the section instead
+ *                                        either way: .is-started when done > 0 and .is-complete
+ *                                        once all required fields of the section are filled
  *   [data-form-section-link="<id>"]      link that opens a section and scrolls to it
  *   [data-form-field-link="<name>"]      link that opens the field's section and scrolls to the field
  *   [data-form-progress-item="<name>"]   gets .is-complete when the field is filled
@@ -171,10 +172,7 @@ this.ckan.module('form-sections', function ($) {
         return {required: true, complete: rows.every(this._rowComplete, this)};
       }
       if (!required) {
-        if (wrapper.hasAttribute('data-form-field-counted')) {
-          return {required: false, counted: true, complete: this._filled(name, wrapper)};
-        }
-        return {required: false, complete: false};
+        return {required: false, complete: this._filled(name, wrapper)};
       }
 
       var complete = this._filled(name, wrapper);
@@ -205,7 +203,8 @@ this.ckan.module('form-sections', function ($) {
       var perSection = {};
 
       this.sections.forEach(function (section) {
-        perSection[section.getAttribute('data-form-section')] = {done: 0, total: 0};
+        // done/total: required fields; filled/fields: all fields
+        perSection[section.getAttribute('data-form-section')] = {done: 0, total: 0, filled: 0, fields: 0};
       });
 
       Array.prototype.forEach.call(this.root.querySelectorAll('[data-form-field]'), function (wrapper) {
@@ -218,12 +217,16 @@ this.ckan.module('form-sections', function ($) {
           total += 1;
           done += state.complete ? 1 : 0;
         }
-        if ((state.required || state.counted) && stats) {
-          stats.total += 1;
-          stats.done += state.complete ? 1 : 0;
+        if (stats) {
+          stats.fields += 1;
+          stats.filled += state.complete ? 1 : 0;
+          if (state.required) {
+            stats.total += 1;
+            stats.done += state.complete ? 1 : 0;
+          }
         }
 
-        wrapper.classList.toggle('is-complete', (state.required || state.counted) && state.complete);
+        wrapper.classList.toggle('is-complete', state.complete);
         this._each('[data-form-progress-item="' + name + '"]', function (item) {
           item.hidden = !state.required;
           item.classList.toggle('is-complete', state.complete);
@@ -239,11 +242,13 @@ this.ckan.module('form-sections', function ($) {
         var optional = stats.total === 0;
         var finished = !optional && stats.done === stats.total;
         this._each('[data-form-section-counter="' + id + '"]', function (counter) {
+          var all = counter.getAttribute('data-form-section-counter-scope') === 'all';
+          var shown = all ? stats.filled : stats.done;
           this._setText(counter, optional
             ? counter.getAttribute('data-optional-label')
-            : this._format(counter, stats.done, stats.total));
+            : this._format(counter, shown, all ? stats.fields : stats.total));
           counter.classList.toggle('is-optional', optional);
-          counter.classList.toggle('is-started', stats.done > 0);
+          counter.classList.toggle('is-started', shown > 0);
           counter.classList.toggle('is-complete', finished);
         });
         this._each('[data-form-section="' + id + '"]', function (section) {

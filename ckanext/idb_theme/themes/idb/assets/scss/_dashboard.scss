@@ -739,7 +739,7 @@
             // 48px rows with the 1px row border; a cell with wrapped badges grows the row
             .tabulator-row .tabulator-cell {
                 min-height: 47px;
-                padding: 8px var(--idb-space-sm);
+                padding: 8px 12px;
                 font-size: var(--idb-font-size-label);
                 line-height: var(--idb-line-height-label);
                 white-space: normal;
@@ -758,6 +758,8 @@
             }
 
             .tabulator-footer {
+                // the footer row wraps by the width of the table, not of the viewport
+                container-type: inline-size;
                 padding: var(--idb-space-xs) 20px;
                 border-bottom-left-radius: 8px;
                 border-bottom-right-radius: 8px;
@@ -766,9 +768,30 @@
 
                 // "Items per page", the page size, the counter and the arrows, in one row
                 .tabulator-footer-contents {
+                    // the gap between the footer items; narrower on mobile so the row fits
+                    --footer-gap: 16px;
+
                     flex-wrap: wrap;
                     justify-content: flex-end;
-                    gap: 48px;
+                    gap: var(--idb-space-xs) var(--footer-gap);
+
+                    @include media-breakpoint-up(md) {
+                        --footer-gap: 48px;
+                    }
+
+                    // a narrow table: the counter and the arrows go on a line of their own,
+                    // so the previous and next arrows never split; the empty item is the line
+                    // break, its height the space between the two lines
+                    @container (max-width: 480px) {
+                        row-gap: 0;
+
+                        &::before {
+                            content: "";
+                            order: 3;
+                            flex-basis: 100%;
+                            height: var(--idb-space-xs);
+                        }
+                    }
                     font-family: "Inter", sans-serif;
                     line-height: 1rem;
 
@@ -776,11 +799,11 @@
                         display: contents;
 
                         // the paginator children are items of the footer row, see `display: contents`:
-                        // "Items per page" sits 8px from its select, not the 48px gap
+                        // "Items per page" sits 8px from its select, not the footer gap
                         label {
                             order: 1;
                             margin: 0;
-                            margin-inline-end: calc(8px - 48px);
+                            margin-inline-end: calc(8px - var(--footer-gap));
                             font-size: 0.75rem;
                             color: var(--idb-color-text-default);
                         }
@@ -845,9 +868,9 @@
                                 mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='8 6 7.41 12'><path d='M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z'/></svg>");
                             }
 
-                            // 16px from the previous button, not the 48px gap of the footer
+                            // 16px from the previous button, not the footer gap
                             &[data-page="next"] {
-                                margin-inline-start: calc(16px - 48px);
+                                margin-inline-start: calc(16px - var(--footer-gap));
                             }
 
                             &[data-page="next"]::before {
@@ -954,22 +977,26 @@
     }
 }
 
-// The row actions menu of the dashboard tables, as the design system dropdown
-// menu. Tabulator appends it to <body>, outside the table.
+// The row actions menu of the dashboard tables, as the dropdown menus of the
+// header (user, language, "More"), see `.dropdown-menu` in _masthead.scss.
+// Tabulator appends it to <body>, outside the table.
 body:has(.dashboard-table) .tabulator-menu.tabulator-popup-container {
-    min-width: 160px;
-    padding: 6px var(--idb-space-xs);
+    min-width: $dropdown-min-width;
+    padding: ($spacer * .625) $spacer-2;
     border-color: var(--idb-color-border-default);
     border-radius: var(--idb-border-radius);
-    box-shadow: 0 8px 24px color-mix(in srgb, var(--idb-color-neutral-20) 12%, transparent);
+    box-shadow: 0 0.5rem 1.5rem color-mix(in srgb, var(--idb-color-neutral-20) 12%, transparent);
 
     .tabulator-menu-item {
-        padding: var(--idb-space-xs) 12px;
+        padding: $spacer-2 ($spacer * .75);
         border-radius: var(--idb-border-radius);
-        font-size: var(--idb-font-size-label-large);
-        line-height: var(--idb-line-height-label-large);
+        font-family: var(--idb-font-family-inter);
+        font-size: $font-size-base * .75;
+        font-weight: $font-weight-normal;
+        line-height: $line-height-base;
         color: var(--idb-color-text-primary);
         white-space: nowrap;
+        @include transition($nav-link-transition);
 
         &:not(:last-child) {
             margin-bottom: 4px;
@@ -977,7 +1004,7 @@ body:has(.dashboard-table) .tabulator-menu.tabulator-popup-container {
 
         i {
             width: 1.25em;
-            color: var(--idb-color-on-surface-variant);
+            color: inherit;
         }
 
         &:not(.tabulator-menu-item-disabled):hover {
@@ -987,6 +1014,15 @@ body:has(.dashboard-table) .tabulator-menu.tabulator-popup-container {
 
         &.tabulator-menu-item-disabled {
             opacity: 0.5;
+        }
+
+        // a destructive action (delete, remove), see `data-confirm-type` of the
+        // row actions in tables.py: the label and the icon in red
+        &:has([data-confirm-type="danger"]) {
+            &,
+            &:not(.tabulator-menu-item-disabled):hover {
+                color: #C53030;
+            }
         }
     }
 }
