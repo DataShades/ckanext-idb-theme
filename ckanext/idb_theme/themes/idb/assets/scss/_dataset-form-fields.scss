@@ -1,0 +1,545 @@
+// Fields of the dataset form (create and edit): inputs, dropdowns, chips,
+// month inputs, Yes/No selects, repeating blocks and URL lists, with their
+// hint, error and disabled (conditional field not available) states.
+// The label, help text and tooltip are in _forms.scss, the rich text editor
+// in _form-layout.scss.
+// Templates: ckanext-iadb-iar templates/scheming/form_snippets
+
+:root {
+    --idb-field-height: 40px;
+    --idb-field-chevron: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%23232222' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/></svg>");
+    --idb-field-disabled-bg: var(--idb-color-neutral-99);
+    --idb-field-disabled-border: var(--idb-color-border-subtle);
+    --idb-field-disabled-text: var(--idb-color-text-disabled);
+}
+
+#dataset-edit {
+    // Text inputs, textareas and dropdowns ////////////////////////////////////
+
+    .form-control,
+    .form-select,
+    .ts-wrapper .ts-control {
+        min-height: var(--idb-field-height);
+        border: 1px solid var(--idb-color-outline);
+        border-radius: 4px;
+        background-color: var(--idb-color-on-primary);
+        color: var(--idb-color-text-default);
+        font-size: var(--idb-font-size-text);
+        line-height: 1.5rem;
+
+        &::placeholder {
+            color: var(--idb-color-text-placeholder);
+            opacity: 1;
+        }
+
+        &:focus {
+            border-color: var(--idb-color-button-stroke-text);
+            box-shadow: inset 0 0 0 1px var(--idb-color-button-stroke-text);
+        }
+    }
+
+    // Tom Select copies the classes of its input to the wrapper; the box is .ts-control
+    .form-control.ts-wrapper,
+    .form-select.ts-wrapper {
+        min-height: 0;
+        padding: 0;
+        border: 0;
+        background: none;
+        box-shadow: none;
+    }
+
+    .form-select {
+        padding: 8px 40px 8px 12px;
+        background-image: var(--idb-field-chevron);
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        background-size: 14px 14px;
+
+        // the empty option shows the placeholder (e.g. Select "Yes" or "No")
+        &:has(option[value=""]:checked) {
+            color: var(--idb-color-text-placeholder);
+        }
+
+        option {
+            color: var(--idb-color-text-default);
+        }
+    }
+
+    .ts-wrapper {
+        .ts-control {
+            align-items: center;
+            gap: 6px;
+            padding: 7px 12px;
+            box-shadow: none;
+            cursor: text;
+
+            > input {
+                min-width: 4rem;
+                color: var(--idb-color-text-default);
+                font-size: var(--idb-font-size-text);
+
+                &::placeholder {
+                    color: var(--idb-color-text-placeholder);
+                }
+            }
+        }
+
+        &.focus .ts-control {
+            border-color: var(--idb-color-button-stroke-text);
+            box-shadow: inset 0 0 0 1px var(--idb-color-button-stroke-text);
+        }
+
+        // dropdown: chevron on the right
+        &.single .ts-control {
+            padding-right: 40px;
+            cursor: pointer;
+
+            &::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                right: 16px;
+                width: 14px;
+                height: 14px;
+                margin-top: -7px;
+                background: var(--idb-field-chevron) center / contain no-repeat;
+                transition: transform 0.2s ease;
+            }
+        }
+
+        &.single.dropdown-active .ts-control::after {
+            transform: rotate(180deg);
+        }
+
+        // chips of a multi-value field
+        &.multi .ts-control > .item {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin: 0;
+            padding: 2px 4px 2px 10px;
+            border: 0;
+            border-radius: 8px;
+            background: var(--idb-color-surface-variant);
+            color: var(--idb-color-on-surface);
+            font-size: var(--idb-font-size-label-large);
+            line-height: var(--idb-line-height-label-large);
+            font-weight: 600;
+
+            &.active {
+                background: var(--idb-color-primary-light);
+                color: var(--idb-color-primary);
+            }
+
+            .remove {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 20px;
+                height: 20px;
+                margin: 0;
+                padding: 0;
+                border: 0;
+                border-radius: 50%;
+                color: var(--idb-color-on-surface-variant);
+                font-size: 1rem;
+                line-height: 1;
+
+                &:hover {
+                    background: rgba(0, 0, 0, 0.08);
+                    color: var(--idb-color-text-default);
+                }
+            }
+        }
+
+        &.multi.has-items .ts-control {
+            padding: 6px 12px;
+        }
+    }
+
+    // option list of Tom Select, like the idb-select dropdown (_select.scss)
+    .ts-dropdown {
+        margin-top: 4px;
+        padding: var(--idb-space-xs) 0;
+        border: 0;
+        border-radius: var(--idb-border-radius-sm);
+        box-shadow: 0 2px 4px -1px rgba(0, 0, 0, .2), 0 4px 5px 0 rgba(0, 0, 0, .14), 0 1px 10px 0 rgba(0, 0, 0, .12);
+        color: var(--idb-color-text-default);
+        font-size: var(--idb-font-size-text);
+
+        .option,
+        .create,
+        .no-results {
+            display: flex;
+            align-items: center;
+            min-height: 3rem;
+            padding: 0 var(--idb-space-sm);
+        }
+
+        .active {
+            background: var(--idb-color-interaction-selected);
+            color: var(--idb-color-text-default);
+        }
+
+        .selected {
+            background: var(--idb-color-primary-light);
+            color: var(--idb-color-primary);
+        }
+    }
+
+    // person search: a search box, not a dropdown
+    .vocab-select--person .ts-wrapper.single .ts-control {
+        padding-right: 12px;
+
+        &::after {
+            content: none;
+        }
+    }
+
+    // chips of Select2 inputs (the autocomplete module)
+    .select2-container-multi {
+        .select2-choices {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+            min-height: var(--idb-field-height);
+            padding: 6px 12px;
+            border: 1px solid var(--idb-color-outline);
+            border-radius: 4px;
+            background: var(--idb-color-on-primary);
+            box-shadow: none;
+
+            .select2-search-choice {
+                display: inline-flex;
+                align-items: center;
+                margin: 0;
+                padding: 2px 10px 2px 26px;
+                border: 0;
+                border-radius: 8px;
+                background: var(--idb-color-surface-variant);
+                box-shadow: none;
+                color: var(--idb-color-on-surface);
+                font-size: var(--idb-font-size-label-large);
+                line-height: var(--idb-line-height-label-large);
+                font-weight: 600;
+            }
+
+            .select2-search-choice-close {
+                top: 50%;
+                left: 8px;
+                transform: translateY(-50%);
+            }
+
+            .select2-search-field input {
+                margin: 0;
+                padding: 0 !important;
+                color: var(--idb-color-text-default);
+                font-family: inherit;
+                font-size: var(--idb-font-size-text);
+                letter-spacing: normal;
+            }
+        }
+
+        &.select2-container-active .select2-choices {
+            border-color: var(--idb-color-button-stroke-text);
+            box-shadow: inset 0 0 0 1px var(--idb-color-button-stroke-text);
+        }
+    }
+
+    // Hint under a chips input, e.g. "Type to search; ..." ///////////////////
+
+    .form-hint {
+        margin-top: 4px;
+        padding: 0 var(--idb-space-sm);
+        color: var(--idb-color-on-surface-variant);
+        font-size: 12px;
+        line-height: 16px;
+    }
+
+    // Error: red border and the message under the field //////////////////////
+
+    .form-control.is-invalid,
+    .form-select.is-invalid,
+    .ts-wrapper.is-invalid .ts-control,
+    .form-group:has(> .error-inline) .select2-choices,
+    .markdown-editor__input.is-invalid {
+        border-color: var(--idb-color-error-40);
+        background-image: none;
+    }
+
+    .form-select.is-invalid {
+        background-image: var(--idb-field-chevron);
+    }
+
+    .form-control.is-invalid:focus,
+    .form-select.is-invalid:focus,
+    .ts-wrapper.is-invalid.focus .ts-control {
+        box-shadow: inset 0 0 0 1px var(--idb-color-error-40);
+    }
+
+    .invalid-feedback,
+    .error-block {
+        margin-top: 4px;
+        padding: 0 var(--idb-space-sm);
+        color: var(--idb-color-error-40);
+        font-size: 12px;
+        line-height: 16px;
+        font-weight: 400;
+    }
+
+    // Disabled: a conditional field that is not available (greyed out) /////
+
+    .form-control:disabled,
+    .form-select:disabled,
+    .ts-wrapper.disabled .ts-control {
+        border-color: var(--idb-field-disabled-border);
+        background-color: var(--idb-field-disabled-bg);
+        color: var(--idb-field-disabled-text);
+        opacity: 1;
+        cursor: not-allowed;
+
+        &::placeholder,
+        > input::placeholder {
+            color: var(--idb-field-disabled-text);
+        }
+    }
+
+    .ts-wrapper.disabled .ts-control::after {
+        opacity: 0.38;
+    }
+
+    .form-group:has(:is(input, select, textarea):disabled:not([type="hidden"]), .ts-wrapper.disabled) {
+        > .form-label,
+        > .form-label .control-required,
+        > .form-text,
+        > .form-hint {
+            color: var(--idb-field-disabled-text);
+        }
+
+        > .form-label .field-tooltip {
+            opacity: 0.6;
+        }
+    }
+
+    // Month/year date (MM/YYYY) //////////////////////////////////////////////
+
+    .month-input {
+        width: 100%;
+        max-width: 200px;
+
+        &::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+        }
+    }
+
+    // Data Providers: a block per provider, "Add data provider" ////////////////
+
+    .repeating-field {
+        &__fieldset {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--idb-space-sm);
+            min-width: 0;
+            margin: 0;
+            padding: 0;
+            border: 0;
+        }
+
+        &__blocks {
+            display: flex;
+            flex-direction: column;
+            gap: var(--idb-space-sm);
+            align-self: stretch;
+        }
+
+        &__add {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+    }
+
+    .repeating-block {
+        &__card {
+            padding: 20px var(--idb-space-sm) var(--idb-space-sm);
+            border: 1px solid var(--idb-color-border-n-variant80);
+            border-radius: var(--idb-border-radius);
+            background: var(--idb-color-on-primary);
+        }
+
+        &__header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--idb-space-xs);
+            margin-bottom: 12px;
+        }
+
+        &__title {
+            margin: 0;
+            color: var(--idb-color-text-default);
+            font-size: var(--idb-font-size-text);
+            line-height: var(--idb-line-height-text);
+            font-weight: 600;
+        }
+
+        // the first block is "Data Provider", the next ones are numbered
+        &:first-child .repeating-block__index {
+            display: none;
+        }
+
+        &__remove {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: var(--idb-border-radius-lg);
+            color: var(--idb-color-error-40);
+            font-size: var(--idb-font-size-label-large);
+            line-height: var(--idb-line-height-label-large);
+            font-weight: 600;
+            text-decoration: none;
+
+            svg {
+                width: 16px;
+                height: 16px;
+            }
+
+            &:hover,
+            &:focus-visible {
+                background: rgba(0, 0, 0, 0.06);
+                color: var(--idb-color-error-40);
+            }
+        }
+
+        // a single block can't be removed
+        &:only-child .repeating-block__remove {
+            display: none;
+        }
+
+        &__body {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 0;
+
+            .form-group {
+                margin-bottom: 0;
+            }
+        }
+
+        &__removed {
+            color: var(--idb-color-text-subtle);
+            font-size: var(--idb-font-size-label-large);
+        }
+    }
+
+    // List of URLs: "Add URL", the "x" icon removes one ///////////////////////
+
+    .repeating-input {
+        &__list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--idb-space-xs);
+        }
+
+        &__row {
+            position: relative;
+        }
+
+        &__row:has(.repeating-input__remove:not([hidden])) .repeating-input__input {
+            padding-right: 44px;
+        }
+
+        &__remove {
+            position: absolute;
+            top: 50%;
+            right: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            padding: 0;
+            border: 0;
+            border-radius: 50%;
+            background: none;
+            color: var(--idb-color-on-surface-variant);
+            font-size: 1.125rem;
+            transform: translateY(-50%);
+
+            &[hidden] {
+                display: none;
+            }
+
+            &:hover,
+            &:focus-visible {
+                background: rgba(0, 0, 0, 0.06);
+                color: var(--idb-color-text-default);
+            }
+
+            &:focus-visible {
+                outline: 2px solid var(--idb-color-button-flat-background);
+                outline-offset: -2px;
+            }
+        }
+
+        &__add {
+            display: inline-flex;
+            align-items: center;
+            align-self: flex-start;
+            gap: 6px;
+            margin-top: var(--idb-space-xs);
+            padding: 4px 12px;
+            border: 1px solid var(--idb-color-button-stroke-border);
+            border-radius: 100px;
+            background: var(--idb-color-on-primary);
+            color: var(--idb-color-button-stroke-text);
+            font-size: 12px;
+            line-height: 16px;
+            font-weight: 700;
+
+            &[hidden] {
+                display: none;
+            }
+
+            i {
+                font-size: 10px;
+            }
+
+            &:hover,
+            &:focus-visible {
+                background: var(--idb-color-interaction-selected);
+            }
+
+            &:focus-visible {
+                outline: 2px solid var(--idb-color-button-flat-background);
+                outline-offset: 1px;
+            }
+        }
+    }
+
+    // Small screens ///////////////////////////////////////////////////////////
+
+    @include media-breakpoint-down(sm) {
+        .month-input {
+            max-width: none;
+        }
+
+        .repeating-block__card {
+            padding: var(--idb-space-sm) 12px 12px;
+        }
+
+        .repeating-field__add {
+            align-self: stretch;
+            justify-content: center;
+        }
+
+        .slug-preview {
+            flex-wrap: wrap;
+        }
+    }
+}

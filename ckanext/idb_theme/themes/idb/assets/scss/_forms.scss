@@ -1013,8 +1013,11 @@ select[data-module="autocomplete"] {
     }
 }
 
+// Field order: label, help text, the control, the input hint, then the error
+// message under the control. The macros render the help text and the hint after
+// the control (as call content), so they are moved up with `order`.
 :is(#dataset-edit, #resource-edit, #data-project-edit, .dataset-form, [data-module~="resource-form"])
-    .form-group:not(.form-check):has(> .form-text, > .error-inline) {
+    .form-group:not(.form-check):has(> .form-text, > .form-hint, > .error-inline) {
     display: flex;
     flex-direction: column;
 
@@ -1026,12 +1029,16 @@ select[data-module="autocomplete"] {
         order: 2;
     }
 
-    > .error-inline {
+    > :not(.form-label, .form-text, .form-hint, .error-inline) {
         order: 3;
     }
 
-    > :not(.form-label, .error-inline, .form-text) {
+    > .form-hint {
         order: 4;
+    }
+
+    > .error-inline {
+        order: 5;
     }
 }
 
@@ -1042,12 +1049,12 @@ select[data-module="autocomplete"] {
     flex-direction: column;
 
     > .form-text {
-        order: -2;
+        order: -1;
     }
 
     > .error-block,
     > .error-inline {
-        order: -1;
+        order: 1;
     }
 }
 

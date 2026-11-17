@@ -236,9 +236,10 @@ Markdown textarea with a formatting toolbar (bold, italic, list, link) and a
 character counter. The `markdown-editor` JS module adds the behaviour; without
 JS it's a plain textarea that still stops at `max_length`.
 
-max_length - maximum number of characters (the markdown source is counted)
+max_length  - maximum number of characters (the markdown source is counted)
+input_attrs - extra attributes of the textarea, e.g. a data-module of its own
 -#}
-{%- macro markdown_editor(name, id, label, value="", placeholder="", required=false, errors=[], help=none, tooltip=none, max_length=none) -%}
+{%- macro markdown_editor(name, id, label, value="", placeholder="", required=false, errors=[], help=none, tooltip=none, max_length=none, input_attrs={}) -%}
     {%- set field_id = id or "field-" ~ name -%}
     {%- set help_id = field_id ~ "-help" -%}
     {%- set counter_id = field_id ~ "-counter" -%}
@@ -251,7 +252,7 @@ max_length - maximum number of characters (the markdown source is counted)
             <button type="button" class="markdown-editor__button" data-markdown-format="list" title="{{ _('Bulleted list') }}" aria-label="{{ _('Bulleted list') }}">{{ ui.icon("list-ul") }}</button>
             <button type="button" class="markdown-editor__button" data-markdown-format="link" title="{{ _('Link') }}" aria-label="{{ _('Link') }}" data-link-prompt="{{ _('Link URL') }}">{{ ui.icon("link") }}</button>
         </div>
-        <textarea class="form-control markdown-editor__input{{ ' is-invalid' if errors }}" id="{{ field_id }}" name="{{ name }}" rows="3"
+        <textarea {{ ui.util.attrs({"attrs": input_attrs}) if input_attrs }} class="form-control markdown-editor__input{{ ' is-invalid' if errors }}" id="{{ field_id }}" name="{{ name }}" rows="3"
             {%- if placeholder %} placeholder="{{ placeholder }}"{% endif %}
             {%- if max_length %} maxlength="{{ max_length }}"{% endif %}
             {%- if required %} required{% endif %}
