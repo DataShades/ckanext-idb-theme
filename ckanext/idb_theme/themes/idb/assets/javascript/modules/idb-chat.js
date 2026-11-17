@@ -9,6 +9,17 @@ this.ckan.module("idb-chat", function ($) {
       this.modal = $("#knowledge-assistant-modal");
       this.modal.on("ka:rendered", this._onRendered);
       this.modal.on("ka:answer", this._onAnswer);
+      this.modal.on("click", ".idb-chat-copy", this._onCopy);
+    },
+
+    _onCopy(event) {
+      const button = $(event.currentTarget);
+      const label = button.find(".idb-chat-copy-label");
+      const text = label.data("text") || label.text();
+
+      label.data("text", text).text(button.data("copied"));
+      clearTimeout(label.data("timer"));
+      label.data("timer", setTimeout(() => label.text(text), 2000));
     },
 
     _onAnswer(event, message, text) {

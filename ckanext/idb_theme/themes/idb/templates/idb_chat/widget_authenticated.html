@@ -17,7 +17,8 @@
       <span class="idb-chat-steps-chevron d-flex">{{ ui.icon('chevron-down') }}</span>
     </div>
     <div class="idb-chat-answer-actions d-flex align-items-center justify-content-between">
-      {{ ui.button(ui.icon('copy', style='regular') ~ _('Copy response'), attrs={"class": "idb-chat-copy d-inline-flex align-items-center p-0 border-0 bg-transparent"}, data={"module": "copy-into-buffer"}) }}
+      {% set copy_label %}<span class="idb-chat-copy-label">{{ _('Copy response') }}</span>{% endset %}
+      {{ ui.button(ui.icon('copy', style='regular') ~ copy_label, attrs={"class": "idb-chat-copy d-inline-flex align-items-center p-0 border-0 bg-transparent"}, data={"module": "copy-into-buffer", "copied": _('Copied')}) }}
       <span class="idb-chat-feedback d-flex">
         {{ ui.button(ui.icon('thumbs-up', style='regular'), attrs={"class": "idb-chat-feedback-btn p-0 border-0 bg-transparent", "tabindex": "-1", "title": _('Coming soon')}, aria={"disabled": "true", "label": _('Helpful')}) }}
         {{ ui.button(ui.icon('thumbs-down', style='regular'), attrs={"class": "idb-chat-feedback-btn p-0 border-0 bg-transparent", "tabindex": "-1", "title": _('Coming soon')}, aria={"disabled": "true", "label": _('Not helpful')}) }}
