@@ -1,6 +1,15 @@
 {% extends "package/base.html" %}
 
+{# `pkg` is the Package ORM; `package` / `pkg_dict` is the dict from package_show. #}
 {% set res = resource %}
+{% set pkg_dict = package %}
+{% set card = h.idb_theme_resource_card(pkg_dict, res) %}
+
+{%- set PAGE_LAYOUT | trim -%}
+{%- block page_layout -%}
+    {{ "sidebar-end" }}
+{%- endblock %}
+{%- endset -%}
 
 {% block head_extras -%}
     {{ super() }}
@@ -22,187 +31,194 @@
     {{- ui.breadcrumb(h.resource_display_name(res)|truncate(30), href="", active=true, aria={"current": "page", "label": _('Current resource: {name}').format(name=h.resource_display_name(res))}) }}
 {%- endblock %}
 
-{% block pre_primary %}
-    {% block resource %}
-        <section class="module module-resource" role="complementary">
-            {% block resource_inner %}
-                <div class="actions">
-                    {% block resource_actions %}
-                        <ul class="d-flex flex-wrap gap-1 justify-content-end">
-                            {% block resource_actions_inner %}
-                                {% if res.url and h.is_url(res.url) %}
-                                    <li>
-                                        <div class="btn-group">
-                                            <a class="btn btn-primary resource-url-analytics" href="{{ res.url }}">
-                                                {% if res.resource_type in ('listing', 'service') %}
-                                                    {{ ui.icon("eye") }} {{ _('View') }}
-                                                {% elif  res.resource_type == 'api' %}
-                                                    {{ ui.icon("key") }} {{ _('API Endpoint') }}
-                                                {% elif not res.has_views and not res.url_type == 'upload' %}
-                                                    {{ ui.icon("external-link") }} {{ _('Go to resource') }}
-                                                {% else %}
-                                                    {{ ui.icon("arrow-circle-down") }} {{ _('Download') }}
-                                                {% endif %}
-                                            </a>
-                                            {% block download_resource_button %}{% endblock download_resource_button %}
-                                        </div>
-                                    </li>
-                                {% endif %}
-                            {% endblock %}
-                            {% block action_manage %}
-                                {% block action_manage_inner %}{% endblock %}
-                                {% if h.check_access('package_update', {'id':pkg.id }) %}
-                                    <li>
-                                        {{ ui.button(_('Manage'), href=h.url_for(pkg.type ~ '_resource.edit', id=pkg.name, resource_id=res.id), style="secondary", icon="wrench") }}
-                                    </li>
-                                {% endif %}
-                            {% endblock action_manage %}
-                        </ul>
-                    {% endblock %}
-                </div>
-                {% block resource_content %}
-                    {% block resource_read_title %}<h1 class="page-heading">{{ h.resource_display_name(res) | truncate(50) }}</h1>{% endblock %}
-                    {% block resource_read_url %}
-                        {% if res.url and h.is_url(res.url) %}
-                            <p class="text-muted ellipsis">{{ _('URL:') }} <a class="resource-url-analytics" href="{{ res.url }}" aria-label="{{ _('Resource URL: {url}').format(url=res.url) }}">{{ res.url }}</a></p>
-                        {% elif res.url %}
-                            <p class="text-muted break-word">{{ _('URL:') }} {{ res.url }}</p>
+{% block maintag %}<div class="main resource-read bg-main-grey">{% endblock %}
+
+{% block pre_primary %}{% endblock %}
+
+{% block primary_content %}
+    <article class="resource-page module">
+        <div class="module-content">
+            {% block resource_content %}
+                {% block resource_read_title %}
+                    <h1 class="page-heading fs-36 text-idb-default mb-3">
+                        {{ h.resource_display_name(res) }}
+                    </h1>
+                {% endblock %}
+
+                {% block resource_description %}
+                    {% if card.description %}
+                        <div class="notes embedded-content text-iadb-netural-black mb-20">
+                            {{ h.render_markdown(card.description) }}
+                        </div>
+                    {% elif package.notes %}
+                        <div class="notes embedded-content text-iadb-netural-black mb-20">
+                            {{ h.markdown_extract(h.get_translated(package, 'notes')) }}
+                        </div>
+                    {% endif %}
+                {% endblock %}
+
+                {% block resource_chips %}
+                    <ul class="dataset-chips list-unstyled d-flex flex-wrap gap-2 mb-20">
+                        {% if card.format %}
+                            {{ ui.chip(card.format, style="secondary") }}
                         {% endif %}
-                    {% endblock %}
-                    <div class="prose notes" property="rdfs:label">
-                        {% if res.description %}
-                            {{ h.render_markdown(h.get_translated(res, 'description')) }}
+                        {% if card.coverage_label %}
+                            {{ ui.chip(card.coverage_label, style="secondary", svg="calendar") }}
                         {% endif %}
-                        {% if not res.description and package.notes %}
-                            {{ ui.heading(_('Dataset description:'), level=1) }}
-                            <blockquote>{{ h.markdown_extract(h.get_translated(package, 'notes')) }}</blockquote>
-                            <p>{% trans dataset=h.get_translated(package, 'title'), url=h.url_for(package.type ~ '.read', id=package.name) %}Source: <a href="{{ url }}">{{ dataset }}</a>{% endtrans %}<p>
+                        {{ ui.chip(
+                            ungettext('{number} download', '{number} downloads', card.downloads).format(number=h.localised_number(card.downloads)),
+                            style="secondary",
+                            svg="download"
+                        ) }}
+                        {% if card.size %}
+                            {{ ui.chip(card.size, style="secondary") }}
+                        {% endif %}
+                    </ul>
+                {% endblock %}
+
+                {% block resource_actions %}
+                    {%- set data_dictionary_panel_id = "resource-data-dictionary" -%}
+                    {%- set data_dictionary = h.datastore_dictionary(res.id) if res.datastore_active and h.plugin_loaded('datastore') else [] -%}
+                    <div class="resource-page-actions d-flex flex-wrap align-items-center gap-3 mb-20">
+                        {% if card.download_url %}
+                            {{ ui.button(
+                                _('Download'),
+                                href=card.download_url,
+                                style="primary",
+                                svg="res-download",
+                                blank=true,
+                                icon_end=true,
+                                _extra_class="fs-5 resource-url-analytics"
+                            ) }}
+                        {% endif %}
+                        {% if current_resource_view %}
+                            {{ ui.button(
+                                _('Fullscreen'),
+                                href=h.url_for(pkg_dict.type ~ '_resource.view', id=pkg_dict.name, resource_id=res.id, view_id=current_resource_view.id, qualified=true),
+                                style="outline-primary",
+                                icon="arrows-alt",
+                                blank=true,
+                                _extra_class="fs-5"
+                            ) }}
+                            {{ ui.modal_handle(
+                                _('Embed'),
+                                href="#embed-" ~ current_resource_view.id,
+                                style="outline-primary",
+                                icon="object-group",
+                                _extra_class="fs-5",
+                                data={
+                                    "module": "resource-view-embed",
+                                    "module-id": current_resource_view.id,
+                                    "module-url": h.url_for(pkg_dict.type ~ '_resource.view', id=pkg_dict.name, resource_id=res.id, view_id=current_resource_view.id, qualified=true),
+                                }
+                            ) }}
+                        {% endif %}
+                        {% if data_dictionary %}
+                            {{ ui.offcanvas_handle(
+                                _('View data dictionary'),
+                                id=data_dictionary_panel_id,
+                                style="outline-primary",
+                                icon="book",
+                                _extra_class="fs-5"
+                            ) }}
+                        {% endif %}
+                        {% if h.check_access('package_update', {'id': pkg.id }) %}
+                            {{ ui.button(
+                                _('Manage'),
+                                href=h.url_for(pkg.type ~ '_resource.edit', id=pkg.name, resource_id=res.id),
+                                style="outline-primary",
+                                icon="wrench"
+                            ) }}
                         {% endif %}
                     </div>
+                    {% if data_dictionary %}
+                        {% snippet "snippets/offcanvas_panel.html",
+                            id=data_dictionary_panel_id,
+                            title=_('Data dictionary'),
+                            width="min(56.25rem, 92vw)",
+                            content_snippet="package/snippets/resource_data_dictionary_panel.html",
+                            content_data={"res": res, "ddict": data_dictionary}
+                        %}
+                    {% endif %}
                 {% endblock %}
-                {% block data_preview %}
-                    {% block resource_view %}
-                        {% block resource_view_nav %}
-                            {% snippet "package/snippets/resource_views_list.html",
-                                        views=resource_views,
-                                        pkg=pkg,
-                                        is_edit=false,
-                                        view_id=current_resource_view['id'],
-                                        resource=resource,
-                                        extra_class="nav-tabs"
-                            %}
-                        {% endblock %}
-                        {% block resource_view_content %}
-                            <div class="resource-view">
-                                {% if resource_views %}
-                                    {% for resource_view in resource_views %}
-                                        {% if resource_view == current_resource_view %}
-                                            {% snippet 'package/snippets/resource_view.html',
-                                                        resource_view=resource_view,
-                                                        resource=resource,
-                                                        package=package
-                                            %}
-                                        {% endif %}
-                                    {% endfor %}
-                                {% else %}
-                                    {# Views not created #}
-                                    <div class="data-viewer-info">
-                                        <p>{{ _("There are no views created for this resource yet.") }}</p>
-                                        {% if h.check_access('resource_view_create', {'resource_id': resource.id}) %}
-                                            <p class="text-muted">
-                                                <i class="fa fa-info-circle"></i>
-                                                {{ _("Not seeing the views you were expecting?")}}
-                                                <a href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#data-view-info">
-                                                    {{ _('Click here for more information.') }}</a>
-                                            </p>
-                                            <div id="data-view-info" class="collapse">
-                                                <p>{{ _('Here are some reasons you may not be seeing expected views:') }}</p>
-                                                <ul>
-                                                    <li>{{ _("No view has been created that is suitable for this resource")}}</li>
-                                                    <li>{{ _("The site administrators may not have enabled the relevant view plugins")}}</li>
-                                                    <li>{{ _("If a view requires the DataStore, the DataStore plugin may not be enabled, or the data may not have been pushed to the DataStore, or the DataStore hasn't finished processing the data yet")}}</li>
-                                                </ul>
-                                            </div>
-                                        {% endif %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        {% endblock %}
+
+                {% block resource_format_tip %}
+                    {% if card.format_tip %}
+                        <div class="resource-card-tip mb-4" role="note">
+                            {% snippet "svg/info.svg" %}
+                            <span>{{ card.format_tip }}</span>
+                        </div>
+                    {% endif %}
+                {% endblock %}
+            {% endblock %}
+
+            {% block resource_file_details %}
+                {% snippet "package/snippets/resource_file_details.html", pkg=pkg_dict, card=card, res=res %}
+            {% endblock %}
+
+            {% block data_preview %}
+                {% block resource_view %}
+                    {% block resource_view_nav %}
+                        {% snippet "package/snippets/resource_views_list.html",
+                                    views=resource_views,
+                                    pkg=pkg,
+                                    is_edit=false,
+                                    view_id=current_resource_view.id if current_resource_view else none,
+                                    resource=resource,
+                                    extra_class="nav-tabs"
+                        %}
+                    {% endblock %}
+                    {% block resource_view_content %}
+                        <div class="resource-view">
+                            {% if resource_views %}
+                                {% for resource_view in resource_views %}
+                                    {% if resource_view == current_resource_view %}
+                                        {% snippet 'package/snippets/resource_view.html',
+                                                    resource_view=resource_view,
+                                                    resource=resource,
+                                                    package=package
+                                        %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                <div class="data-viewer-info">
+                                    <p>{{ _("There are no views created for this resource yet.") }}</p>
+                                    {% if h.check_access('resource_view_create', {'resource_id': resource.id}) %}
+                                        <p class="text-muted">
+                                            <i class="fa fa-info-circle"></i>
+                                            {{ _("Not seeing the views you were expecting?")}}
+                                            <a href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#data-view-info">
+                                                {{ _('Click here for more information.') }}</a>
+                                        </p>
+                                        <div id="data-view-info" class="collapse">
+                                            <p>{{ _('Here are some reasons you may not be seeing expected views:') }}</p>
+                                            <ul>
+                                                <li>{{ _("No view has been created that is suitable for this resource")}}</li>
+                                                <li>{{ _("The site administrators may not have enabled the relevant view plugins")}}</li>
+                                                <li>{{ _("If a view requires the DataStore, the DataStore plugin may not be enabled, or the data may not have been pushed to the DataStore, or the DataStore hasn't finished processing the data yet")}}</li>
+                                            </ul>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
                     {% endblock %}
                 {% endblock %}
             {% endblock %}
-        </section>
-    {% endblock %}
-{% endblock %}
-
-{% block primary_content %}
-    {% block resource_additional_information %}
-        {% if res %}
-            <section class="module">
-                {% block resource_additional_information_inner %}
-                    {% if h.plugin_loaded("datastore") and res.datastore_active %}
-                        {% block resource_data_dictionary %}
-                            {% with ddict=h.datastore_dictionary(res.id) %}
-                                {% include 'datastore/snippets/dictionary_view.html' %}
-                            {% endwith %}
-                        {% endblock %}
-                    {% endif %}
-                    <div class="module-content">
-                        {{ ui.heading(_('Additional Information'), level=2) }}
-                        {%- call ui.util.call(ui.table, striped=true, bordered=true, data={"module": "table-toggle-more"}) -%}
-                            <thead>
-                                <tr>
-                                    <th scope="col">{{ _('Field') }}</th>
-                                    <th scope="col">{{ _('Value') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th scope="row">{{ _('Data last updated') }}</th>
-                                    <td>{{ h.render_datetime(res.last_modified) or h.render_datetime(res.created) or _('unknown') }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">{{ _('Metadata last updated') }}</th>
-                                    <td>{{ h.render_datetime(res.metadata_modified) or h.render_datetime(res.created) or _('unknown') }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">{{ _('Created') }}</th>
-                                    <td>{{ h.render_datetime(res.created) or _('unknown') }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">{{ _('Format') }}</th>
-                                    <td>{{ res.format or res.mimetype_inner or res.mimetype or _('unknown') }}</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">{{ _('License') }}</th>
-                                    <td>{% snippet "snippets/license.html", pkg_dict=pkg, text_only=True %}</td>
-                                </tr>
-                                {% for key, value in h.format_resource_items(res.items()) %}
-                                    {% if key not in ('created', 'metadata modified', 'last modified', 'format') %}
-                                        <tr class="toggle-more"><th scope="row">{{ key | capitalize }}</th><td>{{ value }}</td></tr>
-                                    {% endif %}
-                                {% endfor %}
-                            </tbody>
-                        {%- endcall %}
-
-                    </div>
-                {% endblock %}
-            </section>
-        {% endif %}
-    {% endblock %}
+        </div>
+    </article>
 {% endblock %}
 
 {% block secondary_content %}
-
-    {% block dataset_wrench %}
-        {% snippet "package/snippets/package_wrench.html", pkg=pkg, active=res.id, action='read' %}
+    {% block resource_belongs_to %}
+        {% snippet "package/snippets/resource_belongs_to.html", pkg=pkg_dict %}
     {% endblock %}
 
     {% block resources_list %}
-        {% snippet "package/snippets/resources.html", pkg=pkg, active=res.id, action='read' %}
+        {% snippet "package/snippets/resource_siblings.html", pkg=pkg_dict, current_resource_id=res.id %}
     {% endblock %}
 
-    {% block resource_license %}
-        {% snippet "snippets/social.html" %}
+    {% block resource_contact %}
+        {% snippet "package/snippets/resource_contact.html" %}
     {% endblock %}
 {% endblock %}

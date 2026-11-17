@@ -1,0 +1,79 @@
+{#
+File details block on the resource page.
+
+pkg  - Package dict (dataset license fallback).
+card - Result of h.idb_theme_resource_card(...).
+res  - Resource dict.
+
+#}
+{% set schema = h.scheming_get_dataset_schema(pkg.type) if pkg else none %}
+{% set resource_license = res.license if res and res.license else none %}
+{% set dataset_license = pkg.license if pkg and pkg.license else none %}
+{% set license_from_resource = resource_license is not none %}
+{% set license_data = res if license_from_resource else pkg %}
+{% set license_value = resource_license if license_from_resource else dataset_license %}
+{% set license_field = (
+    h.scheming_field_by_name(schema.resource_fields, 'license')
+    if license_from_resource and schema
+    else h.scheming_field_by_name(schema.dataset_fields, 'license')
+    if schema
+    else none
+) %}
+<section class="resource-file-details">
+    {{ ui.heading(_('File details'), level=2, attrs={"class": "mb-20 fs-24 text-idb-primary-20 fs-semibold"}) }}
+    <dl class="resource-file-details-list text-idb-default fs-14 mb-0">
+        {% if card.format %}
+            <div class="resource-file-details-row">
+                <dt class="fw-semibold">{{ _('Format') }}</dt>
+                <dd>{{ card.format }}</dd>
+            </div>
+        {% endif %}
+        {% if card.size %}
+            <div class="resource-file-details-row">
+                <dt class="fw-semibold">{{ _('File size') }}</dt>
+                <dd>{{ card.size }}</dd>
+            </div>
+        {% endif %}
+        {% if card.coverage_label %}
+            <div class="resource-file-details-row">
+                <dt class="fw-semibold">{{ _('Coverage') }}</dt>
+                <dd>{{ card.coverage | join(" - ") }}</dd>
+            </div>
+        {% endif %}
+        <div class="resource-file-details-row">
+            <dt class="fw-semibold">{{ _('Downloads') }}</dt>
+            <dd>{{ h.localised_number(card.downloads) }}</dd>
+        </div>
+        {% if card.created %}
+            <div class="resource-file-details-row">
+                <dt class="fw-semibold">{{ _('Created') }}</dt>
+                <dd>{{ h.render_datetime(card.created) }}</dd>
+            </div>
+        {% endif %}
+        {% if card.last_modified %}
+            <div class="resource-file-details-row">
+                <dt class="fw-semibold">{{ _('Last updated') }}</dt>
+                <dd>{{ h.render_datetime(card.last_modified) }}</dd>
+            </div>
+        {% endif %}
+        {% if license_value %}
+            <div class="resource-file-details-row">
+                <dt class="fw-semibold">{{ _('License') }}</dt>
+                <dd>
+                    {% if license_field %}
+                        {% snippet 'scheming/snippets/display_field.html',
+                            field=license_field,
+                            data=license_data,
+                            entity_type='dataset',
+                            object_type=pkg.type,
+                            schema=schema %}
+                    {% elif license_value is iterable and license_value is not string %}
+                        {{ license_value | join(', ') }}
+                    {% else %}
+                        {{ license_value }}
+                    {% endif %}
+                </dd>
+            </div>
+        {% endif %}
+    </dl>
+</section>

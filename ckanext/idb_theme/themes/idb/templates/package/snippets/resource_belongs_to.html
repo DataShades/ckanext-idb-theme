@@ -1,0 +1,19 @@
+{#
+Sidebar card: dataset ownership for the resource page.
+
+pkg - The package dict that owns the resource.
+
+#}
+{% if pkg %}
+    <section class="resource-sidebar-card mb-3">
+        <h2 class="resource-sidebar-card-title fs-14">{{ _('This resource belongs to') }}</h2>
+        <a class="resource-sidebar-dataset-link" href="{{ h.url_for(pkg.type ~ '.read', id=pkg.name) }}">
+            {{ h.dataset_display_name(pkg) }}
+        </a>
+        {% if pkg.organization %}
+            <p class="resource-sidebar-org mb-0">
+                {{ pkg.organization.title or pkg.organization.name }}
+            </p>
+        {% endif %}
+    </section>
+{% endif %}

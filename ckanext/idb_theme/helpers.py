@@ -624,6 +624,10 @@ def idb_theme_resource_card(pkg: dict[str, Any], resource: dict[str, Any]) -> di
         resource_id=resource["id"],
     )
     download_url = _resource_download_url(pkg, resource)
+    downloads = resource.get("num_downloads")
+    if downloads is None:
+        stamped = _attach_resource_download_counts([resource], pkg.get("id"))
+        downloads = stamped[0].get("num_downloads") if stamped else 0
 
     return {
         "title": title,
@@ -633,11 +637,33 @@ def idb_theme_resource_card(pkg: dict[str, Any], resource: dict[str, Any]) -> di
         "coverage_label": (
             _("{period} (Coverage)").format(period=" - ".join(coverage)) if coverage else None
         ),
-        "downloads": resource.get("num_downloads") or 0,
+        "downloads": downloads or 0,
         "size": size_label,
         "preview_url": preview_url,
         "download_url": download_url,
         "format_tip": _resource_format_tip(fmt),
+        "created": resource.get("created"),
+        "last_modified": resource.get("last_modified") or resource.get("metadata_modified"),
+        "id": resource.get("id"),
+    }
+
+
+def idb_theme_sibling_resources(pkg: dict[str, Any], current_resource_id: str | None = None) -> dict[str, Any]:
+    """Return other resources of the dataset for the resource-page sidebar.
+
+    Excludes ``current_resource_id``. ``total`` is the full resource count of
+    the dataset (including the current one).
+    """
+    resources = pkg.get("resources") or []
+    stamped = _attach_resource_download_counts(resources, pkg.get("id"))
+    siblings = [
+        idb_theme_resource_card(pkg, resource)
+        for resource in stamped
+        if resource.get("id") != current_resource_id
+    ]
+    return {
+        "total": len(resources),
+        "resources": siblings,
     }
 
 

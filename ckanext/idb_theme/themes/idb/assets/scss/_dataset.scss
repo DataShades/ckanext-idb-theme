@@ -245,24 +245,26 @@
         font-size: var(--idb-font-size-label-large);
         line-height: var(--idb-line-height-label-large);
     }
-    
-    .resource-card-tip {
-        display: flex;
-        align-items: center;
-        gap: var(--idb-space-xs);
-        padding: 0.75rem var(--idb-space-sm);
-        border-radius: var(--idb-border-radius-sm);
-        background: var(--idb-color-alert-info-bg);
-        color: var(--idb-color-alert-info-fg);
-        font-size: var(--idb-font-size-label-large);
-        line-height: var(--idb-line-height-label-large);
-    
-        svg {
-            flex: 0 0 auto;
-            width: 1.25rem;
-            height: 1.25rem;
-            margin-top: 0.1rem;
-        }
+}
+
+// Shared format tip (resource cards + resource page).
+.resource-card-tip {
+    display: flex;
+    align-items: center;
+    gap: var(--idb-space-xs);
+    padding: 0.75rem var(--idb-space-sm);
+    border: 1px solid var(--idb-color-alert-info-border, #B6CFDE);
+    border-radius: var(--idb-border-radius-sm);
+    background: var(--idb-color-alert-info-bg);
+    color: var(--idb-color-alert-info-fg);
+    font-size: var(--idb-font-size-label-large);
+    line-height: var(--idb-line-height-label-large);
+
+    svg {
+        flex: 0 0 auto;
+        width: 1.25rem;
+        height: 1.25rem;
+        margin-top: 0.1rem;
     }
 }
 
@@ -605,6 +607,117 @@
 
 .resource-view {
     margin-top: 20px;
+}
+
+.resource-read {
+    .module-content {
+        padding: 0;
+    }
+    // .resource-page-actions {
+    //     .btn svg {
+    //         width: 1.125rem;
+    //         height: 1.125rem;
+    //         margin-left: 0.35rem;
+    //         vertical-align: -0.15rem;
+    //     }
+    // }
+
+    .resource-file-details {
+        margin-top: 2.5rem;
+        margin-bottom: 2.5rem;
+        padding: 1.5rem 2.5rem;
+        border: 1px solid var(--idb-color-border-n-variant80);
+        border-radius: 1rem;
+        background: $white;
+    }
+
+    .resource-file-details-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .resource-file-details-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--idb-space-sm);
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--idb-color-border-n-variant95);
+    }
+}
+
+.resource-sidebar-card {
+    padding: 1.25rem 1rem;
+    border: 1px solid var(--idb-color-border-n-variant80);
+    border-radius: var(--idb-border-radius);
+    background: $white;
+}
+
+.resource-sidebar-card-title {
+    margin: 0 0 0.5rem;
+    color: var(--idb-color-text-default);
+    font-weight: 600;
+}
+
+.resource-sidebar-dataset-link {
+    display: inline-block;
+    margin-bottom: 0.5rem;
+    color: var(--idb-color-link-default);
+    font-size: var(--idb-font-size-label-large);
+    font-weight: 600;
+    line-height: var(--idb-line-height-label-large);
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.resource-sidebar-org {
+    color: var(--idb-color-text-default);
+    font-size: var(--idb-font-size-label);
+    line-height: var(--idb-line-height-label);
+}
+
+.resource-siblings-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--idb-color-border-n-variant80);
+
+    &:first-child {
+        padding-top: 0;
+    }
+
+    &:last-child {
+        padding-bottom: 0;
+        border-bottom: 0;
+    }
+}
+
+.resource-siblings-link {
+    display: inline-block;
+    margin-bottom: 0.25rem;
+    color: var(--idb-color-link-default);
+    font-size: var(--idb-font-size-label-large);
+    font-weight: 600;
+    line-height: var(--idb-line-height-label-large);
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}
+
+.resource-siblings-meta {
+    color: var(--idb-color-text-default);
+    font-size: var(--idb-font-size-label);
+    font-weight: 600;
+    line-height: var(--idb-line-height-label);
+}
+
+.resource-sidebar-contact {
+    border-radius: var(--idb-border-radius);
 }
 
 #activity-archive-notice {

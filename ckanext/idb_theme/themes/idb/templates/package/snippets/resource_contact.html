@@ -1,0 +1,12 @@
+{#
+Sidebar contact card (same copy as the dataset page).
+
+#}
+<div class="bg-light-blue p-3 resource-sidebar-contact">
+    <p class="fs-18 text-idb-primary-20 text-center fw-semibold mb-2">
+        {{ _('Questions about this data?') }}
+    </p>
+    <p class="text-center mb-0">
+        {{ ui.button(_("Contact the Data Steward"), style="outline-primary fs-5", svg="envelope", icon_end=true, href="mailto:info@idb.org") }}
+    </p>
+</div>

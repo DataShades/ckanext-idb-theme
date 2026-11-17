@@ -1,0 +1,31 @@
+{#
+Sidebar card: other resources in the same dataset.
+
+pkg                 - The package dict that owns the resources.
+current_resource_id - Id of the resource currently being viewed (excluded).
+
+#}
+{% set panel = h.idb_theme_sibling_resources(pkg, current_resource_id) %}
+{% if panel.total %}
+    <section class="resource-sidebar-card mb-3">
+        <h2 class="resource-sidebar-card-title fs-18 mb-3">
+            {{ _('Resources in this dataset') }} · {{ h.localised_number(panel.total) }}
+        </h2>
+        {% if panel.resources %}
+            <ul class="resource-siblings list-unstyled mb-0">
+                {% for card in panel.resources %}
+                    <li class="resource-siblings-item">
+                        <a class="resource-siblings-link" href="{{ card.preview_url }}">{{ card.title }}</a>
+                        <p class="resource-siblings-meta mb-0">
+                            {%- if card.format -%}.{{ card.format }}{%- endif -%}
+                            {%- if card.format and card.size %} - {% endif -%}
+                            {%- if card.size -%}{{ card.size }}{%- endif -%}
+                        </p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p class="mb-0 text-idb-default">{{ _('No other resources in this dataset.') }}</p>
+        {% endif %}
+    </section>
+{% endif %}

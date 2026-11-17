@@ -1,0 +1,12 @@
+{#
+Data dictionary offcanvas body for the resource page.
+
+res   - Resource dict.
+ddict - Fields from h.datastore_dictionary(...).
+
+#}
+{% if ddict %}
+    {% snippet 'datastore/snippets/dictionary_view.html', ddict=ddict, res=res, prefix='resource-dd' %}
+{% else %}
+    <p class="text-muted mb-0">{{ _('There is no data dictionary for this resource.') }}</p>
+{% endif %}
