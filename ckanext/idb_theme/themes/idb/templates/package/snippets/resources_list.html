@@ -15,7 +15,7 @@ Example:
 {%- endset -%}
 
 <section id="dataset-resources" class="resources">
-    {{ ui.heading(_('Data and Resources'), level=2) }}
+    {{ ui.heading(_('Data & Resources'), level=2, attrs={"class": "mb-20 fs-24 text-idb-primary-20 fs-semibold"}) }}
 
     {% block resource_list %}
         {% if resources %}

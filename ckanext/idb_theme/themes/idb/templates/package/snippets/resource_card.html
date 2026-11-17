@@ -12,9 +12,9 @@ Example:
 {% set card = h.idb_theme_resource_card(pkg, resource) %}
 
 <li class="resource-card mb-20" data-id="{{ resource.id }}">
-    <div class="resource-card-header">
+    <div class="resource-card-header mb-20">
         <h3 class="resource-card-title">
-            <a href="{{ card.preview_url }}" class="resource-card-title-link">
+            <a href="{{ card.preview_url }}" class="resource-card-title-link fs-22">
                 {{ card.title }}
             </a>
         </h3>
@@ -39,7 +39,7 @@ Example:
         </div>
     </div>
 
-    <ul class="resource-card-chips d-flex gap-2 list-unstyled dataset-chips">
+    <ul class="resource-card-chips d-flex gap-2 list-unstyled dataset-chips mb-20">
         {% if card.format %}
             {{ ui.chip(card.format, style="secondary") }}
         {% endif %}
@@ -57,7 +57,7 @@ Example:
     </ul>
 
     {% if card.description %}
-        <p class="resource-card-description">
+        <p class="resource-card-description mb-20 text-idb-default">
             {{ h.markdown_extract(card.description, extract_length=220) }}
         </p>
     {% endif %}

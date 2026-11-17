@@ -24,8 +24,8 @@ Example:
 <section id="dataset-resources" class="resources">
     <div class="resources-panel-header d-flex flex-wrap align-items-end justify-content-between column-gap-4 row-gap-3 mb-20">
         <div class="resources-panel-title">
-            {{ ui.heading(_('Data and Resources'), level=2, attrs={"class": "h3 mb-1"}) }}
-            <p class="resources-panel-count mb-0">
+            {{ ui.heading(_('Data & Resources'), level=2, attrs={"class": "h3 mb-1 text-idb-primary-20 fs-24 fs-semibold"}) }}
+            <p class="resources-panel-count mb-0 text-idb-default fs-14">
                 {{ ungettext(
                     '{number} resource available on this Dataset',
                     '{number} resources available on this Dataset',
@@ -34,9 +34,9 @@ Example:
             </p>
         </div>
 
-        <div class="resources-panel-controls d-flex flex-wrap align-items-center column-gap-3 row-gap-2">
+        <div class="resources-panel-controls d-flex flex-wrap align-items-center column-gap-4 row-gap-2">
             <div class="resources-search">
-                <label for="resources-q" class="visually-hidden">{{ _('Search resources') }}</label>
+                <label for="resources-q" class="visually-hidden">{{ _('Search resources...') }}</label>
                 <input id="resources-q" class="form-control resources-search-input" type="search" name="{{ panel.q_param }}"
                     value="{{ panel.q }}" placeholder="{{ _('Search resources') }}"
                     aria-label="{{ _('Search resources') }}" autocomplete="off"
