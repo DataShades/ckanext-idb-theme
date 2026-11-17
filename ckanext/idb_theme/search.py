@@ -6,7 +6,7 @@ from flask import has_request_context
 
 import ckan.plugins.toolkit as tk
 
-from .helpers import DATASET_SORTS, DEFAULT_DATASET_SORT, idb_theme_datasets_per_page
+from .helpers import DATASETS_PAGE_SORT, idb_theme_datasets_per_page
 
 
 def datasets_page_search_params(search_params: dict[str, Any]) -> dict[str, Any]:
@@ -34,7 +34,7 @@ def datasets_page_search_params(search_params: dict[str, Any]) -> dict[str, Any]
     search_params["start"] = (tk.h.get_page_number(tk.request.args) - 1) * per_page
 
     if is_datasets_page and not tk.request.args.get("sort"):
-        search_params["sort"] = DATASET_SORTS[DEFAULT_DATASET_SORT]
+        search_params["sort"] = DATASETS_PAGE_SORT
 
     return search_params
 

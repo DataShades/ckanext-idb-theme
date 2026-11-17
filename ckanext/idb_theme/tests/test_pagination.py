@@ -7,7 +7,7 @@ import pytest
 import ckan.plugins.toolkit as tk
 from ckan.tests import factories
 
-from ckanext.idb_theme import search
+from ckanext.idb_theme import helpers, search
 
 THEME_PLUGINS = "theming idb_theme"
 PER_PAGE = 3
@@ -25,7 +25,12 @@ class TestDatasetsPageSearchParams:
     def test_dataset_search_gets_the_default_sort(self, app):
         params = _params(app, "/dataset", rows=tk.config["ckan.datasets_per_page"])
 
-        assert params["sort"] == search.DATASET_SORTS[search.DEFAULT_DATASET_SORT]
+        assert params["sort"] == "score desc, metadata_modified desc"
+
+    def test_dataset_search_defaults_to_the_first_page_size(self, app):
+        params = _params(app, "/dataset", rows=tk.config["ckan.datasets_per_page"])
+
+        assert params["rows"] == helpers.DATASETS_PER_PAGE_OPTIONS[0]
 
     def test_dataset_search_keeps_the_selected_sort(self, app):
         params = _params(app, "/dataset?sort=title asc", rows=tk.config["ckan.datasets_per_page"])
@@ -65,7 +70,7 @@ class TestDatasetsPageSearchParams:
 @pytest.mark.ckan_config("ckan.plugins", THEME_PLUGINS)
 @pytest.mark.ckan_config("ckan.ui.theme", "idb")
 @pytest.mark.ckan_config("ckan.datasets_per_page", PER_PAGE)
-@pytest.mark.usefixtures("with_plugins", "clean_db", "clean_index")
+@pytest.mark.usefixtures("with_plugins", "clean_db", "clean_index", "small_pages")
 class TestOrganizationPagePagination:
     """The organization page paginates its datasets as the Datasets page does."""
 
@@ -112,7 +117,7 @@ class TestOrganizationPagePagination:
 @pytest.mark.ckan_config("ckan.plugins", THEME_PLUGINS)
 @pytest.mark.ckan_config("ckan.ui.theme", "idb")
 @pytest.mark.ckan_config("ckan.datasets_per_page", PER_PAGE)
-@pytest.mark.usefixtures("with_plugins", "clean_db", "clean_index")
+@pytest.mark.usefixtures("with_plugins", "clean_db", "clean_index", "small_pages")
 def test_datasets_page_shows_the_results_of_its_pages(app):
     """The results of the page after the first one are rendered (see `page` checks)."""
     org, names = _organization_with_datasets(5)
@@ -125,6 +130,11 @@ def test_datasets_page_shows_the_results_of_its_pages(app):
     assert len(first_names) == PER_PAGE
     assert set(_datasets_on(page, names)) == set(names) - set(first_names)
     assert "No datasets match your search" not in page
+
+
+@pytest.fixture
+def small_pages(monkeypatch: pytest.MonkeyPatch):
+    monkeypatch.setattr(helpers, "DATASETS_PER_PAGE_OPTIONS", [PER_PAGE, 8])
 
 
 def _params(app: Any, url: str, **params: Any) -> dict[str, Any]:
