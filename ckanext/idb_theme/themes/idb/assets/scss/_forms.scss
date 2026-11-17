@@ -996,6 +996,10 @@ select[data-module="autocomplete"] {
     background: var(--surface-default, #FFF);
     color: var(--idb-color-text-default, #232222);
 
+    &:is(textarea) {
+        padding: 16px 12px;
+    }
+
     &.ts-wrapper {
         padding: 0;
         border: unset;

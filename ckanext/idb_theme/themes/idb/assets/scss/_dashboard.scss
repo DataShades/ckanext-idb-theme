@@ -703,6 +703,11 @@
                     background-color: #F3F3F3;
                 }
 
+                // the first column: 16px from the left edge (24px on the Data Project edit page)
+                .tabulator-col:first-child .tabulator-col-content {
+                    padding-left: 16px;
+                }
+
                 // the Actions column is 72px: its title is cut, never ends with an ellipsis
                 .tabulator-col[tabulator-field="__table_actions"] .tabulator-col-title {
                     text-overflow: clip;
@@ -744,6 +749,10 @@
                 line-height: var(--idb-line-height-label);
                 white-space: normal;
 
+                &:first-child {
+                    padding-left: 16px;
+                }
+
                 a {
                     font-size: var(--idb-font-size-label-large);
                     line-height: var(--idb-line-height-label-large);
@@ -764,6 +773,7 @@
                 border-bottom-left-radius: 8px;
                 border-bottom-right-radius: 8px;
                 border-top: 1px solid var(--idb-border-color);
+                background: #fff;
                 font-size: var(--idb-font-size-label);
 
                 // "Items per page", the page size, the counter and the arrows, in one row
