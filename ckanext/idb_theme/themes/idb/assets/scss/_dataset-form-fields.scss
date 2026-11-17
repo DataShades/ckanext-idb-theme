@@ -7,7 +7,8 @@
 
 :root {
     --idb-field-height: 40px;
-    --idb-field-chevron: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%23232222' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/></svg>");
+    --idb-field-calendar: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='3 2 18 20'><path fill='%235C5A5A' d='M19 4h-1V2h-2v2H8V2H6v2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 16H5V10h14v10Zm0-12H5V6h14v2Zm-7 5h5v5h-5z'/></svg>");
+    --idb-field-chevron: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='1 4 14 8'><path fill='none' stroke='%23007EB6' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/></svg>");
     --idb-field-disabled-bg: var(--idb-color-neutral-99);
     --idb-field-disabled-border: var(--idb-color-border-subtle);
     --idb-field-disabled-text: var(--idb-color-text-disabled);
@@ -53,7 +54,7 @@
         background-image: var(--idb-field-chevron);
         background-repeat: no-repeat;
         background-position: right 16px center;
-        background-size: 14px 14px;
+        background-size: 12px 7px;
 
         // the empty option shows the placeholder (e.g. Select "Yes" or "No")
         &:has(option[value=""]:checked) {
@@ -69,7 +70,7 @@
         .ts-control {
             align-items: center;
             gap: 6px;
-            padding: 7px 12px;
+            padding: 16px 12px;
             box-shadow: none;
             cursor: text;
 
@@ -89,8 +90,12 @@
             box-shadow: inset 0 0 0 1px var(--idb-color-button-stroke-text);
         }
 
-        // dropdown: chevron on the right
-        &.single .ts-control {
+        // dropdown: chevron on the right (single, multi built from a select,
+        // multi vocabulary field); :where keeps the person-search override winning
+        $dropdown: ":is(.single, .form-select, :where(.vocab-select--multi) .ts-wrapper)";
+
+        &#{$dropdown} .ts-control {
+            --ts-pr-min: 40px; // Tom Select forces padding-right with !important
             padding-right: 40px;
             cursor: pointer;
 
@@ -99,15 +104,15 @@
                 position: absolute;
                 top: 50%;
                 right: 16px;
-                width: 14px;
-                height: 14px;
-                margin-top: -7px;
+                width: 12px;
+                height: 7px;
+                margin-top: -3.5px;
                 background: var(--idb-field-chevron) center / contain no-repeat;
                 transition: transform 0.2s ease;
             }
         }
 
-        &.single.dropdown-active .ts-control::after {
+        &#{$dropdown}.dropdown-active .ts-control::after {
             transform: rotate(180deg);
         }
 
@@ -153,7 +158,11 @@
         }
 
         &.multi.has-items .ts-control {
-            padding: 6px 12px;
+            padding: 15px 12px;
+        }
+
+        &#{$dropdown}.multi.has-items .ts-control {
+            padding-right: 40px;
         }
     }
 
@@ -250,8 +259,8 @@
     // Hint under a chips input, e.g. "Type to search; ..." ///////////////////
 
     .form-hint {
-        margin-top: 4px;
-        padding: 0 var(--idb-space-sm);
+        margin-top: 3px;
+        padding: 0 14px;
         color: var(--idb-color-on-surface-variant);
         font-size: 12px;
         line-height: 16px;
@@ -322,15 +331,27 @@
         }
     }
 
-    // Month/year date (MM/YYYY) //////////////////////////////////////////////
+    // Month/year date (MM/YYYY), a click opens the picker ////////////////////
 
     .month-input {
         width: 100%;
         max-width: 200px;
+        padding: 8px 48px 8px 12px;
+        border-radius: 8px;
+        background-image: var(--idb-field-calendar);
+        background-repeat: no-repeat;
+        background-position: right 16px center;
+        background-size: 18px 20px;
+        cursor: pointer;
 
-        &::-webkit-calendar-picker-indicator {
-            cursor: pointer;
+        &:disabled {
+            cursor: not-allowed;
         }
+    }
+
+    // From / To of a form group fill their column
+    .form-field-group .month-input {
+        max-width: none;
     }
 
     // Data Providers: a block per provider, "Add data provider" ////////////////
@@ -363,7 +384,7 @@
 
     .repeating-block {
         &__card {
-            padding: 20px var(--idb-space-sm) var(--idb-space-sm);
+            padding: 24px;
             border: 1px solid var(--idb-color-border-n-variant80);
             border-radius: var(--idb-border-radius);
             background: var(--idb-color-on-primary);
@@ -375,7 +396,7 @@
             align-items: center;
             justify-content: space-between;
             gap: var(--idb-space-xs);
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
 
         &__title {
@@ -423,10 +444,12 @@
         &__body {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 16px;
             padding: 0;
 
+            // the gap above spaces the fields, not the 20px of .form-section-field
             .form-group {
+                margin-top: 0;
                 margin-bottom: 0;
             }
         }
@@ -451,13 +474,13 @@
         }
 
         &__row:has(.repeating-input__remove:not([hidden])) .repeating-input__input {
-            padding-right: 44px;
+            padding-right: 48px;
         }
 
         &__remove {
             position: absolute;
             top: 50%;
-            right: 8px;
+            right: 10px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
@@ -468,8 +491,12 @@
             border-radius: 50%;
             background: none;
             color: var(--idb-color-on-surface-variant);
-            font-size: 1.125rem;
             transform: translateY(-50%);
+
+            svg {
+                width: 20px;
+                height: 20px;
+            }
 
             &[hidden] {
                 display: none;
@@ -493,7 +520,7 @@
             align-self: flex-start;
             gap: 6px;
             margin-top: var(--idb-space-xs);
-            padding: 4px 12px;
+            padding: 7px 16px;
             border: 1px solid var(--idb-color-button-stroke-border);
             border-radius: 100px;
             background: var(--idb-color-on-primary);

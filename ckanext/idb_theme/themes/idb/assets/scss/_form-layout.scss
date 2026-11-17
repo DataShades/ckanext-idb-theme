@@ -586,7 +586,7 @@
 .form-section {
     padding-bottom: 4px;
     border: 1px solid var(--idb-color-border-n-variant80);
-    border-radius: var(--idb-border-radius);
+    border-radius: 16px;
     background: var(--idb-form-card-bg);
     scroll-margin-top: var(--idb-space-sm);
 
@@ -604,7 +604,7 @@
         width: 100%;
         padding: var(--idb-space-md) 40px 20px;
         border: 0;
-        border-radius: var(--idb-border-radius);
+        border-radius: 16px;
         background: transparent;
         color: var(--idb-color-primary-dark);
         text-align: left;
@@ -640,13 +640,18 @@
         font-weight: 400;
     }
 
+    // same chevron as the dropdown fields (_dataset-form-fields.scss)
     &__chevron {
         flex: 0 0 auto;
-        display: inline-flex;
+        width: 12px;
+        height: 7px;
         margin-left: 40px;
-        color: var(--idb-color-button-stroke-text);
-        font-size: 12px;
+        background: var(--idb-field-chevron) center / contain no-repeat;
         transition: transform 0.2s ease;
+
+        > * {
+            display: none;
+        }
     }
 
     &__toggle:not(.collapsed) &__chevron {
@@ -697,14 +702,78 @@
         margin-bottom: 0;
     }
 
-    .multilingual-field-group .form-group {
-        margin-bottom: 20px;
+    // 20px between the per-language inputs of a translated field (siblings
+    // inside the field, or inside .title-field after the URL box)
+    .form-group ~ .form-group {
+        margin-top: 20px;
     }
 
     // spacing above the divider comes from the gap of .form-section__content
-    & + & {
+    & + &,
+    .form-field-group + &,
+    & + .form-field-group {
         padding-top: 20px;
-        border-top: 1px dashed var(--idb-color-border-n-variant95);
+        border-top: 1px dashed #C7C7C9;
+    }
+}
+
+// A field rendered by the snippet of another one (e.g. Visibility after
+// Organization): the same dashed divider and spacing as between fields
+.form-field-divider {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px dashed #C7C7C9;
+}
+
+// Fields side by side under one heading (form_group in the schema),
+// e.g. Temporal coverage: From / To
+.form-field-group {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+
+    // floated, so the legend doesn't sit on the fieldset border (the divider
+    // above stays a full line) and spaces like a field label
+    > legend {
+        float: left;
+        width: 100%;
+        padding: 0;
+
+        + * {
+            clear: left;
+        }
+    }
+
+    &__fields {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+
+        @include media-breakpoint-down(sm) {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        // no divider between the fields of a group
+        > .form-section-field + .form-section-field {
+            padding-top: 0;
+            border-top: 0;
+        }
+
+        // Label/Large SemiBold
+        .form-label {
+            margin-bottom: 4px;
+            color: var(--idb-color-text-primary);
+            font-family: var(--idb-font-family-inter), sans-serif;
+            font-size: var(--idb-font-size-label-large);
+            line-height: var(--idb-line-height-label-large);
+            font-weight: 600;
+
+            // the group heading shows the required mark
+            .control-required {
+                display: none;
+            }
+        }
     }
 }
 

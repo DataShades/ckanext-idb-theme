@@ -8,6 +8,8 @@ body.dt-view {
   #dtprv_filter {
     display: flex;
     justify-content: flex-end;
+    float: none;
+    clear: both;
     margin-top: 0.5rem;
   }
 }

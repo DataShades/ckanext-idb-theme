@@ -111,7 +111,7 @@ textarea {
 // Help text under a field. Body/Medium
 .form-text {
     margin-top: 0;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     color: var(--idb-color-text-default);
     font-size: var(--idb-font-size-label-large);
     line-height: var(--idb-line-height-label-large);
@@ -990,15 +990,11 @@ select[data-module="autocomplete"] {
 // IDB customization //////////////////////////////////////////////////////////
 // design: MD3 outline border (the theme's --idb-color-outline), xsmall radius, default surface
 .form-control {
-    padding: 8px var(--spacing-12px, 12px);
+    padding: 16px var(--spacing-12px, 12px);
     border: 1px solid var(--idb-color-outline, #A6A6A8);
     border-radius: var(--xsmall, 4px);
     background: var(--surface-default, #FFF);
     color: var(--idb-color-text-default, #232222);
-
-    &:is(textarea) {
-        padding: 16px 12px;
-    }
 
     &.ts-wrapper {
         padding: 0;

@@ -27,6 +27,25 @@ this.ckan.module('dataset-visibility', function ($) {
           .prop('disabled', true)
           .val('False');
       }
+      this._syncTomSelect();
+    },
+
+    // the visibility select may be a Tom Select (created after this module):
+    // copy the state of the native select to it
+    _syncTomSelect: function() {
+      var select = this.options.visibility[0];
+      var tomSelect = select && select.tomselect;
+
+      if (!tomSelect) {
+        return;
+      }
+
+      tomSelect.setValue(select.value, true);
+      if (select.disabled) {
+        tomSelect.disable();
+      } else {
+        tomSelect.enable();
+      }
     }
   };
 });
