@@ -14,6 +14,11 @@ Example:
 
 #}
 <section class="search-results" id="search-results" hx-swap-oob="true" hx-swap="none">
+    {%- set q = request.args.get('q', '') -%}
+    {%- set ai = h.knowledge_assistant_semantic_suggestions_options(q, page.item_count, page.items) if h.plugin_loaded('knowledge_assistant') and request.args.get('page', 1) | int == 1 -%}
+    {%- if ai %}
+        <div class="idb-ai-suggestions" data-module="idb-ai-suggestions" data-module-endpoint="{{ ai.url }}" data-module-q="{{ q }}" data-module-timeout="{{ ai.timeout_ms }}"></div>
+    {%- endif %}
     {% if page.item_count %}
         {% block package_search_results_list %}
             {% snippet 'snippets/package_list.html', packages=page.items %}

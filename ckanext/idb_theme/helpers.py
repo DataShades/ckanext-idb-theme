@@ -28,6 +28,9 @@ DATASET_SORTS = {
     "modified": "metadata_modified desc",
 }
 DEFAULT_DATASET_SORT = "modified"
+# Default of the Datasets page: without a search term every score is equal, so
+# it falls back to the most recently updated first
+DATASETS_PAGE_SORT = "score desc, metadata_modified desc"
 
 # "Items per page" options of the Datasets page, the first one is the default.
 # The parameter starts with "_", so the dataset search view does not treat it
@@ -319,8 +322,11 @@ def idb_theme_dataset_sort_options() -> list[dict[str, str]]:
     ``sort`` parameter to ``package_search`` as is.
     """
     return [
-        {"value": DATASET_SORTS[option["value"]], "label": option["label"]}
-        for option in idb_theme_highlights_sort_options()
+        {"value": DATASETS_PAGE_SORT, "label": _("Relevance")},
+        *(
+            {"value": DATASET_SORTS[option["value"]], "label": option["label"]}
+            for option in idb_theme_highlights_sort_options()
+        ),
     ]
 
 
@@ -329,17 +335,13 @@ def idb_theme_datasets_per_page(options: list[int] | None = None) -> int:
 
     ``options`` are the page sizes of the dropdown, the ones of the Datasets
     page by default; other pages, e.g. the Data Projects page of
-    ckanext-iadb-iar, set their own. Unknown values fall back to
-    ``ckan.datasets_per_page``, the page size the search views use, and to the
-    first option when that value is missing.
+    ckanext-iadb-iar, set their own. A missing or unknown value falls back to
+    the first option, the one the dropdown shows selected.
     """
     options = options or DATASETS_PER_PAGE_OPTIONS
     value = tk.request.args.get(DATASETS_PER_PAGE_PARAM, type=int) if has_request_context() else None
 
-    if value in options:
-        return value
-
-    return tk.config.get("ckan.datasets_per_page") or options[0]
+    return value if value in options else options[0]
 
 
 def idb_theme_datasets_pagination(item_count: int, options: list[int] | None = None) -> dict[str, Any]:
