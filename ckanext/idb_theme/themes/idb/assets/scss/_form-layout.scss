@@ -17,7 +17,7 @@
 .form-page-header {
     display: flex;
     flex-direction: column;
-    margin-bottom: var(--idb-space-md);
+    margin-bottom: 20px;
 
     // spacing via margins (not gap) so the title keeps exactly 16px below it
     > .info-banner {
@@ -26,7 +26,7 @@
 
     &__title {
         margin: 0 0 var(--idb-space-sm);
-        color: var(--idb-color-primary);
+        color: var(--idb-color-primary-20);
         font-size: var(--idb-font-size-display-small);
         line-height: var(--idb-line-height-display-small);
         font-weight: 700;
