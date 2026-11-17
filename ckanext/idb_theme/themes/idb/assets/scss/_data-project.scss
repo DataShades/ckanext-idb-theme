@@ -12,10 +12,10 @@
 }
 
 .form-page-header__description {
-    margin: calc(-1 * var(--idb-space-sm) + 4px) 0 var(--idb-space-sm);
+    margin: calc(-1 * var(--idb-space-sm) + 4px) 0 20px;
     color: var(--idb-color-text-default);
-    font-size: var(--idb-font-size-label-large);
-    line-height: var(--idb-line-height-label-large);
+    font-size: var(--idb-font-size-text);
+    line-height: 24px;
 }
 
 // the toolbar holds only the submit button, on the right
@@ -228,8 +228,27 @@
 
 // no margin around the table: more specific than the dashboard table rule
 // (.data-project-page .dashboard-table ... .tabulator-container in _dashboard.scss)
-.data-project-page .data-project-members.dashboard-table .tabulator-wrapper .tabulator.tabulator-container {
-    margin: 0;
+.data-project-page .data-project-members.dashboard-table .tabulator-wrapper .tabulator {
+    &.tabulator-container {
+        margin: 0;
+    }
+
+    // the first column: 24px from the left edge, in the header and the rows
+    .tabulator-header .tabulator-col:first-child .tabulator-col-content,
+    .tabulator-row .tabulator-cell:first-child {
+        padding-left: 24px;
+    }
+
+    // all the table text is 14px
+    .tabulator-header .tabulator-col .tabulator-col-title,
+    .tabulator-row .tabulator-cell,
+    .tabulator-row .tabulator-cell a,
+    .tabulator-row .tabulator-cell .table-member__name,
+    .tabulator-footer,
+    .tabulator-footer .tabulator-footer-contents .tabulator-paginator label,
+    .tabulator-footer .tabulator-footer-contents .tabulator-paginator .tabulator-page-size {
+        font-size: 14px;
+    }
 }
 
 .data-project-members {
@@ -250,12 +269,12 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: var(--idb-color-secondary-60);
+            width: 32px;
+            height: 32px;
+            border-radius: 64px;
+            background: #007EB6;
             color: var(--idb-color-on-primary);
-            font-size: 0.625rem;
+            font-size: 16px;
             line-height: 1;
             font-weight: 600;
         }
