@@ -425,6 +425,10 @@ def idb_theme_user_initials(user_ref: str | None) -> str:
 def idb_theme_activity_item_html(item_html: str | Markup, initials: str) -> Markup:
     """Swap the CKAN fa-stack icon for a blue initials avatar.
 
+    Leaves the avatar as its own sibling and wraps the remaining ``<li>``
+    content in ``.change-history-body`` so the row can use flex centering
+    instead of absolute positioning.
+
     Works on a plain string so Markup-aware ``replace`` cannot escape the
     injected HTML (that was breaking the change-history list).
     """
@@ -433,9 +437,16 @@ def idb_theme_activity_item_html(item_html: str | Markup, initials: str) -> Mark
         f"{escape(initials)}</span>"
     )
     text = re.sub(
-        r'<span class="fa-stack fa-lg">.*?</span>',
+        r'<span class="fa-stack fa-lg">.*?</span>\s*',
         avatar,
         str(item_html),
+        count=1,
+        flags=re.DOTALL,
+    )
+    text = re.sub(
+        r'(<span class="change-history-avatar"[^>]*>.*?</span>)(.*?)(</li>\s*)$',
+        r'\1<span class="change-history-body">\2</span>\3',
+        text,
         count=1,
         flags=re.DOTALL,
     )

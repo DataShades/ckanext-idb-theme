@@ -57,3 +57,26 @@ class TestPackageActivity:
 
         monkeypatch.setattr(helpers.model.User, "get", lambda ref: FakeUser())
         assert helpers.idb_theme_user_initials("user-1") == "FE"
+
+    def test_activity_item_html_wraps_body_beside_avatar(self):
+        item = (
+            '<li class="item changed-package">'
+            '<span class="fa-stack fa-lg">'
+            '<i class="fa fa-circle fa-stack-2x icon"></i>'
+            '<i class="fa fa-sitemap fa-stack-1x fa-inverse"></i>'
+            "</span>"
+            '<span>Actor</span> updated the dataset <span class="dataset">Demo</span>'
+            "<br />"
+            '<span class="date">2 days ago</span>'
+            "</li>"
+        )
+
+        html = str(helpers.idb_theme_activity_item_html(item, "VA"))
+
+        assert '<span class="change-history-avatar" aria-hidden="true">VA</span>' in html
+        assert '<span class="change-history-body">' in html
+        assert 'class="fa-stack' not in html
+        assert html.index("change-history-avatar") < html.index("change-history-body")
+        assert "Actor" in html
+        assert 'class="date"' in html
+        assert html.strip().endswith("</li>")
