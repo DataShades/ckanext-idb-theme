@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from unittest.mock import patch
+
 import pytest
 
 from ckanext.idb_theme import helpers
@@ -9,9 +11,15 @@ from ckanext.idb_theme import helpers
 THEME_PLUGINS = "theming idb_theme activity"
 
 
+@pytest.fixture
+def activity_db(with_plugins, clean_db, migrate_db_for):
+    migrate_db_for("activity")
+
+
 @pytest.mark.ckan_config("ckan.plugins", THEME_PLUGINS)
 @pytest.mark.usefixtures("with_plugins")
 class TestPackageActivity:
+    @pytest.mark.usefixtures("activity_db")
     def test_default_limit(self, app):
         pkg = {"id": "pkg-1", "name": "demo-dataset"}
         with app.flask_app.test_request_context():
@@ -21,6 +29,7 @@ class TestPackageActivity:
         assert panel["offset"] == 0
         assert panel["limit_options"] == helpers.ACTIVITY_LIMIT_OPTIONS
 
+    @pytest.mark.usefixtures("activity_db")
     def test_unknown_limit_falls_back(self, app):
         pkg = {"id": "pkg-1", "name": "demo-dataset"}
         with app.flask_app.test_request_context():
@@ -28,6 +37,7 @@ class TestPackageActivity:
 
         assert panel["limit"] == helpers.DEFAULT_ACTIVITY_LIMIT
 
+    @pytest.mark.usefixtures("activity_db")
     def test_unknown_activity_type_cleared(self, app):
         pkg = {"id": "pkg-1", "name": "demo-dataset"}
         with app.flask_app.test_request_context():
@@ -42,21 +52,21 @@ class TestPackageActivity:
         assert options
         assert any(option["value"] == "changed package" for option in options)
 
-    def test_user_initials_from_fullname(self, monkeypatch):
+    def test_user_initials_from_fullname(self):
         class FakeUser:
             fullname = "Veneri Guarch, Federico Alejandro"
             name = "fedeveneri"
 
-        monkeypatch.setattr(helpers.model.User, "get", lambda ref: FakeUser())
-        assert helpers.idb_theme_user_initials("user-1") == "VA"
+        with patch.object(helpers.model.User, "get", return_value=FakeUser()):
+            assert helpers.idb_theme_user_initials("user-1") == "VA"
 
-    def test_user_initials_from_name_when_no_fullname(self, monkeypatch):
+    def test_user_initials_from_name_when_no_fullname(self):
         class FakeUser:
             fullname = ""
             name = "fedeveneri"
 
-        monkeypatch.setattr(helpers.model.User, "get", lambda ref: FakeUser())
-        assert helpers.idb_theme_user_initials("user-1") == "FE"
+        with patch.object(helpers.model.User, "get", return_value=FakeUser()):
+            assert helpers.idb_theme_user_initials("user-1") == "FE"
 
     def test_activity_item_html_wraps_body_beside_avatar(self):
         item = (

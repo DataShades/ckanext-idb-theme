@@ -386,7 +386,7 @@ def idb_theme_resource_sort_options() -> list[dict[str, str]]:
 def idb_theme_activity_type_options() -> list[dict[str, str]]:
     """Return activity-type filter options for the change-history panel."""
     try:
-        from ckanext.activity.logic.validators import VALIDATORS_PACKAGE_ACTIVITY_TYPES
+        from ckanext.activity.logic.validators import VALIDATORS_PACKAGE_ACTIVITY_TYPES  # noqa: PLC0415
     except ImportError:
         return []
 
@@ -450,7 +450,7 @@ def idb_theme_activity_item_html(item_html: str | Markup, initials: str) -> Mark
         count=1,
         flags=re.DOTALL,
     )
-    return Markup(text)
+    return Markup(text)  # noqa: S704 - CKAN's rendered activity item plus an escaped avatar
 
 
 def idb_theme_package_activity(
@@ -464,20 +464,7 @@ def idb_theme_package_activity(
     Unknown limit values fall back to the default (9). ``offset`` is snapped
     down to the start of the last page when it would land past the end.
     """
-    type_values = {option["value"] for option in idb_theme_activity_type_options()}
-    if has_request_context():
-        if activity_type is None:
-            activity_type = tk.request.args.get(ACTIVITY_TYPE_PARAM)
-        if limit is None:
-            limit = tk.request.args.get(ACTIVITY_LIMIT_PARAM, type=int)
-        if offset is None:
-            offset = tk.request.args.get(ACTIVITY_OFFSET_PARAM, type=int)
-
-    if activity_type not in type_values:
-        activity_type = ""
-    if limit not in ACTIVITY_LIMIT_OPTIONS:
-        limit = DEFAULT_ACTIVITY_LIMIT
-    offset = max(offset or 0, 0)
+    activity_type, limit, offset = _activity_page_args(activity_type, limit, offset)
 
     pkg_id = pkg.get("id") or ""
     pkg_name = pkg.get("name") or pkg_id
@@ -485,28 +472,13 @@ def idb_theme_package_activity(
     item_count = 0
 
     if pkg_id and p.plugin_loaded("activity"):
-        context: dict[str, Any] = {"user": tk.current_user.name, "auth_user_obj": tk.current_user}
-        data_dict: dict[str, Any] = {"id": pkg_id, "limit": limit, "offset": offset}
-        if activity_type:
-            data_dict["activity_types"] = [activity_type]
         try:
-            activities = tk.get_action("package_activity_list")(context, data_dict)
-            item_count = _package_activity_count(pkg_id, activity_type or None)
+            count = _package_activity_count(pkg_id, activity_type or None)
+            page_offset = ((count - 1) // limit) * limit if count and offset >= count else offset
+            activities = _package_activity_list(pkg_id, activity_type, limit, page_offset)
+            item_count, offset = count, page_offset
         except (tk.ObjectNotFound, tk.NotAuthorized, tk.ValidationError):
-            activities = []
-            item_count = 0
-
-    if item_count and offset >= item_count:
-        offset = ((item_count - 1) // limit) * limit
-        if pkg_id and p.plugin_loaded("activity"):
-            context = {"user": tk.current_user.name, "auth_user_obj": tk.current_user}
-            data_dict = {"id": pkg_id, "limit": limit, "offset": offset}
-            if activity_type:
-                data_dict["activity_types"] = [activity_type]
-            try:
-                activities = tk.get_action("package_activity_list")(context, data_dict)
-            except (tk.ObjectNotFound, tk.NotAuthorized, tk.ValidationError):
-                activities = []
+            pass
 
     last_offset = ((item_count - 1) // limit) * limit if item_count else 0
 
@@ -552,23 +524,7 @@ def idb_theme_package_resources(
     Unknown sort/limit values fall back to the defaults. ``offset`` is snapped
     down to the start of the last page when it would land past the end.
     """
-    sort_values = {option["value"] for option in idb_theme_resource_sort_options()}
-    if has_request_context():
-        if sort is None:
-            sort = tk.request.args.get(RESOURCE_SORT_PARAM)
-        if limit is None:
-            limit = tk.request.args.get(RESOURCE_LIMIT_PARAM, type=int)
-        if offset is None:
-            offset = tk.request.args.get(RESOURCE_OFFSET_PARAM, type=int)
-        if q is None:
-            q = tk.request.args.get(RESOURCE_Q_PARAM)
-
-    if sort not in sort_values:
-        sort = DEFAULT_RESOURCE_SORT
-    if limit not in RESOURCE_LIMIT_OPTIONS:
-        limit = DEFAULT_RESOURCE_LIMIT
-    offset = max(offset or 0, 0)
-    q = (q or "").strip()
+    sort, limit, offset, q = _resource_page_args(sort, limit, offset, q)
 
     resources = _attach_resource_download_counts(
         _filter_package_resources(pkg.get("resources") or [], q),
@@ -737,6 +693,51 @@ def _resource_format_tip(fmt: str) -> str | None:
     return tips.get(key)
 
 
+def _activity_page_args(activity_type: str | None, limit: int | None, offset: int | None) -> tuple[str, int, int]:
+    """Return the activity filter and page: the arguments, else the request's, with defaults for unknown values."""
+    if has_request_context():
+        args = tk.request.args
+        activity_type = args.get(ACTIVITY_TYPE_PARAM) if activity_type is None else activity_type
+        limit = args.get(ACTIVITY_LIMIT_PARAM, type=int) if limit is None else limit
+        offset = args.get(ACTIVITY_OFFSET_PARAM, type=int) if offset is None else offset
+
+    type_values = {option["value"] for option in idb_theme_activity_type_options()}
+    return (
+        activity_type if activity_type in type_values else "",
+        limit if limit in ACTIVITY_LIMIT_OPTIONS else DEFAULT_ACTIVITY_LIMIT,
+        max(offset or 0, 0),
+    )
+
+
+def _package_activity_list(package_id: str, activity_type: str, limit: int, offset: int) -> list[dict[str, Any]]:
+    """Return one page of the package's activities, as the current user sees them."""
+    context: dict[str, Any] = {"user": tk.current_user.name, "auth_user_obj": tk.current_user}
+    data_dict: dict[str, Any] = {"id": package_id, "limit": limit, "offset": offset}
+    if activity_type:
+        data_dict["activity_types"] = [activity_type]
+    return tk.get_action("package_activity_list")(context, data_dict)
+
+
+def _resource_page_args(
+    sort: str | None, limit: int | None, offset: int | None, q: str | None
+) -> tuple[str, int, int, str]:
+    """Return the resources sort, page and query: the arguments, else the request's; defaults for unknown values."""
+    if has_request_context():
+        args = tk.request.args
+        sort = args.get(RESOURCE_SORT_PARAM) if sort is None else sort
+        limit = args.get(RESOURCE_LIMIT_PARAM, type=int) if limit is None else limit
+        offset = args.get(RESOURCE_OFFSET_PARAM, type=int) if offset is None else offset
+        q = args.get(RESOURCE_Q_PARAM) if q is None else q
+
+    sort_values = {option["value"] for option in idb_theme_resource_sort_options()}
+    return (
+        sort if sort in sort_values else DEFAULT_RESOURCE_SORT,
+        limit if limit in RESOURCE_LIMIT_OPTIONS else DEFAULT_RESOURCE_LIMIT,
+        max(offset or 0, 0),
+        (q or "").strip(),
+    )
+
+
 def _filter_package_resources(resources: list[dict[str, Any]], q: str) -> list[dict[str, Any]]:
     """Filter resources by a free-text query against name, description and format."""
     if not q:
@@ -758,11 +759,11 @@ def _filter_package_resources(resources: list[dict[str, Any]], q: str) -> list[d
 def _package_activity_count(package_id: str, activity_type: str | None = None) -> int:
     """Return the number of public activities about a package."""
     try:
-        from ckanext.activity.logic.action import _get_user_permission_labels
-        from ckanext.activity.model.activity import (
+        from ckanext.activity.logic.action import _get_user_permission_labels  # noqa: PLC0415
+        from ckanext.activity.model.activity import (  # noqa: PLC0415
+            _filter_activities_by_permission_labels,
             _filter_activitites_from_type,
             _filter_activitites_from_users,
-            _filter_activities_by_permission_labels,
             _package_activity_query,
         )
     except ImportError:
@@ -787,10 +788,10 @@ def _attach_resource_download_counts(
     downloads: dict[str, int] = {}
     if package_id and p.plugin_loaded("iadb_iar_tracking"):
         try:
-            from ckanext.iadb_iar_tracking.tracking import EventReader
+            from ckanext.iadb_iar_tracking.tracking import EventReader  # noqa: PLC0415
         except ImportError:
-            EventReader = None  # type: ignore[misc, assignment]
-        if EventReader is not None:
+            pass
+        else:
             downloads = EventReader().get_downloads_for_package_resources(package_id)
 
     return [
