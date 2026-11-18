@@ -108,3 +108,9 @@ body.dt-view {
     right: math.div($grid-gutter-width,2);
   }
 }
+
+.resource-view {
+  .actions {
+    position: relative;
+  }
+}

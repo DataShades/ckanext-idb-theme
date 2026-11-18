@@ -80,7 +80,8 @@ a.open-data {
 }
 
 #package-additional-info,
-#package-change-history {
+#package-change-history,
+#resource-data-dictionary {
     border-left: none;
 
     @include media-breakpoint-down(md) {
