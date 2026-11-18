@@ -864,6 +864,17 @@ select[data-module="autocomplete"] {
         display: block;
     }
 
+    &.form-group .form-group {
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        padding: $input-padding-y $input-padding-x;
+        background: $input-bg;
+        color: $input-color;
+        line-height: 2.5;
+    }
+
     label.btn::after {
         // button labels don't need a ":" at the end of the content
         content: "";
@@ -871,7 +882,7 @@ select[data-module="autocomplete"] {
 
     .btn-remove-url {
         position: absolute;
-        top: $grid-gutter-width;
+        top: 2rem;
         right: math.div($grid-gutter-width, 6);
         padding: 5px 12px;
         transform: translateY(30%);

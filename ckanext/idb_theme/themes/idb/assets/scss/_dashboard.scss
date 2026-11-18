@@ -126,7 +126,8 @@
 
 // the Data Project edit page reuses the dashboard table for its members
 .dashboard-layout,
-.data-project-page {
+.data-project-page,
+.add-data {
     .dashboard-sidebar {
         margin-bottom: var(--idb-space-md);
 

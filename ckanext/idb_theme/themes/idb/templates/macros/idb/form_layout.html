@@ -30,11 +30,13 @@ Example:
 A single step of the stepper.
 
 status - one of "active", "complete", "pending". CKAN's "uncomplete" is treated as "pending".
+href   - makes the step a link, e.g. back to a completed step
 -#}
-{%- macro stepper_step(label, index, status="pending") -%}
+{%- macro stepper_step(label, index, status="pending", href=none) -%}
     {%- set status = "pending" if status in (none, "", "uncomplete") else status -%}
     {%- set status_labels = {"active": _("In progress"), "complete": _("Completed"), "pending": _("Pending")} -%}
     <li {{ ui.util.attrs(kwargs, {"class": "stepper-step stepper-step--" ~ status}) }} {{ 'aria-current="step"' | safe if status == "active" }}>
+        {%- if href %}<a class="stepper-step__link" href="{{ href }}">{% endif -%}
         <span class="stepper-step__index" aria-hidden="true">
             {%- if status == "complete" -%}{{ ui.icon("check") }}{%- else -%}{{ index }}{%- endif -%}
         </span>
@@ -42,6 +44,7 @@ status - one of "active", "complete", "pending". CKAN's "uncomplete" is treated 
             <span class="stepper-step__label">{{ label }}</span>
             <span class="stepper-step__status">{{ status_labels.get(status, status) }}</span>
         </span>
+        {%- if href %}</a>{% endif -%}
     </li>
 {%- endmacro %}
 
@@ -96,8 +99,9 @@ fields      - number of all fields in the section, shown in the badge (default: 
 optional    - show "Optional" instead of a counter
 open        - expanded on page load
 collapsible - false renders a plain card: the header has no toggle and the fields are always shown
+badge       - false leaves out the completion badge (a static card that is not part of the form)
 -#}
-{%- macro form_section(content, title, id, subtitle=none, total=0, fields=none, optional=false, open=false, collapsible=true) -%}
+{%- macro form_section(content, title, id, subtitle=none, total=0, fields=none, optional=false, open=false, collapsible=true, badge=true) -%}
     {%- set body_id = "form-section-body-" ~ id -%}
     {%- if not collapsible -%}
     <section {{ ui.util.attrs(kwargs, {"class": "form-section form-section--static is-open", "id": "form-section-" ~ id}) }} data-form-section="{{ id }}">
@@ -106,7 +110,7 @@ collapsible - false renders a plain card: the header has no toggle and the field
                 <h2 class="form-section__title">{{ title }}</h2>
                 {%- if subtitle %}<span class="form-section__subtitle">{{ subtitle }}</span>{% endif %}
             </span>
-            {{ ui.completion_badge(id, total, optional, fields) }}
+            {{ ui.completion_badge(id, total, optional, fields) if badge }}
         </div>
         <div id="{{ body_id }}" class="form-section__body">
             <div class="form-section__content">
@@ -323,4 +327,84 @@ max_size - maximum file size, in MB
             <button type="button" class="image-dropzone__action image-dropzone__action--dismiss" data-image-dropzone-dismiss aria-label="{{ _('Dismiss') }}" title="{{ _('Dismiss') }}">{{ ui.icon("xmark") }}</button>
         </div>
     </div>
+{%- endmacro %}
+
+
+{#-
+Drop zone for one or more files, e.g. the resources of a dataset. Unlike
+`image_dropzone` it is not a form field: the page's JS module takes the chosen
+files from the `change` event of the input and lists them with the template
+below, see iadb-iar-add-data.js.
+
+formats  - accepted formats listed under the text, e.g. "CSV, JSON"
+accept   - the `accept` attribute of the input
+multiple - more than one file at a time
+
+The list items have a `data-state`: "pending", "uploading" or "error".
+-#}
+{%- macro file_dropzone(id, formats=none, accept=none, multiple=true, label=none) -%}
+    <div {{ ui.util.attrs(kwargs, {"class": "file-dropzone"}) }} data-file-dropzone>
+        <div class="file-dropzone__area" data-file-dropzone-area>
+            <input class="file-dropzone__input" type="file" id="{{ id }}" data-file-dropzone-input
+                aria-label="{{ label or _('Choose files to upload') }}"
+                {%- if multiple %} multiple{% endif %}
+                {%- if accept %} accept="{{ accept }}"{% endif %}>
+            <span class="file-dropzone__icon" aria-hidden="true">{{ h.snippet("svg/upload_file.svg") }}</span>
+            <span class="file-dropzone__text">
+                <span class="file-dropzone__link">{{ _("Click to upload") }}</span>
+                {{ _("or drag and drop files here") }}
+            </span>
+            {%- if formats %}
+                <span class="file-dropzone__hint">{{ _("Accepted formats: {formats}").format(formats=formats) }}</span>
+            {%- endif %}
+        </div>
+
+        <ul class="file-dropzone__files" data-file-dropzone-files aria-live="polite" hidden></ul>
+
+        <template data-file-dropzone-template>
+            <li class="file-dropzone__file" data-state="pending">
+                <span class="file-dropzone__file-icon" aria-hidden="true">{{ h.snippet("svg/upload_file.svg") }}</span>
+                <span class="file-dropzone__file-text">
+                    <span class="file-dropzone__file-name" data-file-dropzone-name></span>
+                    <span class="file-dropzone__file-error" data-file-dropzone-error></span>
+                </span>
+                <span class="file-dropzone__spinner spinner-border" role="status">
+                    <span class="visually-hidden">{{ _("Uploading") }}</span>
+                </span>
+                <button type="button" class="file-dropzone__remove" data-file-dropzone-remove aria-label="{{ _('Remove file') }}" title="{{ _('Remove file') }}">{{ ui.icon("xmark") }}</button>
+            </li>
+        </template>
+    </div>
+{%- endmacro %}
+
+
+{#-
+Side card with the details of an item, as a list of labels and values.
+
+title      - the heading of the card
+edit_label - text of the button under the title
+edit_href  - target of the button
+items      - list of dicts with `label` and `value`
+-#}
+{%- macro details_card(title, items=[], edit_label=none, edit_href=none, empty=none) -%}
+    <section {{ ui.util.attrs(kwargs, {"class": "form-side-card details-card"}) }}>
+        {%- if title %}<h2 class="details-card__title">{{ title }}</h2>{% endif %}
+        {%- if edit_label and edit_href %}
+            <a class="details-card__edit btn btn-secondary" href="{{ edit_href }}">
+                {{ edit_label }} <span aria-hidden="true">{{ ui.icon("pen") }}</span>
+            </a>
+        {%- endif %}
+        {%- if items %}
+            <dl class="details-card__list">
+                {%- for item in items %}
+                    <div class="details-card__item">
+                        <dt class="details-card__label">{{ item.label }}</dt>
+                        <dd class="details-card__value">{{ item.value }}</dd>
+                    </div>
+                {%- endfor %}
+            </dl>
+        {%- elif empty %}
+            <p class="details-card__empty">{{ empty }}</p>
+        {%- endif %}
+    </section>
 {%- endmacro %}

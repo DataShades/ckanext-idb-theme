@@ -196,6 +196,28 @@
 }
 
 
+// a step that links back, e.g. the completed "Create Dataset"
+.stepper-step__link {
+    display: flex;
+    align-items: center;
+    gap: var(--idb-space-xs);
+    min-width: 0;
+    color: inherit;
+    text-decoration: none;
+
+    &:hover .stepper-step__label,
+    &:focus-visible .stepper-step__label {
+        text-decoration: underline;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--idb-color-button-flat-background);
+        outline-offset: 2px;
+        border-radius: var(--idb-border-radius-sm);
+    }
+}
+
+
 // Status pill ////////////////////////////////////////////////////////////////
 
 .form-status {
@@ -865,9 +887,12 @@
 }
 
 
-// Image drop zone ////////////////////////////////////////////////////////////
+// Drop zones ////////////////////////////////////////////////////////////////
+// image_dropzone (an image form field) and file_dropzone (files uploaded right
+// away, "Add data") look the same; the blocks below the shared rules keep the differences.
 
-.image-dropzone {
+.image-dropzone,
+.file-dropzone {
     display: flex;
     flex-direction: column;
 
@@ -877,8 +902,6 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        // spacing via the margins of the icon and the text (design)
-        gap: 0;
         padding: 24px 16px;
         // design: the border stays #A6A6A8 in every state (errors show in the status row)
         border: 1px dashed #A6A6A8;
@@ -891,8 +914,8 @@
             background: var(--idb-color-interaction-selected);
         }
 
-        // keyboard focus only: the module focuses the input after Remove and dismiss
-        &:has(.image-dropzone__input:focus-visible) {
+        // keyboard focus only: the image module focuses the input after Remove and dismiss
+        &:has(input[type="file"]:focus-visible) {
             outline: 2px solid var(--idb-color-button-flat-background);
             outline-offset: 1px;
         }
@@ -908,7 +931,6 @@
         cursor: pointer;
     }
 
-    // design: a 40px circle with a ⋮ icon
     &__icon {
         flex: 0 0 auto;
         display: inline-flex;
@@ -916,13 +938,82 @@
         justify-content: center;
         width: 40px;
         height: 40px;
+        margin-bottom: 16px;
         border: 1px solid #AEAEAD;
         border-radius: 50%;
-        margin-bottom: 16px;
         color: #5C5A5A;
         font-size: 1rem;
     }
 
+    &__hint {
+        color: #5C5A5A;
+        font-family: var(--idb-font-family-inter), sans-serif;
+        font-size: 0.75rem;
+        line-height: 1rem;
+        font-weight: 600;
+        text-align: center;
+        overflow-wrap: anywhere;
+    }
+
+    &__spinner {
+        flex: 0 0 auto;
+        width: 18px;
+        height: 18px;
+        border-width: 2px;
+        border-right-color: transparent;
+        color: var(--idb-color-button-flat-background);
+    }
+}
+
+// a chosen file under the drop area
+.image-dropzone__status,
+.file-dropzone__file {
+    display: flex;
+    align-items: center;
+    gap: var(--idb-space-xs);
+    min-height: 52px;
+    border-left: 4px solid #004E70;
+    border-radius: var(--idb-border-radius-sm);
+    background: var(--idb-color-alert-info-bg);
+    color: #004E70;
+    font-family: var(--idb-font-family-inter), sans-serif;
+    font-size: var(--idb-font-size-label-large);
+    line-height: var(--idb-line-height-label-large);
+
+    // design: 4px #A31F37 accent, #FCF0F0 background
+    &[data-state="error"] {
+        border-left-color: #A31F37;
+        background: #FCF0F0;
+        color: var(--idb-color-error-40);
+    }
+}
+
+.image-dropzone__action,
+.file-dropzone__remove {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    font-size: 1.125rem;
+
+    &:hover,
+    &:focus-visible {
+        background: rgba(0, 0, 0, 0.06);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--idb-color-button-flat-background);
+        outline-offset: -2px;
+    }
+}
+
+.image-dropzone {
     &__text {
         margin-bottom: 8px;
         color: #272626;
@@ -936,43 +1027,12 @@
         color: #007EB6;
     }
 
-    &__hint {
-        color: #5C5A5A;
-        font-family: var(--idb-font-family-inter), sans-serif;
-        font-size: 0.75rem;
-        line-height: 1rem;
-        font-weight: 600;
-        letter-spacing: 0;
-        text-align: center;
-        vertical-align: middle;
-    }
-
-    // the chosen file under the drop area: uploading, success or error
     &__status {
-        display: flex;
-        align-items: center;
-        gap: var(--idb-space-xs);
-        min-height: 52px;
         margin-top: var(--idb-space-sm);
         padding: 6px var(--idb-space-sm);
-        border-left: 4px solid #004E70;
-        border-radius: var(--idb-border-radius-sm);
-        background: var(--idb-color-alert-info-bg);
-        color: #004E70;
-        font-family: var(--idb-font-family-inter), sans-serif;
-        font-size: var(--idb-font-size-label-large);
-        line-height: var(--idb-line-height-label-large);
 
         &[hidden] {
             display: none;
-        }
-
-        // design: 4px #A31F37 accent, #FCF0F0 background
-        &[data-state="error"] {
-            border-left: 4px solid #A31F37;
-            border-radius: 4px;
-            background: #FCF0F0;
-            color: var(--idb-color-error-40);
         }
     }
 
@@ -991,12 +1051,10 @@
         }
     }
 
-    // the info icon of the uploading and success states (design: #004E70)
     &__status-icon--file {
         color: #004E70;
     }
 
-    // the icon of the error state (design: #A31F37)
     &__status-icon--error {
         color: #A31F37;
     }
@@ -1016,38 +1074,11 @@
     }
 
     &__spinner {
-        flex: 0 0 auto;
-        width: 18px;
-        height: 18px;
         margin: 0 var(--idb-space-xs);
-        border-width: 2px;
-        border-right-color: transparent;
-        color: var(--idb-color-button-flat-background);
     }
 
     &__action {
-        flex: 0 0 auto;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        padding: 0;
-        border: 0;
-        border-radius: 50%;
-        background: none;
         color: var(--idb-color-primary-dark);
-        font-size: 1.125rem;
-
-        &:hover,
-        &:focus-visible {
-            background: rgba(0, 0, 0, 0.06);
-        }
-
-        &:focus-visible {
-            outline: 2px solid var(--idb-color-button-flat-background);
-            outline-offset: -2px;
-        }
 
         svg {
             width: 14px;
@@ -1066,5 +1097,362 @@
     &__status:not([data-state="success"]) &__action--remove,
     &__status:not([data-state="error"]) &__action--dismiss {
         display: none;
+    }
+}
+
+.file-dropzone {
+    gap: var(--idb-space-sm);
+
+    &__icon svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    &__text {
+        margin-bottom: 8px;
+        color: var(--idb-color-text-primary);
+        text-align: center;
+        font-family: var(--idb-font-family), sans-serif;
+        font-size: var(--idb-font-size-text);
+        line-height: var(--idb-line-height-text);
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    &__link {
+        color: var(--idb-color-link-default);
+        font-family: var(--idb-font-family-inter), sans-serif;
+        font-size: var(--idb-font-size-text);
+        line-height: var(--idb-line-height-text);
+        font-weight: 600;
+    }
+
+    &__files {
+        display: flex;
+        flex-direction: column;
+        gap: var(--idb-space-xs);
+        margin: 0;
+        padding: 0;
+        list-style: none;
+
+        &[hidden] {
+            display: none;
+        }
+    }
+
+    &__file {
+        padding: 6px var(--idb-space-xs) 6px var(--idb-space-sm);
+    }
+
+    &__file-icon {
+        flex: 0 0 auto;
+        display: inline-flex;
+        color: var(--idb-color-button-stroke-text);
+
+        svg {
+            width: 24px;
+            height: 24px;
+        }
+    }
+
+    &__file[data-state="error"] &__file-icon {
+        color: inherit;
+    }
+
+    &__file-text {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+    }
+
+    &__file-name {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__file-error {
+        font-size: var(--idb-font-size-label);
+        line-height: var(--idb-line-height-label);
+        overflow-wrap: anywhere;
+
+        &:empty {
+            display: none;
+        }
+    }
+
+    &__spinner {
+        margin: 0 11px;
+    }
+
+    &__remove {
+        color: inherit;
+    }
+
+    &__file:not([data-state="uploading"]) &__spinner,
+    &__file[data-state="uploading"] &__remove {
+        display: none;
+    }
+}
+
+
+// Details card: labels and values of an item, e.g. the selected resource //////
+
+.details-card {
+    gap: var(--idb-space-sm);
+    border-color: var(--idb-color-outline);
+
+    &__title {
+        margin: 0;
+        color: var(--idb-color-primary-20);
+        font-family: var(--idb-font-family), sans-serif;
+        font-size: 1.125rem;
+        line-height: 1.5rem;
+        font-weight: 600;
+        overflow-wrap: anywhere;
+    }
+
+    // the portal's btn-secondary, with the text and the icon in the link colour (#007EB6),
+    // also over its :hover rule, which sets the text colour again
+    &__edit,
+    &__edit:hover {
+        color: var(--idb-color-button-stroke-text);
+    }
+
+    &__edit {
+        padding: var(--idb-space-xs) var(--idb-space-sm);
+    }
+
+    &__list {
+        align-self: stretch;
+        margin: 0;
+    }
+
+    // label on the left, value on the right; long values wrap under the label on narrow cards
+    &__item {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 4px var(--idb-space-sm);
+        padding: var(--idb-space-xs) 0;
+        border-bottom: 1px solid var(--idb-color-border-n-variant95);
+
+        &:last-child {
+            border-bottom: 0;
+        }
+    }
+
+    &__label {
+        flex: 0 1 auto;
+        margin: 0;
+        color: var(--idb-color-text-default);
+        font-family: var(--idb-font-family), sans-serif;
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+        font-weight: 600;
+    }
+
+    &__value {
+        flex: 1 1 50%;
+        min-width: 0;
+        margin: 0;
+        color: var(--idb-color-text-default);
+        font-family: var(--idb-font-family), sans-serif;
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+        font-weight: 400;
+        text-align: right;
+        overflow-wrap: anywhere;
+    }
+
+    &__empty {
+        margin: 0;
+        color: var(--idb-color-text-subtle);
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+    }
+}
+
+
+// Two columns with the side panel on the right (the "Add data" step) //////////
+
+.form-layout--details {
+    // stacked up to lg, the panel under the content
+    @include media-breakpoint-up(md) {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    @include media-breakpoint-up(lg) {
+        grid-template-columns: minmax(0, 7fr) minmax(240px, 3fr);
+    }
+
+    .form-layout__aside {
+        align-self: start;
+    }
+}
+
+
+// "Add data" step //////////////////////////////////////////////////////////////
+
+.add-data {
+    .form-layout__aside.add-data__aside {
+        gap: 12px;
+    }
+
+    // the "Upload a resource" card: 20px 40px around the header and the content
+    .form-section--static {
+        padding: 20px 40px;
+        border: 1px solid var(--idb-color-outline);
+        border-radius: var(--idb-border-radius);
+        background: var(--idb-color-on-primary);
+
+        .form-section__toggle {
+            padding: 0;
+        }
+
+        // an h2 here (a span in the collapsible sections): not the heading font
+        .form-section__title {
+            margin: 0;
+            color: var(--idb-color-primary-20);
+            font-family: var(--idb-font-family), sans-serif;
+            font-size: var(--idb-font-size-subtitle);
+            line-height: var(--idb-line-height-subtitle);
+            font-weight: 600;
+        }
+
+        .form-section__subtitle {
+            color: var(--idb-color-text-default);
+            font-family: var(--idb-font-family), sans-serif;
+            font-size: var(--idb-font-size-label-large);
+            line-height: var(--idb-line-height-label-large);
+            font-weight: 400;
+        }
+
+        .form-section__content {
+            padding: 20px 0 0;
+        }
+
+        // small screens keep a narrow side padding, as the other sections
+        @include media-breakpoint-down(md) {
+            padding: 20px var(--idb-space-sm);
+        }
+    }
+
+    &__main {
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+    }
+
+    &__upload-actions {
+        display: flex;
+
+        .btn {
+            padding: var(--idb-space-xs) var(--idb-space-md);
+            border-radius: var(--idb-border-radius-lg);
+            font-family: var(--idb-font-family-inter), sans-serif;
+            font-weight: 600;
+
+            &:disabled {
+                border-color: var(--idb-color-interaction-disabled);
+                background: var(--idb-color-interaction-disabled);
+                color: var(--idb-color-text-disabled);
+                opacity: 1;
+            }
+        }
+
+        @include media-breakpoint-down(sm) {
+            .btn {
+                width: 100%;
+            }
+        }
+    }
+
+    &__resources-header {
+        margin-bottom: 20px;
+    }
+
+    &__resources-title {
+        margin: 0;
+        color: var(--idb-color-primary-20);
+        font-family: var(--idb-font-family), sans-serif;
+        font-size: var(--idb-font-size-subtitle);
+        line-height: var(--idb-line-height-subtitle);
+        font-weight: 600;
+    }
+
+    &__resources-subtitle {
+        margin: 0;
+        color: var(--idb-color-text-default);
+        font-family: var(--idb-font-family), sans-serif;
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+        font-weight: 400;
+    }
+
+    // no search, filters or buttons: the empty control bar is not shown
+    .add-data__resources .table-control {
+        display: none !important;
+    }
+
+    // the table follows the title directly; a click on a row selects it
+    .add-data__resources.dashboard-table .tabulator-wrapper .tabulator {
+        &.tabulator-container {
+            margin: 0;
+        }
+
+        .tabulator-row {
+            cursor: pointer;
+
+            &.is-selected,
+            &.is-selected:hover {
+                background: var(--idb-color-interaction-selected);
+            }
+
+            &:focus-visible {
+                outline: 2px solid var(--idb-color-button-flat-background);
+                outline-offset: -2px;
+            }
+        }
+
+    }
+}
+
+// "Edit Resource Info" modal of the "Add data" step: the resource form scrolls,
+// its Cancel and "Save changes" buttons stay at the bottom
+#add-data-resource-modal {
+    .modal-content {
+        max-height: calc(100vh - var(--bs-modal-margin) * 2);
+    }
+
+    .modal-body {
+        overflow-y: auto;
+        padding-bottom: 0;
+    }
+
+    .add-data-modal__loading {
+        display: flex;
+        justify-content: center;
+        padding: var(--idb-space-xl) 0;
+        color: var(--idb-color-button-flat-background);
+    }
+
+    .add-data-modal__error {
+        margin: 0 0 var(--bs-modal-padding);
+        color: var(--idb-color-error-40);
+    }
+
+    .form-actions {
+        position: sticky;
+        bottom: 0;
+        z-index: 1;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: var(--idb-space-xs);
+        margin: 0 calc(-1 * var(--bs-modal-padding));
+        padding: var(--idb-space-sm) var(--bs-modal-padding);
+        background: var(--bs-modal-bg);
     }
 }
