@@ -1079,3 +1079,12 @@ select[data-module="autocomplete"] {
         order: 4;
     }
 }
+
+#dataset-edit,
+#resource-edit {
+    .form-control.ka-ai-filled,
+    .ka-ai-filled + .ts-wrapper .ts-control {
+        border-color: var(--idb-form-banner-border);
+        background-color: var(--idb-form-banner-bg);
+    }
+}
