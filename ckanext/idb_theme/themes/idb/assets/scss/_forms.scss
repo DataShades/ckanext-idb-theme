@@ -869,10 +869,17 @@ select[data-module="autocomplete"] {
     }
 
     .form-control {
-        padding: $input-padding-y $input-padding-x;
+        padding: 16px var(--spacing-12px, 12px);
         background: $input-bg;
         color: $input-color;
         line-height: 2.5;
+
+        // Bootstrap pulls the button to the edges by its own input padding, not this one
+        &::file-selector-button {
+            margin: -16px calc(-1 * var(--spacing-12px, 12px));
+            margin-inline-end: var(--spacing-12px, 12px);
+            padding: 16px var(--spacing-12px, 12px);
+        }
     }
 
     label.btn::after {

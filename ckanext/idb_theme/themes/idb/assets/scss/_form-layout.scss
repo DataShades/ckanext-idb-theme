@@ -1402,6 +1402,12 @@
             margin: 0;
         }
 
+        .tabulator-header .tabulator-col .tabulator-col-title,
+        .tabulator-row .tabulator-cell {
+            font-size: var(--idb-font-size-label-large);
+            line-height: var(--idb-line-height-label-large);
+        }
+
         .tabulator-row {
             cursor: pointer;
 
