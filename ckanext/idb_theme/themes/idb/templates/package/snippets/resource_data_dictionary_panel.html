@@ -1,12 +1,38 @@
 {#
 Data dictionary offcanvas body for the resource page.
 
+List layout (like change history), 3 columns from Data dictionary.svg:
+Variable | Type | Description.
+
 res   - Resource dict.
 ddict - Fields from h.datastore_dictionary(...).
 
 #}
-{% if ddict %}
-    {% snippet 'datastore/snippets/dictionary_view.html', ddict=ddict, res=res, prefix='resource-dd' %}
-{% else %}
-    <p class="text-muted mb-0">{{ _('There is no data dictionary for this resource.') }}</p>
-{% endif %}
+<section class="data-dictionary-panel">
+    {% if ddict %}
+        <ul class="data-dictionary-list">
+            <li class="data-dictionary-item data-dictionary-item--head" aria-hidden="true">
+                <span class="data-dictionary-col data-dictionary-col-variable">{{ _('Variable') }}</span>
+                <span class="data-dictionary-col data-dictionary-col-type">{{ _('Type') }}</span>
+                <span class="data-dictionary-col data-dictionary-col-description">{{ _('Description') }}</span>
+            </li>
+            {% for field in ddict %}
+                {% set info = field.get('info') or {} %}
+                {% set description = h.get_translated(info, 'notes') or h.get_translated(info, 'label') or '' %}
+                <li class="data-dictionary-item">
+                    <span class="data-dictionary-col data-dictionary-col-variable">{{ field.id }}</span>
+                    <span class="data-dictionary-col data-dictionary-col-type">{{ (field.type or '')|upper }}</span>
+                    <span class="data-dictionary-col data-dictionary-col-description">
+                        {% if description %}
+                            {{ description }}
+                        {% else %}
+                            <span class="data-dictionary-empty">—</span>
+                        {% endif %}
+                    </span>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="data-dictionary-empty mb-0">{{ _('There is no data dictionary for this resource.') }}</p>
+    {% endif %}
+</section>
