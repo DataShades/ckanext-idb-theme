@@ -99,7 +99,7 @@ fields      - number of all fields in the section, shown in the badge (default: 
 optional    - show "Optional" instead of a counter
 open        - expanded on page load
 collapsible - false renders a plain card: the header has no toggle and the fields are always shown
-badge       - false leaves out the completion badge (a static card that is not part of the form)
+badge       - false leaves out the completion badge
 -#}
 {%- macro form_section(content, title, id, subtitle=none, total=0, fields=none, optional=false, open=false, collapsible=true, badge=true) -%}
     {%- set body_id = "form-section-body-" ~ id -%}
@@ -126,7 +126,7 @@ badge       - false leaves out the completion badge (a static card that is not p
                     <span class="form-section__title">{{ title }}</span>
                     {%- if subtitle %}<span class="form-section__subtitle">{{ subtitle }}</span>{% endif %}
                 </span>
-                {{ ui.completion_badge(id, total, optional, fields) }}
+                {{ ui.completion_badge(id, total, optional, fields) if badge }}
                 <span class="form-section__chevron" aria-hidden="true">{{ ui.icon("chevron-down") }}</span>
             </button>
         </h2>

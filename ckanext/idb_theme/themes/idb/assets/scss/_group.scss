@@ -428,3 +428,72 @@
         }
     }
 }
+
+
+// Create (and later Edit) Organizational Unit page: organization/new.html and
+// organization/snippets/organization_page.html. The header, the toolbar and the
+// form card come from _form-layout.scss; the members and datasets panels of the
+// Edit page will take the right column of .organization-layout.
+.main.organization-page {
+    padding-top: 24px;
+    padding-bottom: 48px;
+    background-color: #F9F9FA;
+
+    // .main .primary is white (see _layout.scss)
+    .primary {
+        background-color: transparent;
+    }
+}
+
+// the toolbar holds only the submit button, on the right
+.organization-form-page .form-page-toolbar {
+    justify-content: flex-end;
+    min-height: 82px;
+}
+
+.organization-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 40px;
+    align-items: start;
+    margin-bottom: var(--idb-space-lg);
+
+    @include media-breakpoint-up(lg) {
+        // the Edit page: the overview on the left, the panels on the right
+        &:has(.organization-layout__aside) {
+            grid-template-columns: minmax(0, 863fr) minmax(0, 617fr);
+        }
+    }
+
+    &__main,
+    &__aside {
+        min-width: 0;
+    }
+
+    &__aside {
+        display: flex;
+        flex-direction: column;
+        gap: var(--idb-space-md);
+    }
+
+    // the form keeps the 863px of the design while there is no side column
+    @include media-breakpoint-up(xxxl) {
+        &:not(:has(.organization-layout__aside)) &__main {
+            max-width: 863px;
+        }
+    }
+}
+
+// CKAN's slug preview hides the URL field (inline display: none) and shows
+// "URL: /organization/<name> Edit" under the title instead: the empty wrapper,
+// with its divider, goes too
+.organization-form .form-section-field:has(> .form-group[style*="display: none"]) {
+    display: none;
+}
+
+// the URL field belongs to the title: no divider between them (edit state of
+// the slug preview)
+.organization-form .form-section-field#form-field-name {
+    padding-top: 0;
+    border-top: 0;
+}
