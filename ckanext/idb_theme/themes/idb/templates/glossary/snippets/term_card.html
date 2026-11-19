@@ -1,0 +1,42 @@
+{#
+Glossary term card. Clicking the card opens the term detail offcanvas;
+the favorite control stays a separate control so it does not nest a form
+inside the open button.
+#}
+{% set panel_id = "glossary-term-" ~ term.id %}
+{% set label = h.iadb_iar_glossary_fluent(term.label) %}
+{% set definition = h.iadb_iar_glossary_fluent(term.definition) %}
+
+<li class="glossary-term-card">
+    <button type="button"
+            class="glossary-term-card-open"
+            data-bs-toggle="offcanvas"
+            data-bs-target="#{{ panel_id }}"
+            aria-controls="{{ panel_id }}">
+        <div>
+            <span class="glossary-term-card-title">{{ label }}</span>
+        </div>
+        <span class="glossary-term-card-definition">{{ definition }}</span>
+        <span class="glossary-term-card-meta">
+            <span class="glossary-term-card-category">{{ term.category_label }}</span>
+        </span>
+    </button>
+    {% if is_logged_in %}
+        <form class="glossary-term-card-favorite"
+              method="post"
+              action="{{ h.url_for('iadb_iar.glossary_favorite', term_id=term.id) }}">
+            {{ h.csrf_input() }}
+            <button type="submit"
+                    class="glossary-term-favorite-btn{{ ' is-favorite' if term.is_favorite }}"
+                    aria-pressed="{{ 'true' if term.is_favorite else 'false' }}"
+                    aria-label="{{ _('Remove from favorites') if term.is_favorite else _('Add to favorites') }}">
+                {% if term.is_favorite %}
+                    {% snippet "svg/glossary-star-filled.svg" %}
+                {% else %}
+                    {% snippet "svg/glossary-star.svg" %}
+                {% endif %}
+            </button>
+        </form>
+    {% endif %}
+
+</li>

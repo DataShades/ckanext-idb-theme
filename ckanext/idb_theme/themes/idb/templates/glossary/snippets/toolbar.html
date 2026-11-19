@@ -1,0 +1,41 @@
+{#
+Search field and sort control for the glossary primary column.
+Form posts to the current glossary section route (no ?view=).
+#}
+{% set form_endpoint = {
+    'all': 'iadb_iar.glossary',
+    'category': 'iadb_iar.glossary_category',
+    'recent': 'iadb_iar.glossary_recent',
+    'favorites': 'iadb_iar.glossary_favorites',
+}.get(view, 'iadb_iar.glossary') %}
+<form class="glossary-toolbar" method="get" action="{{ h.url_for(form_endpoint) }}" role="search">
+    {% if view == 'all' and letter %}
+        <input type="hidden" name="letter" value="{{ letter }}">
+    {% endif %}
+    {% for category_id in selected_categories | default([]) %}
+        <input type="hidden" name="category" value="{{ category_id }}">
+    {% endfor %}
+
+    <div class="glossary-search">
+        <label class="visually-hidden" for="glossary-q">{{ _('Search terms') }}</label>
+        <input id="glossary-q" class="form-control glossary-search-input" type="search" name="q"
+               value="{{ q }}" placeholder="{{ _('Search terms, definitions, or categories') }}"
+               autocomplete="off">
+        <span class="facet-icon facet-icon-search" aria-hidden="true"></span>
+    </div>
+
+    {% if view != 'recent' %}
+        <div class="glossary-sort">
+            <label class="visually-hidden" for="glossary-sort">{{ _('Sort') }}</label>
+            <select id="glossary-sort" class="form-select" name="sort" data-module="idb-select"
+                    onchange="this.form.submit()">
+                <option value="label asc"{% if sort == 'label asc' %} selected{% endif %}>
+                    {{ _('Name Ascending') }}
+                </option>
+                <option value="label desc"{% if sort == 'label desc' %} selected{% endif %}>
+                    {{ _('Name Descending') }}
+                </option>
+            </select>
+        </div>
+    {% endif %}
+</form>
