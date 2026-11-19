@@ -8,8 +8,10 @@
     --idb-field-disabled-text: var(--idb-color-text-disabled);
 }
 
-// the resource form has no id of its own: its `resource-form` module (as in _forms.scss)
-:is(#dataset-edit, #organization-edit, [data-module~="resource-form"]) {
+// the resource form has no id of its own: its `resource-form` module (as in
+// _forms.scss); the "Add member" search of the organization page sits outside
+// its form, so the form around it is listed too
+:is(#dataset-edit, #organization-edit, [data-module~="resource-form"], .organization-members__add) {
     // Text inputs, textareas and dropdowns ////////////////////////////////////
 
     .form-control,
@@ -111,6 +113,10 @@
             transform: rotate(180deg);
         }
 
+        // the "Add member" search has no dropdown to open: a magnifier takes
+        // the place of the chevron (see the .organization-members__search rule
+        // at the end of this block)
+
         // chips of a multi-value field
         &.multi .ts-control > .item {
             display: inline-flex;
@@ -198,6 +204,16 @@
         &::after {
             content: none;
         }
+    }
+
+    // the "Add member" search of the organization page is a search box too
+    .organization-members__search .ts-wrapper.single .ts-control::after {
+        content: none;
+    }
+
+    .organization-members__search .ts-wrapper.single .ts-control {
+        --ts-pr-min: 48px;
+        padding-right: 48px;
     }
 
     // chips of Select2 inputs (the autocomplete module)

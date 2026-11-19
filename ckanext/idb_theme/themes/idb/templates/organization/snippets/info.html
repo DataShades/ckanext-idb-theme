@@ -45,9 +45,9 @@ error_message   - Error returned by the follow action.
                         {%- if organization.state == 'deleted' %} [{{ _('Deleted') }}]{% endif -%}
                     </h1>
 
-                    {%- if organization.notes %}
+                    {%- if organization.description %}
                         <div class="idb-unit-banner-description embedded-content">
-                            {{ h.render_markdown(organization.notes) }}
+                            {{ h.render_markdown(organization.description) }}
                         </div>
                     {%- endif %}
                 </div>

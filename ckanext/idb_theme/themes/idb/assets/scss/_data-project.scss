@@ -251,7 +251,8 @@
     }
 }
 
-.data-project-members {
+.data-project-members,
+.organization-members {
     // no search, filters or buttons: the empty control bar is not shown
     .table-control {
         display: none !important;
