@@ -40,7 +40,7 @@
         <div class="module-content">
             {% block resource_content %}
                 {% block resource_read_title %}
-                    <h1 class="page-heading fs-36 text-idb-default mb-3">
+                    <h1 class="page-heading fs-36 text-idb-default mb-12 mt-20">
                         {{ h.resource_display_name(res) }}
                     </h1>
                 {% endblock %}
@@ -51,14 +51,14 @@
                             {{ h.render_markdown(card.description) }}
                         </div>
                     {% elif package.notes %}
-                        <div class="notes embedded-content text-iadb-netural-black mb-20">
+                        <div class="notes embedded-content text-iadb-default mb-20">
                             {{ h.markdown_extract(h.get_translated(package, 'notes')) }}
                         </div>
                     {% endif %}
                 {% endblock %}
 
                 {% block resource_chips %}
-                    <ul class="dataset-chips list-unstyled d-flex flex-wrap gap-2 mb-20">
+                    <ul class="dataset-chips res-chips list-unstyled d-flex flex-wrap gap-2 mb-20">
                         {% if card.format %}
                             {{ ui.chip(card.format, style="secondary") }}
                         {% endif %}
@@ -159,17 +159,47 @@
             {% block data_preview %}
                 {% block resource_view %}
                     {% block resource_view_nav %}
-                        {% snippet "package/snippets/resource_views_list.html",
-                                    views=resource_views,
-                                    pkg=pkg,
-                                    is_edit=false,
-                                    view_id=current_resource_view.id if current_resource_view else none,
-                                    resource=resource,
-                                    extra_class="nav-tabs"
-                        %}
+                        {% if current_resource_view and current_resource_view.view_type in ['datatables_view', 'charts_builder_view'] and resource_views %}
+                            <section class="resource-explorer" aria-labelledby="resource-explorer-title">
+                                <h2 id="resource-explorer-title" class="resource-explorer-title">{{ _('Data explorer') }}</h2>
+                                <ul class="resource-explorer-tabs">
+                                    {% for view in resource_views %}
+                                        {% set is_selected = view.id == current_resource_view.id %}
+                                        {% set view_icon = h.resource_view_icon(view) %}
+                                        {% set icon_class = 'fab' if view_icon == 'windows' else 'fa' %}
+                                        {% set label = _('Table') if view.view_type == 'datatables_view' else (_('Chart Builder') if view.view_type == 'charts_builder_view' else view.title) %}
+                                        {% if request.args.get('filters') %}
+                                            {% set href = h.url_for(pkg_dict.type ~ '_resource.read', id=pkg_dict.name, resource_id=resource.id, view_id=view.id, filters=request.args.get('filters')) %}
+                                        {% else %}
+                                            {% set href = h.url_for(pkg_dict.type ~ '_resource.read', id=pkg_dict.name, resource_id=resource.id, view_id=view.id) %}
+                                        {% endif %}
+                                        <li>
+                                            <a class="resource-explorer-tab{% if is_selected %} active{% endif %}"
+                                               href="{{ href }}"{% if is_selected %} aria-current="page"{% endif %}>
+                                                {% if view.view_type == 'charts_builder_view' %}
+                                                    <i class="resource-explorer-chart-icon" aria-hidden="true"></i>
+                                                {% else %}
+                                                    <i class="{{ icon_class }} fa-{{ view_icon }}" aria-hidden="true"></i>
+                                                {% endif %}
+                                                {{ label }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </section>
+                        {% else %}
+                            {% snippet "package/snippets/resource_views_list.html",
+                                        views=resource_views,
+                                        pkg=pkg,
+                                        is_edit=false,
+                                        view_id=current_resource_view.id if current_resource_view else none,
+                                        resource=resource,
+                                        extra_class="nav-tabs"
+                            %}
+                        {% endif %}
                     {% endblock %}
                     {% block resource_view_content %}
-                        <div class="resource-view">
+                        <div class="resource-view{% if current_resource_view and current_resource_view.view_type == 'datatables_view' %} data-explorer-table-view{% endif %}">
                             {% if resource_views %}
                                 {% for resource_view in resource_views %}
                                     {% if resource_view == current_resource_view %}

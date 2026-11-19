@@ -1,0 +1,35 @@
+{#
+Glossary sidebar views (All Terms / By Category / Recently Added / My favorites).
+Icons always visible; active/hover use currentColor → blue from the link.
+#}
+<nav class="glossary-views dashboard-menu" aria-label="{{ _('Glossary views') }}">
+    <p class="dashboard-menu-title">{{ _('Glossary') }}</p>
+    <ul class="dashboard-menu-list">
+        {{ ui.dashboard_nav_item(
+            _('All Terms'),
+            href=h.url_for('iadb_iar.glossary'),
+            active=view == 'all',
+            svg='glossary-book'
+        ) }}
+        {{ ui.dashboard_nav_item(
+            _('By Category'),
+            href=h.url_for('iadb_iar.glossary_category'),
+            active=view == 'category',
+            svg='glossary-folder'
+        ) }}
+        {{ ui.dashboard_nav_item(
+            _('Recently Added'),
+            href=h.url_for('iadb_iar.glossary_recent'),
+            active=view == 'recent',
+            svg='glossary-recent'
+        ) }}
+        {% if is_logged_in %}
+            {{ ui.dashboard_nav_item(
+                _('My favorites'),
+                href=h.url_for('iadb_iar.glossary_favorites'),
+                active=view == 'favorites',
+                svg='glossary-star'
+            ) }}
+        {% endif %}
+    </ul>
+</nav>

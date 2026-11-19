@@ -1,0 +1,13 @@
+{#
+Body of the glossary term detail offcanvas (Category + Definition).
+#}
+<dl class="idb-spec-list glossary-term-detail">
+    <div class="idb-spec-row">
+        <dt>{{ _('Category') }}</dt>
+        <dd>{{ term.category_label }}</dd>
+    </div>
+    <div class="idb-spec-row">
+        <dt>{{ _('Definition') }}</dt>
+        <dd>{{ h.iadb_iar_glossary_fluent(term.definition) }}</dd>
+    </div>
+</dl>

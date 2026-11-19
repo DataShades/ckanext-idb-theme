@@ -1,0 +1,16 @@
+{#
+A–Z letter filter for the All Terms view.
+#}
+{% set letters = ['ALL'] + 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'|list %}
+<nav class="glossary-az" aria-label="{{ _('Filter by letter') }}">
+    <ul class="glossary-az-list list-unstyled">
+        {% for item in letters %}
+            <li class="glossary-az-item{{ ' active' if letter == item }}">
+                <a href="{{ h.url_for('iadb_iar.glossary', letter=item, q=q, sort=sort) }}"
+                   {% if letter == item %}aria-current="page"{% endif %}>
+                    {{ item }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+</nav>

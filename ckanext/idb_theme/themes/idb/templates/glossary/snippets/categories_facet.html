@@ -1,0 +1,68 @@
+{#
+Category facet for /glossary/category. Reuses the dataset facet section
+markup and idb-search-facets module for search / expand. Links stay on
+glossary_category and keep the current search/sort.
+#}
+{% set selected_categories = selected_categories | default([]) %}
+{% set long_list_size = 5 %}
+{% set is_long = categories | length > long_list_size %}
+{% set selected_count = selected_categories | length %}
+
+<div class="filters glossary-filters" data-module="idb-search-facets">
+    <div class="filters-panel" role="region" aria-label="{{ _('Categories') }}">
+        {%- call ui.util.call(
+            ui.facet_section,
+            title=_('Categories'),
+            key='category',
+            tooltip=_('Filter glossary terms by one or more thematic categories. Placeholder help text.'),
+            selected=selected_count,
+            collapsed=false
+        ) -%}
+            {%- set search_id = ui.util.id('category', prefix='facet-search-') -%}
+            <div class="facet-search">
+                <label class="visually-hidden" for="{{ search_id }}">{{ _('Search categories') }}</label>
+                <input id="{{ search_id }}" class="form-control facet-search-input" type="search"
+                       placeholder="{{ _('Search categories') }}" autocomplete="off">
+                <span class="facet-icon facet-icon-search" aria-hidden="true"></span>
+            </div>
+
+            <ul class="facet-items list-unstyled">
+                {% for item in categories %}
+                    {% set item_id = item['id'] %}
+                    {% set label = h.iadb_iar_glossary_fluent(item['label']) %}
+                    {% set active = item_id in selected_categories %}
+                    {#- single expression: {% set %} inside {% if %} does not leak in Jinja -#}
+                    {% set next_categories = (
+                        selected_categories | reject('equalto', item_id) | list
+                    ) if active else (selected_categories + [item_id]) %}
+                    <li class="facet-item{{ ' active' if active }}{{ ' facet-item-extra' if is_long and loop.index > long_list_size and not active }}"
+                        data-facet-label="{{ label | lower }}">
+                        <a href="{{ h.url_for(
+                            'iadb_iar.glossary_category',
+                            category=next_categories | join(','),
+                            q=q | default(''),
+                            sort=sort | default('label asc')
+                        ) }}"
+                           role="checkbox" aria-checked="{{ 'true' if active else 'false' }}">
+                            <span class="facet-item-check" aria-hidden="true"></span>
+                            <span class="facet-item-label">{{ label }}</span>
+                            <span class="facet-item-count">{{ item['count'] }}</span>
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <p class="facet-search-empty" hidden>{{ _('No values match your search') }}</p>
+
+            {% if is_long %}
+                <button type="button" class="facet-view-all" aria-expanded="false">
+                    <span class="facet-view-all-more">
+                        {{ _('View all {num} categories').format(num=categories | length) }}
+                    </span>
+                    <span class="facet-view-all-less">{{ _('View less') }}</span>
+                    <span class="facet-icon facet-icon-chevron" aria-hidden="true"></span>
+                </button>
+            {% endif %}
+        {%- endcall %}
+    </div>
+</div>

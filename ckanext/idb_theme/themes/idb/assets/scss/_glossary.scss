@@ -1,0 +1,441 @@
+// Public Glossary page: sidebar views, search/A–Z toolbar, term cards and
+// the term-detail offcanvas (Category + Definition).
+
+.glossary-page {
+    background: #F9F9FA;
+
+    .primary {
+        background: none;
+    }
+
+    // dashboard-menu styles live under .dashboard-page; reuse them here
+    .glossary-views.dashboard-menu {
+        .dashboard-menu-title {
+            padding: 0.375rem 1rem;
+            font-size: 0.75rem;
+            color: var(--idb-color-text-faint);
+            font-weight: 600;
+        }
+        padding: var(--idb-space-sm) var(--idb-space-xs);
+        margin-bottom: 0.75rem;
+        background-color: var(--idb-color-on-primary);
+        border: 1px solid #C7C7C9;
+        border-radius: var(--idb-border-radius);
+
+        .dashboard-menu-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .dashboard-menu-item {
+            a {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 12px 16px;
+                border-radius: var(--idb-border-radius);
+                font-size: 14px;
+                line-height: 20px;
+                font-weight: 400;
+                color: var(--idb-color-text-default);
+                text-decoration: none;
+
+                &:hover,
+                &:focus-visible {
+                    background-color: #EDF5FA;
+                    color: #007EB6;
+                    font-weight: 600;
+                    text-decoration: none;
+
+                    .dashboard-menu-icon {
+                        color: #007EB6;
+                    }
+                }
+
+                &:focus-visible {
+                    outline: 2px solid var(--idb-color-button-flat-background);
+                    outline-offset: -2px;
+                }
+            }
+
+            &.active a {
+                background-color: #EDF5FA;
+                color: #007EB6;
+                font-weight: 600;
+
+                .dashboard-menu-icon {
+                    color: #007EB6;
+                }
+            }
+        }
+
+        .dashboard-menu-icon {
+            display: inline-flex;
+            flex: 0 0 20px;
+            align-items: center;
+            justify-content: center;
+            color: #535354;
+
+            svg {
+                width: 1.5rem;
+                height: 1.5rem;
+            }
+        }
+    }
+
+    .glossary-filters {
+        .filters-panel {
+            margin-bottom: 0;
+        }
+    }
+}
+
+.glossary-header {
+    margin-bottom: 2.5rem;
+}
+
+.glossary-title {
+    margin-bottom: 4px;
+    color: var(--idb-color-primary-20);
+    font-size: var(--idb-font-size-title);
+    line-height: var(--idb-line-height-title);
+    font-weight: 700;
+}
+
+.glossary-description {
+    margin: 0;
+    color: var(--idb-color-text-default);
+    font-size: var(--idb-font-size-text);
+    line-height: var(--idb-line-height-text);
+}
+
+.glossary-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--idb-space-sm);
+    margin-bottom: 0.75rem;
+    justify-content: space-between;
+}
+
+.glossary-search {
+    position: relative;
+    max-width: 339px;
+    width: 100%;
+    margin: 0;
+
+    &-input {
+        height: 2.5rem;
+        padding: var(--idb-space-xs) 2.75rem var(--idb-space-xs) 0.75rem;
+        background: var(--idb-color-on-primary);
+        border: 1px solid var(--idb-color-button-stroke-border);
+        border-radius: var(--idb-border-radius);
+        color: var(--idb-color-text-default);
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+
+        &::placeholder {
+            color: #939292;
+            opacity: 1;
+        }
+
+        &::-webkit-search-cancel-button {
+            display: none;
+        }
+    }
+
+    .facet-icon {
+        position: absolute;
+        top: 50%;
+        right: 0.75rem;
+        width: 1.5rem;
+        height: 1.5rem;
+        transform: translateY(-50%);
+        color: var(--idb-color-on-surface-variant);
+        pointer-events: none;
+    }
+}
+
+.glossary-sort {
+
+    .form-select {
+        height: 2.5rem;
+        background-color: var(--idb-color-on-primary);
+        border: 1px solid var(--idb-color-button-stroke-border);
+        border-radius: var(--idb-border-radius);
+        color: var(--idb-color-text-default);
+        font-size: var(--idb-font-size-label-large);
+    }
+}
+
+.glossary-az {
+    margin-bottom: 0.75rem;
+
+    &-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background: var(--idb-color-on-primary);
+        border: 1px solid #C7C7C9;
+        border-radius: 100px;
+    }
+
+    &-item {
+        flex: 1 1 auto;
+        min-width: 1.75rem;
+        border-right: 1px solid #EAEAEA;
+
+        &:last-child {
+            border-right: none;
+        }
+
+        a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 2.25rem;
+            padding: 0.25rem;
+            color: var(--idb-color-text-default);
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            font-weight: 600;
+            text-decoration: none;
+
+            &:hover {
+                background: var(--idb-color-interaction-selected);
+                color: var(--idb-color-primary-30);
+                ;
+                text-decoration: none;
+            }
+
+            &:focus-visible {
+                outline: 2px solid var(--idb-color-primary-30);
+                ;
+                outline-offset: -2px;
+            }
+        }
+
+        &.active a {
+            background: var(--idb-color-interaction-selected);
+            color: var(--idb-color-primary-30);
+            ;
+        }
+    }
+}
+
+.glossary-count {
+    margin: 0 0 0.75rem;
+    color: var(--idb-color-secondary-40);
+}
+
+.glossary-term-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px var(--idb-space-md);
+    margin: 0 0 20px;
+}
+
+.glossary-term-card {
+    position: relative;
+    display: flex;
+    min-height: 100%;
+    margin: 0;
+    background: var(--idb-color-on-primary);
+    border-radius: var(--idb-border-radius);
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+    &:hover {
+        border-color: #007EB6;
+        box-shadow: 0 1px 3px rgba(16, 24, 40, 0.08);
+    }
+
+    &-open {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        gap: 0.75rem;
+        width: 100%;
+        padding: 1.5rem;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        text-align: start;
+        cursor: pointer;
+
+        &:focus-visible {
+            outline: 2px solid #007EB6;
+            outline-offset: -2px;
+            border-radius: inherit;
+        }
+    }
+
+    &-title {
+        display: block;
+        color: var(--idb-color-primary-20);
+        font-size: 1.125rem;
+        line-height: 1.5rem;
+        font-weight: 600;
+        padding-right: 1.5rem;
+    }
+
+    &-definition {
+        display: -webkit-box;
+        flex: 1 1 auto;
+        overflow: hidden;
+        color: var(--idb-color-text-default);
+        font-size: var(--idb-font-size-label);
+        line-height: var(--idb-line-height-label);
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+    }
+
+    &-meta {
+        display: flex;
+        align-items: center;
+        margin-top: auto;
+        padding-top: 0.25rem;
+        padding-right: 0.25rem;
+    }
+
+    &-category {
+        display: inline-flex;
+        align-items: center;
+        min-height: 1.75rem;
+        padding: 0.25rem 0.5rem;
+        background: var(--idb-color-adornment-blue-bg);
+        border: 1px solid var(--idb-color-alert-info-border);
+        border-radius: var(--idb-border-radius-sm);
+        color: var(--idb-color-primary);
+        font-size: 0.75rem;
+        line-height: 1rem;
+        font-weight: 600;
+    }
+
+    &-favorite {
+        position: absolute;
+        right: 1rem;
+        margin: 0;
+        top: 1.25rem;
+    }
+}
+
+.glossary-term-favorite-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #939292;
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+        color: #007EB6;
+        background: #EDF5FA;
+    }
+
+    &:focus-visible {
+        outline: 2px solid #007EB6;
+        outline-offset: 2px;
+    }
+
+    &.is-favorite {
+        color: #007EB6;
+    }
+
+    svg {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+}
+
+// Term detail offcanvas: grey header bar like Term Detail.svg / members panel
+[id^="glossary-term-"] {
+    border-left: none;
+
+    .offcanvas-header {
+        min-height: 4.5rem;
+        padding: 1rem 1.25rem;
+        background-color: var(--idb-color-neutral-99, #f3f3f3);
+        border-bottom: 1px solid var(--idb-color-border-default, #e4e7ec);
+    }
+
+    .offcanvas-title {
+        font-size: 1.375rem;
+        line-height: 1.75rem;
+        font-weight: 600;
+        color: var(--idb-color-text-primary, var(--idb-color-primary-20));
+    }
+
+    .offcanvas-body {
+        padding: 1.25rem;
+    }
+
+    @include media-breakpoint-down(md) {
+        --bs-offcanvas-width: 100% !important;
+    }
+}
+
+.glossary-term-detail {
+    .idb-spec-row {
+        padding: 1rem 0;
+    }
+
+    dt {
+        margin-bottom: 0.35rem;
+    }
+}
+
+.glossary-empty {
+    margin-top: 40px;
+    text-align: center;
+
+    .btn {
+        margin-top: var(--idb-space-sm);
+    }
+}
+
+.filters.glossary-filters {
+    .facet-section-header {
+        padding: 0.5rem 1rem;
+    }
+    .facet-search-input {
+        &::placeholder {
+            color: var(--idb-color-text-primary);
+        }
+    }
+}
+
+@include media-breakpoint-down(xl) {
+    .glossary-term-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@include media-breakpoint-down(lg) {
+    .glossary-term-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@include media-breakpoint-down(sm) {
+    .glossary-term-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .glossary-sort {
+        flex: 1 1 100%;
+        min-width: 0;
+    }
+}

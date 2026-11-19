@@ -1,4 +1,4 @@
-{% set data = {"module": module or "ka-chat"} %}
+{% set data = {"module": module or "ka-chat", "module-delete-confirm-type": "danger"} %}
 {% if pkg is defined and pkg %}
   {% do data.update({"module-package-id": pkg.id}) %}
 {% endif %}
