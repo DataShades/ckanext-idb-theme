@@ -40,7 +40,7 @@
         <div class="module-content">
             {% block resource_content %}
                 {% block resource_read_title %}
-                    <h1 class="page-heading fs-36 text-idb-default mb-3">
+                    <h1 class="page-heading fs-36 text-idb-default mb-12 mt-20">
                         {{ h.resource_display_name(res) }}
                     </h1>
                 {% endblock %}
@@ -51,14 +51,14 @@
                             {{ h.render_markdown(card.description) }}
                         </div>
                     {% elif package.notes %}
-                        <div class="notes embedded-content text-iadb-netural-black mb-20">
+                        <div class="notes embedded-content text-iadb-default mb-20">
                             {{ h.markdown_extract(h.get_translated(package, 'notes')) }}
                         </div>
                     {% endif %}
                 {% endblock %}
 
                 {% block resource_chips %}
-                    <ul class="dataset-chips list-unstyled d-flex flex-wrap gap-2 mb-20">
+                    <ul class="dataset-chips res-chips list-unstyled d-flex flex-wrap gap-2 mb-20">
                         {% if card.format %}
                             {{ ui.chip(card.format, style="secondary") }}
                         {% endif %}

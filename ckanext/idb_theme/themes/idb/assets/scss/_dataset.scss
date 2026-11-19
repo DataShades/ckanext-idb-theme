@@ -61,6 +61,15 @@
     min-height: 2rem;
 }
 
+.res-chips,
+.resource-card-chips {
+    .badge {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+}
+    
+
 .dataset-tags .badge {
     --bs-badge-font-size: var(--idb-font-size-label);
     --bs-badge-padding-y: .25rem;
@@ -614,6 +623,9 @@
     //         vertical-align: -0.15rem;
     //     }
     // }
+    .toolbar {
+        margin-bottom: 2.125rem;
+    }
 
     .resource-file-details {
         margin-top: 2.5rem;
@@ -670,7 +682,7 @@
 
 .resource-sidebar-org {
     color: var(--idb-color-text-default);
-    font-size: var(--idb-font-size-label);
+    font-size: 0.875rem;
     line-height: var(--idb-line-height-label);
 }
 
@@ -682,10 +694,10 @@
         padding-top: 0;
     }
 
-    &:last-child {
-        padding-bottom: 0;
-        border-bottom: 0;
-    }
+    // &:last-child {
+    //     padding-bottom: 0;
+    //     border-bottom: none;
+    // }
 }
 
 .resource-siblings-link {

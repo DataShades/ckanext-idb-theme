@@ -7,7 +7,7 @@ current_resource_id - Id of the resource currently being viewed (excluded).
 #}
 {% set panel = h.idb_theme_sibling_resources(pkg, current_resource_id) %}
 {% if panel.total %}
-    <section class="resource-sidebar-card mb-3">
+    <section class="resource-sidebar-card mb-12">
         <h2 class="resource-sidebar-card-title fs-18 mb-3">
             {{ _('Resources in this dataset') }} · {{ h.localised_number(panel.total) }}
         </h2>

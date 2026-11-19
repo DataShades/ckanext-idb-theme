@@ -5,7 +5,7 @@ pkg - The package dict that owns the resource.
 
 #}
 {% if pkg %}
-    <section class="resource-sidebar-card mb-3">
+    <section class="resource-sidebar-card mb-12">
         <h2 class="resource-sidebar-card-title fs-14">{{ _('This resource belongs to') }}</h2>
         <a class="resource-sidebar-dataset-link" href="{{ h.url_for(pkg.type ~ '.read', id=pkg.name) }}">
             {{ h.dataset_display_name(pkg) }}
