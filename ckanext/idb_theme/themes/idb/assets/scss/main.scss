@@ -27,9 +27,12 @@
     --idb-color-success: #2E7D32;
     --idb-color-success-md: #00854D; // design: MD3 success
     --idb-color-success-container: #DAF2DF;
+    --idb-color-on-success-container: #14361C;
     --idb-color-error: #C62828;
     --idb-color-error-40: #A60001;
     --idb-color-warning: #8A6D00;
+    --idb-color-warning-container: #FEF2E1;
+    --idb-color-on-warning-container: #4C2E02;
     --idb-color-on-primary: #FFFFFF;
     --idb-color-neutral-20: #141414;
     --idb-color-neutral-60: #555353;
@@ -43,6 +46,10 @@
     --idb-color-alert-info-bg: #F0F4F7;
     --idb-color-alert-info-border: #B6CFDE;
     --idb-color-alert-info-fg: #004E70;
+    --idb-color-alert-warning-bg: #F9F3E7;
+    --idb-color-alert-warning-border: #E0C892;
+    --idb-color-alert-warning-fg: #603600;
+    --idb-color-alert-warning-icon: #8A4700;
     --idb-color-adornment-blue-bg: #F0F4F7;
     --idb-color-text-default: #232222;
     --idb-color-text-primary: #272626;

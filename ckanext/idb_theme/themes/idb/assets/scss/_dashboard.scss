@@ -632,9 +632,19 @@
             white-space: nowrap;
             text-overflow: ellipsis;
             font-weight: 600;
-            color: #4C2E02;
-            background-color: #FEF2E1;
-            border-radius: 8px;
+            color: var(--idb-color-on-warning-container);
+            background-color: var(--idb-color-warning-container);
+            border-radius: var(--idb-border-radius);
+
+            &--draft {
+                color: var(--idb-color-text-default);
+                background-color: var(--idb-color-neutral-99);
+            }
+
+            &--published {
+                color: var(--idb-color-on-success-container);
+                background-color: var(--idb-color-success-container);
+            }
         }
 
         // the row actions column: the ⋮ button centered in the cell
