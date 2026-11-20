@@ -59,6 +59,9 @@
 
 .dataset-chips .badge {
     min-height: 2rem;
+    font-family: var(--idb-font-family-inter), sans-serif;
+    font-size: var(--idb-font-size-label-large);
+    line-height: var(--idb-line-height-label-large);
 }
 
 .res-chips,

@@ -17,7 +17,7 @@
 .form-page-header {
     display: flex;
     flex-direction: column;
-    margin-bottom: 20px;
+    margin-bottom: 3rem;
 
     // spacing via margins (not gap) so the title keeps exactly 16px below it
     > .info-banner {
@@ -25,12 +25,16 @@
     }
 
     &__title {
-        margin: 0 0 var(--idb-space-sm);
+        margin: 0 0 var(--idb-space-md);
         color: var(--idb-color-primary-20);
         font-size: var(--idb-font-size-display-small);
         line-height: var(--idb-line-height-display-small);
         font-weight: 700;
         overflow-wrap: anywhere;
+    }
+
+    @include media-breakpoint-down(md) {
+        margin-bottom: 1.25rem;
     }
 }
 
@@ -169,7 +173,7 @@
     }
 
     &--complete .stepper-step__index {
-        background: var(--idb-color-success);
+        background: var(--idb-color-link-default);
     }
 
     // everything in a pending step is muted
