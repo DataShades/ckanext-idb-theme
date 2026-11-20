@@ -1,0 +1,11 @@
+{#
+Empty state for My favorites when the user has not starred any terms.
+#}
+<div class="search-empty glossary-empty glossary-empty-favorites">
+    <img class="search-empty-image" src="{{ h.url_for_static('/images/no-results.svg') }}" alt="" width="272" height="278">
+    <h2 class="search-empty-title">{{ _('No favorite terms yet') }}</h2>
+    <p class="search-empty-text">{{ _('Click the star on any term to save it here.') }}</p>
+    <a class="btn btn-outline-primary" href="{{ h.url_for('iadb_iar.glossary') }}">
+        {{ _('Browse all terms') }}
+    </a>
+</div>

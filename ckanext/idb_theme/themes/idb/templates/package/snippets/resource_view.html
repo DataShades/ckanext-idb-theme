@@ -1,24 +1,14 @@
 {% import 'macros/form.html' as form %}
 
 {% block resource_view %}
-    <div id="view-{{ resource_view['id'] }}" class="resource-view" data-id="{{ resource_view['id'] }}" data-title="{{ resource_view['title'] }}" data-description="{{ resource_view['descripion'] }}">
-        <div class="actions">
+    {% set is_data_explorer_table = resource_view.get('view_type') == 'datatables_view' %}
+    <div id="view-{{ resource_view['id'] }}" class="resource-view{% if is_data_explorer_table %} data-explorer-table-content{% endif %}" data-id="{{ resource_view['id'] }}" data-title="{{ resource_view['title'] }}" data-description="{{ resource_view['descripion'] }}">
+        {% if resource_view['description'] %}
+            <p class="desc">{{ h.render_markdown(resource_view['description']) }}</p>
+        {% endif %}
 
-            {{ ui.button(_("Fullscreen"), icon="arrows-alt", style="secondary", blank=true, href=h.url_for(package['type'] ~ '_resource.view', id=package['name'], resource_id=resource['id'], view_id=resource_view['id'], qualified=True)) }}
-
-            {{ ui.modal_handle(_("Embed"), icon="object-group", href="#embed-"~resource_view['id'], style="secondary",
-                    data={
-                       "module": "resource-view-embed",
-                       "module-id": resource_view.id,
-                       "module-url": h.url_for(package.type ~ '_resource.view', id=package.name, resource_id=resource.id, view_id=resource_view.id, qualified=true),
-                    }) }}
-
-        </div>
-
-        <p class="desc">{{ h.render_markdown(resource_view['description']) }}</p>
-
-        <div class="m-top ckanext-datapreview">
-            {% if not to_preview and h.resource_view_is_filterable(resource_view) %}
+        <div class="{% if not is_data_explorer_table %}m-top {% endif %}ckanext-datapreview{% if is_data_explorer_table %} data-explorer-preview{% endif %}">
+            {% if (not is_data_explorer_table or request.args.get('filters')) and not to_preview and h.resource_view_is_filterable(resource_view) %}
                 {%- with resource=resource -%}
                     {% include 'package/snippets/resource_view_filters.html' %}
                 {%- endwith %}
@@ -64,7 +54,7 @@
 
                 {% endif %}
 
-                <iframe aria-label="Data viewer" src="{{ src }}" frameborder="0" width="100%" data-module="data-viewer">
+                <iframe aria-label="Data viewer" src="{{ src }}" frameborder="0" width="100%"{% if is_data_explorer_table %} class="data-explorer-frame"{% endif %} data-module="data-viewer">
                     <p>{{ _('Your browser does not support iframes.') }}</p>
                 </iframe>
             {% endif %}

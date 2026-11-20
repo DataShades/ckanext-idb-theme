@@ -22,3 +22,36 @@
     background-size: contain;
     color: var(--idb-color-text-primary);
 }
+
+.fa-file-upload-o {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    background-image: $fileUpload;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    color: var(--idb-color-text-primary);
+}
+
+.fa-pencil-o {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    background-image: $pencilIcon;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    color: var(--idb-color-text-primary);
+}
+
+.fa-trash-o {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    background-image: $trashIcon;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    color: var(--idb-color-text-primary);
+}

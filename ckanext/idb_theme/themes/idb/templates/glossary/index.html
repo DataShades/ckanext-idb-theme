@@ -1,0 +1,87 @@
+{#
+Public Glossary page: sidebar views, search/sort/A–Z, term cards that open
+an offcanvas detail panel (Category + Definition), like change history.
+#}
+{% extends "page.html" %}
+
+{% block subtitle -%}
+    {{ ui.subtitle_item(_('Glossary')) }}
+    {{- super() }}
+{%- endblock %}
+
+{% block maintag %}<div class="main glossary-page">{% endblock %}
+
+{% block breadcrumb_content -%}
+    {{ ui.breadcrumb(_('Glossary'), href=request.path, active=true) }}
+{%- endblock %}
+
+{% block wrapper_class %}glossary-layout{% endblock %}
+
+{% block pre_primary %}
+    <div class="glossary-header col-12">
+        <h1 class="glossary-title">{{ _('Glossary') }}</h1>
+        <p class="glossary-description">
+            {{ _('Explore key terms and definitions to better understand the concepts used throughout the Data Catalog.') }}
+        </p>
+    </div>
+{% endblock %}
+
+{% block primary_content %}
+    <div class="glossary-primary">
+        {% if view != 'favorites' or listing.results %}
+            {% snippet "glossary/snippets/toolbar.html",
+                view=view, q=q, sort=sort, letter=letter,
+                selected_categories=selected_categories
+            %}
+        {% endif %}
+
+        {% if view == 'all' %}
+            {% snippet "glossary/snippets/az.html", letter=letter, q=q, sort=sort %}
+        {% endif %}
+
+        {% if view != 'favorites' or listing.results %}
+            <p class="glossary-count fs-22 fw-semibold">
+                {{ ungettext('{number} term', '{number} terms', listing.count).format(number=listing.count) }}
+            </p>
+        {% endif %}
+
+        {% if listing.results %}
+            <ul class="glossary-term-grid list-unstyled">
+                {% for term in listing.results %}
+                    {% snippet "glossary/snippets/term_card.html", term=term, is_logged_in=is_logged_in %}
+                {% endfor %}
+            </ul>
+
+            {% for term in listing.results %}
+                {% set panel_id = "glossary-term-" ~ term.id %}
+                {% snippet "snippets/offcanvas_panel.html",
+                    id=panel_id,
+                    title=h.iadb_iar_glossary_fluent(term.label),
+                    width="420px",
+                    content_snippet="glossary/snippets/term_panel.html",
+                    content_data={"term": term}
+                %}
+            {% endfor %}
+        {% elif view == 'favorites' %}
+            {% snippet "glossary/snippets/empty_favorites.html" %}
+        {% else %}
+            <div class="search-empty glossary-empty">
+                <img class="search-empty-image" src="{{ h.url_for_static('/images/no-results.svg') }}" alt="" width="272" height="278">
+                <h2 class="search-empty-title">{{ _('No terms found') }}</h2>
+                <p class="search-empty-text">{{ _('Try a different search or clear the filters to see more terms.') }}</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block secondary_content %}
+    {% snippet "glossary/snippets/views.html", view=view, is_logged_in=is_logged_in %}
+    {% if view == 'category' %}
+        {% snippet "glossary/snippets/categories_facet.html",
+            categories=listing.categories,
+            selected_categories=selected_categories,
+            q=q,
+            sort=sort
+        %}
+    {% endif %}
+{% endblock %}

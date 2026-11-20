@@ -124,9 +124,11 @@
     margin-bottom: 30px;
 }
 
-// the Data Project edit page reuses the dashboard table for its members
+// the Data Project and Organizational Unit edit pages reuse the dashboard table
+// for their members and datasets
 .dashboard-layout,
 .data-project-page,
+.organization-page,
 .add-data {
     .dashboard-sidebar {
         margin-bottom: var(--idb-space-md);
