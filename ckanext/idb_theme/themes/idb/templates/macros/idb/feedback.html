@@ -9,12 +9,15 @@
     </div>
 {%- endmacro %}
 
-{%- macro modal(content, title, footer, dismissible, id, size) -%}
+{%- macro modal(content, title, footer, dismissible, id, size, width) -%}
     {%- set class = "modal fade" -%}
     {%- if size -%}
         {%- set class = class ~ " modal-" ~ size -%}
     {%- endif %}
     {%- set default_attrs = {"class": class, "id": id, "tabindex": "-1"} -%}
+    {%- if width -%}
+        {%- do default_attrs.update({"style": "--bs-modal-width: " ~ width}) -%}
+    {%- endif %}
     {%- if not dismissible -%}
         {%- do default_attrs.update({"data-bs-backdrop": "static", "data-bs-keyboard": "false"}) -%}
     {%- endif %}

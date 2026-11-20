@@ -19,9 +19,39 @@
     flex-direction: column;
     margin-bottom: 3rem;
 
-    // spacing via margins (not gap) so the title keeps exactly 16px below it
+    @include media-breakpoint-up(md) {
+        margin-bottom: var(--idb-space-md);
+    }
+
+    // spacing via margins (not gap) so the title keeps its exact margin below it
     > .info-banner {
         margin-top: var(--idb-space-xs);
+    }
+
+    &--review {
+        .stepper-step--complete .stepper-step__index,
+        .stepper-step--pending .stepper-step__index {
+            background: var(--idb-color-button-flat-background);
+        }
+
+        .stepper-step--pending {
+            &::before {
+                background: var(--idb-color-outline);
+            }
+
+            .stepper-step__index {
+                font-size: var(--idb-font-size-label);
+                font-weight: 400;
+            }
+
+            .stepper-step__label {
+                color: var(--idb-color-text-default);
+            }
+
+            .stepper-step__status {
+                color: var(--idb-color-on-surface-variant);
+            }
+        }
     }
 
     &__title {
@@ -31,6 +61,10 @@
         line-height: var(--idb-line-height-display-small);
         font-weight: 700;
         overflow-wrap: anywhere;
+
+        @include media-breakpoint-up(md) {
+            margin-bottom: var(--idb-space-md);
+        }
     }
 
     @include media-breakpoint-down(md) {
@@ -66,6 +100,8 @@
     }
 
     &__actions {
+        display: flex;
+        gap: var(--idb-space-md);
         margin-left: auto;
 
         .btn {
@@ -89,11 +125,23 @@
                 opacity: 1;
             }
         }
+
+        .btn-sm {
+            height: 2rem;
+            padding: 0 var(--idb-space-sm);
+            border-radius: var(--bs-border-radius-pill);
+            font-size: var(--idb-font-size-label);
+            line-height: var(--idb-line-height-label);
+        }
     }
 
     @include media-breakpoint-down(md) {
         &__status {
             justify-content: flex-start;
+        }
+
+        &__actions {
+            flex-direction: column;
         }
 
         &__actions,
@@ -269,6 +317,16 @@
         font-size: var(--idb-font-size-label-large);
         line-height: var(--idb-line-height-label-large);
         font-weight: 400;
+    }
+
+    &--warning {
+        border-color: var(--idb-color-alert-warning-border);
+        background: var(--idb-color-alert-warning-bg);
+        color: var(--idb-color-alert-warning-fg);
+
+        .info-banner__icon {
+            color: var(--idb-color-alert-warning-icon);
+        }
     }
 }
 
@@ -1335,6 +1393,10 @@
 
         .form-section__content {
             padding: 20px 0 0;
+
+            @include media-breakpoint-up(md) {
+                gap: var(--idb-space-sm);
+            }
         }
 
         // small screens keep a narrow side padding, as the other sections
