@@ -19,7 +19,11 @@
     flex-direction: column;
     margin-bottom: 20px;
 
-    // spacing via margins (not gap) so the title keeps exactly 16px below it
+    @include media-breakpoint-up(md) {
+        margin-bottom: var(--idb-space-md);
+    }
+
+    // spacing via margins (not gap) so the title keeps its exact margin below it
     > .info-banner {
         margin-top: var(--idb-space-xs);
     }
@@ -31,6 +35,10 @@
         line-height: var(--idb-line-height-display-small);
         font-weight: 700;
         overflow-wrap: anywhere;
+
+        @include media-breakpoint-up(md) {
+            margin-bottom: var(--idb-space-md);
+        }
     }
 }
 
@@ -166,10 +174,6 @@
         .stepper-step__index {
             background: var(--idb-color-button-flat-background);
         }
-    }
-
-    &--complete .stepper-step__index {
-        background: var(--idb-color-success);
     }
 
     // everything in a pending step is muted
@@ -1331,6 +1335,10 @@
 
         .form-section__content {
             padding: 20px 0 0;
+
+            @include media-breakpoint-up(md) {
+                gap: var(--idb-space-sm);
+            }
         }
 
         // small screens keep a narrow side padding, as the other sections
