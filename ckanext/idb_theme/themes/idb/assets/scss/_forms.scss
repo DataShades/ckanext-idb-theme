@@ -60,6 +60,14 @@ textarea {
 
 .form-group {
     margin-bottom: 30px;
+
+    &--small-label > .form-label {
+        margin-bottom: var(--idb-space-xs);
+        color: var(--idb-color-text-default);
+        font-family: var(--idb-font-family), sans-serif;
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
+    }
 }
 .form-group .btn {
     position: relative;
