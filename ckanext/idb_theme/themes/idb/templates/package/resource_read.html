@@ -47,7 +47,7 @@
 
                 {% block resource_description %}
                     {% if card.description %}
-                        <div class="notes embedded-content text-iadb-netural-black mb-20">
+                        <div class="notes embedded-content text-iadb-default mb-20">
                             {{ h.render_markdown(card.description) }}
                         </div>
                     {% elif package.notes %}
