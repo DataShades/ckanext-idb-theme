@@ -12,7 +12,7 @@
     &-title {
         margin: 0 0 8px;
         color: var(--idb-color-primary-20);
-        font-family: var(--idb-font-family-inter), sans-serif;
+        font-family: var(--idb-font-family, "Open Sans"), sans-serif;
         font-size: var(--idb-font-size-subtitle);
         line-height: var(--idb-line-height-subtitle);
         font-weight: 600;
@@ -40,6 +40,7 @@
         height: 40px;
         border-bottom: 2px solid transparent;
         color: var(--idb-color-text-subtle);
+        font-family: var(--idb-font-family-inter, Inter), sans-serif;
         font-size: var(--idb-font-size-text);
         line-height: var(--idb-line-height-text);
         white-space: nowrap;
@@ -107,7 +108,7 @@ body.dt-view {
         max-width: 100%;
         height: auto;
         max-height: none;
-        padding: 0 0 4px;
+        padding: 0;
         overflow: visible;
         background: transparent;
     }
@@ -525,7 +526,8 @@ body.dt-view {
             padding: 14px 12px;
             border: 0;
             border-bottom: 1px solid var(--idb-color-border-subtle);
-            color: var(--idb-color-text-default);
+            color: var(--idb-color-text-primary, #272626);
+            font-family: var(--idb-font-family, "Open Sans"), sans-serif;
             font-size: var(--idb-font-size-label-large);
             vertical-align: middle;
         }
@@ -563,6 +565,7 @@ body.dt-view {
             border: 1px solid var(--idb-color-border-default);
             border-radius: 8px;
             color: var(--idb-color-text-default);
+            font-family: var(--idb-font-family-inter, Inter), sans-serif;
             font-size: var(--idb-font-size-label-large);
             line-height: var(--idb-line-height-label-large);
             box-shadow: none;
@@ -590,7 +593,7 @@ body.dt-view {
 
         tbody tr.selected > * {
             background-color: var(--idb-color-interaction-selected) !important;
-            color: var(--idb-color-text-default);
+            color: var(--idb-color-text-primary, #272626);
         }
 
         thead th.sorting:before,
@@ -607,6 +610,7 @@ body.dt-view {
             bottom: auto;
             color: var(--idb-color-text-subtle);
             opacity: .45;
+            font-family: var(--idb-font-family-inter, Inter), sans-serif;
             font-size: 16px;
             transform: translateY(-50%);
         }
@@ -627,6 +631,10 @@ body.dt-view {
     }
 }
 
+.resource-read.has-data-explorer {
+    padding-bottom: var(--idb-space-xl, 48px);
+}
+
 .resource-read .data-explorer-preview,
 .resource-read .data-explorer-table-content,
 .resource-read .data-explorer-table-view {
@@ -637,6 +645,7 @@ body.dt-view {
     padding-top: 0;
 
     > .data-explorer-frame {
+        display: block;
         height: auto;
         min-height: 0;
     }
