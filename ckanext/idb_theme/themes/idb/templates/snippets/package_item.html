@@ -3,17 +3,18 @@ Displays a single of dataset.
 
 package        - A package to display.
 item_class     - The class name to use on the list item.
-variant        - Card variant: "full" (default, Datasets page) or "short" (Home page, highlights).
+variant        - Card variant: "full" (default), "search" (Datasets page: the full card
+                 with the search words in bold and the matching resources) or "short"
+                 (Home page, highlights).
 
 Example:
 
 {% snippet 'snippets/package_item.html', package=c.datasets[0], variant="short" %}
 
 #}
-{% set title = package.title or package.name %}
-{% set notes = h.markdown_extract(package.notes, extract_length=180) %}
+{% set card = h.idb_theme_dataset_card(package, variant) %}
+{% set notes = card.shown_notes %}
 {% set is_full = variant != "short" %}
-{% set card = h.idb_theme_dataset_card(package) %}
 
 {% macro meta(svg, label, value, hide_label=false) -%}
     <li {{ ui.util.attrs(kwargs, {"class": "align-items-center d-flex gap-1"}) }}>
@@ -31,9 +32,7 @@ Example:
                     <h3 class="dataset-heading fw-semibold">
 
                         {% block heading_title %}
-                            {%- with title=title | truncate(80) -%}
-                                {{ ui.link(title, href=h.url_for(package.type~'.read', id=package.name), aria={"label": _('Navigate to dataset: {title}').format(title=title)}) }}
-                            {%- endwith %}
+                            {{ ui.link(h.idb_theme_bold(card.shown_title), href=h.url_for(package.type~'.read', id=package.name), aria={"label": _('Navigate to dataset: {title}').format(title=card.title)}) }}
                         {% endblock %}
 
                         {% block heading_private %}
@@ -87,9 +86,37 @@ Example:
 
                 {% block notes %}
                     {% if notes %}
-                        <p class="dataset-notes {{ 'mb-4' if is_full and card.tags else 'mb-0' }}">{{ notes }}</p>
+                        <p class="dataset-notes {{ 'mb-4' if card.resources or is_full and card.tags else 'mb-0' }}">{{ h.idb_theme_bold(notes) }}</p>
                     {% else %}
                         {{ ui.empty(h.humanize_entity_type('package', package.type, 'no description') or _("There is no description for this dataset")) }}
+                    {% endif %}
+                {% endblock %}
+
+                {% block resources %}
+                    {% if card.resources %}
+                        <ul class="dataset-resources list-unstyled d-flex flex-column fw-semibold {{ 'mb-3' if card.tags else 'mb-0' }}">
+                            {% for resource in card.resources %}
+                                <li class="d-flex flex-wrap align-items-center column-gap-2">
+                                    {%- set name -%}
+                                        {% snippet "svg/description.svg" %}
+                                        <span>{{ h.idb_theme_bold(resource.name) }}</span>
+                                    {%- endset %}
+                                    {% if resource.page_url %}
+                                        {{ ui.link(name, href=resource.page_url, attrs={"class": "d-inline-flex align-items-center gap-1 text-idb-blue-link"}) }}
+                                    {% else %}
+                                        <span class="d-inline-flex align-items-center gap-1 text-idb-default">{{ name }}</span>
+                                    {% endif %}
+                                    {% if resource.format %}
+                                        <span class="text-idb-default">.{{ resource.format | upper }}</span>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                            {% if card.more_resources %}
+                                <li>
+                                    {{ ui.link(ungettext("+{number} more resource", "+{number} more resources", card.more_resources).format(number=h.localised_number(card.more_resources)), href=h.url_for(package.type ~ '.read', id=package.name), attrs={"class": "text-iadb-netural-black fw-normal"}) }}
+                                </li>
+                            {% endif %}
+                        </ul>
                     {% endif %}
                 {% endblock %}
 

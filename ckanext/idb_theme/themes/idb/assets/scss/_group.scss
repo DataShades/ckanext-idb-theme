@@ -321,6 +321,10 @@
 .iadb-iar-organization-search {
     position: relative;
 
+    .js & .show-filters.btn {
+        display: none;
+    }
+
     &:has(.idb-organization-search-loading.htmx-request) #publisher-tree {
         filter: blur(2px);
         opacity: 0.45;

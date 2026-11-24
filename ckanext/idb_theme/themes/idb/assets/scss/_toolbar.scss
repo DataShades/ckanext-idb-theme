@@ -125,6 +125,11 @@
 .content_action {
     display: flex;
     justify-content: flex-end;
+
+    .btn {
+        --bs-btn-font-size: var(--idb-font-size-text);
+        min-height: 2.5rem;
+    }
 }
 
 .nav-tabs-plain {

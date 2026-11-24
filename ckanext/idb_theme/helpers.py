@@ -32,6 +32,22 @@ DEFAULT_DATASET_SORT = "modified"
 # it falls back to the most recently updated first
 DATASETS_PAGE_SORT = "score desc, metadata_modified desc"
 
+# The highlighted texts of a Datasets page result, by per-language index field,
+# and the marks around the search words in them: private-use characters, which
+# never occur in dataset texts
+HIGHLIGHT_KEY = "highlight"
+HIGHLIGHT_START = "\ue000"
+HIGHLIGHT_END = "\ue001"
+SEARCH_CARD_RESOURCES = 3
+CARD_TITLE_LENGTH = 80
+# a title this much longer is shown whole, as by the `truncate` template filter
+CARD_TITLE_LEEWAY = 5
+CARD_DESCRIPTION_LENGTH = 180
+# characters kept before the first marked word of a long description
+CARD_DESCRIPTION_LEAD = 60
+SEARCH_OPERATORS = {"AND", "OR", "NOT", "TO"}
+ELLIPSIS = "..."
+
 # "Items per page" options of the Datasets page, the first one is the default.
 # The parameter starts with "_", so the dataset search view does not treat it
 # as a facet filter.
@@ -1134,16 +1150,27 @@ def idb_theme_advanced_search_config() -> dict[str, Any]:
     }
 
 
-def idb_theme_dataset_card(pkg: dict[str, Any]) -> dict[str, Any]:
-    """Collect the values displayed on the dataset card."""
+def idb_theme_dataset_card(pkg: dict[str, Any], variant: str = "full") -> dict[str, Any]:
+    """Collect the values displayed on the dataset card; a "search" card marks the search words.
+
+    `title` is the whole title; `shown_title` and `shown_notes` are cut to the card lengths.
+    """
     lang = tk.h.lang()
 
     gov_labels = _vocab_labels(pkg, "gov_tier", lang)
     tags = _fluent_values(pkg, "tags_translated", lang) or [t["display_name"] for t in pkg.get("tags", [])]
 
     start, end = _year(pkg.get("temporal_start")), _year(pkg.get("temporal_end"))
+    title = tk.h.get_translated(pkg, "title") or pkg.get("title") or pkg.get("name")
+    notes = tk.h.get_translated(pkg, "notes") or pkg.get("notes")
 
+    marks = _search_marks(pkg, title, notes) if variant == "search" else {}
     return {
+        "title": title,
+        "shown_title": marks.get("title") or _fit(title, CARD_TITLE_LENGTH, CARD_TITLE_LEEWAY),
+        "shown_notes": marks.get("notes") or tk.h.markdown_extract(notes, extract_length=CARD_DESCRIPTION_LENGTH),
+        "resources": marks.get("resources", []),
+        "more_resources": marks.get("more_resources", 0),
         "themes": _vocab_labels(pkg, "theme", lang),
         "units": _vocab_labels(pkg, "unitResponsible", lang),
         "countries": _vocab_labels(pkg, "spatial_coverage", lang),
@@ -1155,6 +1182,125 @@ def idb_theme_dataset_card(pkg: dict[str, Any]) -> dict[str, Any]:
         "modified": _date(pkg.get("metadata_modified")),
         "downloads": idb_theme_download_count(pkg),
     }
+
+
+def idb_theme_highlight_field(field: str, lang: str) -> str:
+    """The index field of a text in one language, e.g. `title_i18n_es`, by which the search highlight is keyed."""
+    return f"{field}_i18n_{lang}"
+
+
+def idb_theme_bold(text: str) -> Markup:
+    """Escape a text and show its marked search words in bold."""
+    bold = re.sub(f"{HIGHLIGHT_START}(.*?){HIGHLIGHT_END}", r"<strong>\1</strong>", str(escape(text)), flags=re.DOTALL)
+    return Markup(_unmarked(bold))  # noqa: S704 - the text is escaped before the tags are added
+
+
+def _search_marks(pkg: dict[str, Any], title: str, notes: str | None) -> dict[str, Any]:
+    """The marked title and description, cut to the card lengths, and the matching resources of a result.
+
+    Without the search highlight (`HIGHLIGHT_KEY`), the typed words are marked.
+    """
+    highlight = pkg.get(HIGHLIGHT_KEY)
+    if highlight is None:
+        query = tk.request.args.get("q", "") if has_request_context() else ""
+        words = [word for word in re.findall(r"\w+", query) if len(word) > 1 and word not in SEARCH_OPERATORS]
+        if not words:
+            return {}
+        return {
+            "title": _marked_title(_mark_words(title, words)),
+            "notes": _marked_description(_mark_words(notes, words)),
+        }
+
+    marks = {field: {_unmarked(text): text for text in texts} for field, texts in highlight.items()}
+    resources = [resource for resource in pkg.get("resources") or [] if _resource_matches(resource, marks)]
+    title_marks = highlight.get(idb_theme_highlight_field("title", _shown_language(pkg, "title"))) or [None]
+    notes_marks = highlight.get(idb_theme_highlight_field("notes", _shown_language(pkg, "notes"))) or [None]
+    return {
+        "title": _marked_title(title_marks[0]),
+        "notes": _marked_description(notes_marks[0]),
+        "resources": [_resource_line(pkg, resource, marks) for resource in resources[:SEARCH_CARD_RESOURCES]],
+        "more_resources": max(len(resources) - SEARCH_CARD_RESOURCES, 0),
+    }
+
+
+def _marked_title(text: str | None) -> str | None:
+    return _fit(text, CARD_TITLE_LENGTH, CARD_TITLE_LEEWAY) if text else None
+
+
+def _marked_description(text: str | None) -> str | None:
+    """The marked description as plain text, cut to the card length.
+
+    When the cut would hide the first mark, the text starts a few words before it.
+    """
+    if not text:
+        return None
+    plain = " ".join(tk.h.markdown_extract(text, extract_length=0).split())
+    shown = _fit(plain, CARD_DESCRIPTION_LENGTH)
+    start = plain.find(HIGHLIGHT_START)
+    if start < 0 or HIGHLIGHT_START in shown:
+        return shown
+    cut = plain.find(" ", start - CARD_DESCRIPTION_LEAD, start)
+    return _fit(ELLIPSIS + plain[cut + 1 if cut >= 0 else start - CARD_DESCRIPTION_LEAD :], CARD_DESCRIPTION_LENGTH)
+
+
+def _fit(text: str, length: int, leeway: int = 0) -> str:
+    """Cut a text, marked or not, as the `truncate` template filter does, counting only visible characters.
+
+    A text up to `leeway` characters longer stays whole. A cut drops the last
+    word it splits, unless the text has no space to cut at, and closes a cut mark.
+    """
+    if len(_unmarked(text)) <= length + leeway:
+        return text
+    kept, visible = "", 0
+    for char in text:
+        if char not in (HIGHLIGHT_START, HIGHLIGHT_END):
+            if visible == length - len(ELLIPSIS):
+                break
+            visible += 1
+        kept += char
+    kept = kept.rsplit(" ", 1)[0]
+    if kept.count(HIGHLIGHT_START) > kept.count(HIGHLIGHT_END):
+        kept += HIGHLIGHT_END
+    return kept + ELLIPSIS
+
+
+def _resource_matches(resource: dict[str, Any], marks: dict[str, dict[str, str]]) -> bool:
+    """Whether the search marked the name or the description of a resource, in any language."""
+    return any(
+        str(value or "").strip() in marks.get(idb_theme_highlight_field(f"res_{field}", lang), {})
+        for field in ("name", "description")
+        for lang, value in (resource.get(f"{field}_translated") or {}).items()
+    )
+
+
+def _resource_line(pkg: dict[str, Any], resource: dict[str, Any], marks: dict[str, dict[str, str]]) -> dict[str, Any]:
+    """The marked name, the format and the page of a matching resource; no page when its URL is hidden."""
+    name = tk.h.get_translated(resource, "name") or resource.get("name") or tk.h.resource_display_name(resource)
+    field = idb_theme_highlight_field("res_name", _shown_language(resource, "name"))
+    page = f"{pkg['type']}_resource.read"
+    return {
+        "name": marks.get(field, {}).get(name.strip(), name),
+        "format": (resource.get("format") or "").lstrip("."),
+        "page_url": tk.h.url_for(page, id=pkg["name"], resource_id=resource["id"]) if resource.get("url") else None,
+    }
+
+
+def _shown_language(item: dict[str, Any], field: str) -> str:
+    """The language of the text `h.get_translated` shows: the page language, else the default one."""
+    lang = tk.h.lang()
+    return lang if (item.get(f"{field}_translated") or {}).get(lang) else tk.config.get("ckan.locale_default")
+
+
+def _mark_words(text: str | None, words: list[str]) -> str | None:
+    """Mark the given words in a text, ignoring case."""
+    if not text:
+        return None
+    pattern = r"\b(?:{})\b".format("|".join(map(re.escape, words)))
+    return re.sub(pattern, lambda match: f"{HIGHLIGHT_START}{match[0]}{HIGHLIGHT_END}", text, flags=re.IGNORECASE)
+
+
+def _unmarked(text: str) -> str:
+    return text.replace(HIGHLIGHT_START, "").replace(HIGHLIGHT_END, "")
 
 
 def _fluent_values(pkg: dict[str, Any], field_name: str, lang: str) -> list[str]:

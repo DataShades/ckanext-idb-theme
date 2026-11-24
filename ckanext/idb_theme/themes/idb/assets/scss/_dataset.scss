@@ -6,6 +6,8 @@
     --bs-card-cap-padding-y: .875rem;
     --bs-card-cap-padding-x: var(--bs-card-spacer-x);
     --bs-card-cap-bg: var(--idb-color-surface-variant);
+    --bs-card-border-radius: var(--bs-border-radius-lg);
+    --bs-card-inner-border-radius: calc(var(--bs-border-radius-lg) - var(--bs-card-border-width));
     width: 100%;
     overflow-wrap: anywhere;
 
@@ -43,6 +45,24 @@
     overflow: hidden;
 }
 
+.dataset-heading,
+.dataset-notes,
+.dataset-resources {
+    strong {
+        font-weight: $font-weight-extrabold;
+    }
+}
+
+.dataset-resources {
+    font-size: var(--idb-font-size-label-large);
+    line-height: var(--idb-line-height-label-large);
+    gap: .75rem;
+
+    svg {
+        flex-shrink: 0;
+    }
+}
+
 // chip palette: info, neutral (secondary) and success
 .dataset-chips,
 .dataset-tags {
@@ -58,6 +78,7 @@
 }
 
 .dataset-chips .badge {
+    --bs-badge-padding-y: .3125rem;
     min-height: 2rem;
     font-family: var(--idb-font-family-inter), sans-serif;
     font-size: var(--idb-font-size-label-large);
@@ -90,6 +111,12 @@
 }
 
 .dataset-item--full {
+    --bs-card-cap-padding-y: .8125rem;
+
+    .card-footer {
+        line-height: var(--idb-line-height-label-large);
+    }
+
     @include media-breakpoint-up(md) {
         .card-body {
             padding-top: 30px;
