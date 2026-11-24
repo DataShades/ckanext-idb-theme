@@ -12,11 +12,11 @@
     --bs-modal-border-radius: 8px;
     --bs-modal-inner-border-radius: 7px;
     --bs-modal-box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-    --bs-modal-header-padding: 18px 24px 0;
+    --bs-modal-header-padding: 16px 24px 12px;
     --bs-modal-header-border-width: 0;
     --bs-modal-footer-border-width: 0;
     --bs-modal-footer-gap: 8px;
-    --bs-modal-title-line-height: 1.5rem;
+    --bs-modal-title-line-height: 1.75rem;
     --bs-modal-color: #5C5A5A;
     --bs-modal-bg: #{$white};
 }
@@ -72,13 +72,13 @@
     color: #272626;
     font-family: "Inter", sans-serif;
     font-size: 1.125rem;
-    line-height: 1.5rem;
+    line-height: 1.75rem;
     font-weight: 600;
     overflow-wrap: anywhere;
 }
 
 .modal-body {
-    padding: 24px 24px 0;
+    padding: 8px 24px 16px;
     color: #5C5A5A;
     font-family: "Inter", sans-serif;
     font-size: 0.875rem;
@@ -87,7 +87,7 @@
 
 .modal-footer {
     gap: 8px;
-    padding: 32px 24px 20px;
+    padding: 16px 24px 20px;
 
     // Bootstrap puts a margin around each button, the gap spaces them instead
     > * {

@@ -54,7 +54,7 @@
         {% endblock %}
         {% block idb_theme_package_notes %}
             {% if pkg.notes %}
-                <div class="notes embedded-content text-iadb-netural-black">
+                <div class="notes embedded-content text-idb-default">
                     {{ h.render_markdown(h.get_translated(pkg, 'notes')) }}
                 </div>
             {% endif %}
