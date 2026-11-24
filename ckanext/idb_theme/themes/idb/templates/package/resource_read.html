@@ -47,11 +47,11 @@
 
                 {% block resource_description %}
                     {% if card.description %}
-                        <div class="notes embedded-content text-iadb-default mb-20">
+                        <div class="notes embedded-content text-idb-default mb-20">
                             {{ h.render_markdown(card.description) }}
                         </div>
                     {% elif package.notes %}
-                        <div class="notes embedded-content text-iadb-default mb-20">
+                        <div class="notes embedded-content text-idb-default mb-20">
                             {{ h.markdown_extract(h.get_translated(package, 'notes')) }}
                         </div>
                     {% endif %}
