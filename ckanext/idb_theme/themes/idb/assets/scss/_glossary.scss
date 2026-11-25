@@ -17,6 +17,8 @@
             color: var(--idb-color-text-faint);
             font-weight: 600;
             margin: 0;
+            margin-bottom: 0.25rem;
+            font-family: "Inter", sans-serif;
         }
         padding: var(--idb-space-sm) var(--idb-space-xs);
         margin-bottom: 0.75rem;
@@ -242,7 +244,7 @@
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 1rem;
-    margin: 0 0 20px;
+    margin: 0 0 1rem;
 }
 
 .glossary-term-card {
@@ -405,9 +407,9 @@
     margin-top: 40px;
     text-align: center;
 
-    .btn {
-        margin-top: var(--idb-space-sm);
-    }
+    // .btn {
+    //     margin-top: var(--idb-space-sm);
+    // }
 }
 
 .filters.glossary-filters {
