@@ -20,7 +20,7 @@
     margin-bottom: 3rem;
 
     @include media-breakpoint-up(md) {
-        margin-bottom: var(--idb-space-md);
+        margin-bottom: 1.25rem;
     }
 
     // spacing via margins (not gap) so the title keeps its exact margin below it
@@ -686,9 +686,9 @@
         display: flex;
         align-items: center;
         width: 100%;
-        padding: var(--idb-space-md) 40px 20px;
+        padding: var(--idb-space-md) var(--idb-space-lg) 1.25rem;
         border: 0;
-        border-radius: 16px;
+        border-radius: 1rem;
         background: transparent;
         color: var(--idb-color-primary-dark);
         text-align: left;
@@ -746,8 +746,8 @@
     &__content {
         display: flex;
         flex-direction: column;
-        gap: 20px;
-        padding: 0 40px 20px;
+        gap: 1.25rem;
+        padding: 1.25rem 3.5rem 1.25rem;
 
         > * {
             align-self: stretch;
@@ -758,7 +758,7 @@
     // small screens keep a narrow side padding
     @include media-breakpoint-down(md) {
         &__toggle {
-            padding: 20px var(--idb-space-sm) var(--idb-space-sm);
+            padding: 1.25rem var(--idb-space-sm) var(--idb-space-sm);
         }
 
         &__content {
