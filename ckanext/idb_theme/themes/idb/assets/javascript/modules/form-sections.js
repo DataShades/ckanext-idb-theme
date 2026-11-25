@@ -22,13 +22,17 @@
  *   [data-form-progress-bar]             overall progress bar
  *   [data-form-progress-summary]         text "{done} of {total}" (data-template)
  *   [data-form-next]                     button that stays disabled until all required fields are filled
+ *                                        (and, with the requireChange option, the form is changed)
  *   [data-form-sticky]                   sticky side block; gets `--form-sticky-top` so a block taller
  *                                        than the screen sticks by its bottom edge
  *
  * Options
  *
- *   primaryLang - for translated fields, only `<name>-<primaryLang>` is
- *                 required (default: "en")
+ *   primaryLang   - for translated fields, only `<name>-<primaryLang>` is
+ *                   required (default: "en")
+ *   requireChange - [data-form-next] also stays disabled until the values of the
+ *                   form the button submits change, or the form shows the errors of
+ *                   the server (default: false)
  *
  * Example
  *
@@ -43,6 +47,7 @@ this.ckan.module('form-sections', function ($) {
   return {
     options: {
       primaryLang: 'en',
+      requireChange: false,
       // marks a required field; conditional fields add/remove it as their condition changes
       requiredSelector: '.control-required',
       // one row of a repeating field (ckanext-scheming repeating subfields)
@@ -55,6 +60,8 @@ this.ckan.module('form-sections', function ($) {
       this.root = this.el[0];
       this.sections = Array.prototype.slice.call(this.root.querySelectorAll('[data-form-section]'));
       this._scheduled = false;
+      // the values the form loads with, to know whether the user changed it
+      this._initialState = this._formState();
 
       this.el.on('input change', this._onChange);
       this.el.on('click', '[data-form-section-link]', this._onSectionLinkClick);
@@ -256,7 +263,7 @@ this.ckan.module('form-sections', function ($) {
         });
       }, this);
 
-      var allDone = done === total;
+      var allDone = done === total && this._isChanged();
 
       this._each('[data-form-progress-bar]', function (bar) {
         bar.setAttribute('aria-valuenow', done);
@@ -273,6 +280,51 @@ this.ckan.module('form-sections', function ($) {
         button.disabled = !allDone;
         button.setAttribute('aria-disabled', String(!allDone));
       });
+    },
+
+    /* Changed form */
+
+    // The form the [data-form-next] button submits, set by its `form` attribute.
+    _nextForm: function () {
+      var button = this.root.querySelector('[data-form-next]');
+      return (button && button.form) || this.root.querySelector('form');
+    },
+
+    // The values of the controls of that form, to tell whether the user changed anything.
+    // Hidden controls are left out: the CSRF token and the fields the widgets keep
+    // in sync are not what the user edits.
+    _formState: function () {
+      var form = this._nextForm();
+      var state = [];
+      if (!form) {
+        return '';
+      }
+      Array.prototype.forEach.call(form.querySelectorAll('[name]'), function (el) {
+        var type = (el.type || '').toLowerCase();
+        if (SKIP_TYPES.indexOf(type) !== -1) {
+          return;
+        }
+        if (type === 'checkbox' || type === 'radio') {
+          state.push(el.name + '=' + (el.checked ? '1' : '0'));
+        } else if (type === 'file') {
+          state.push(el.name + '=' + (el.files ? el.files.length : 0));
+        } else {
+          state.push(el.name + '=' + (el.value || ''));
+        }
+      });
+      return state.join('\n');
+    },
+
+    // The form changed: its controls hold other values than the ones it loaded with.
+    // A form the server sent back with errors counts as changed, so it can be saved again.
+    _isChanged: function () {
+      if (!this.options.requireChange) {
+        return true;
+      }
+      if (this.root.querySelector(ERROR_SELECTOR)) {
+        return true;
+      }
+      return this._formState() !== this._initialState;
     },
 
     // write text only when it changes, so the MutationObserver doesn't loop

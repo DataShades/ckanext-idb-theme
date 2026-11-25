@@ -574,7 +574,6 @@
     grid-template-columns: minmax(0, 1fr);
     gap: 2.5rem;
     align-items: start;
-    margin-bottom: var(--idb-space-lg);
 
     @include media-breakpoint-up(lg) {
         // the Edit page: the overview on the left, the panels on the right
@@ -612,23 +611,29 @@
 // CKAN's slug preview hides the URL field (inline display: none) and shows
 // "URL: /organization/<name> Edit" under the title instead: the empty wrapper,
 // with its divider, goes too
-.organization-form .form-section-field:has(> .form-group[style*="display: none"]) {
-    display: none;
-}
+.organization-form {
+    .form-section-field:has(> .form-group[style*="display: none"]) {
+        display: none;
+    }
 
-// the URL field belongs to the title: no divider between them (edit state of
-// the slug preview)
-.organization-form .form-section-field#form-field-name {
-    padding-top: 0;
-    border-top: 0;
+    // the URL field belongs to the title: no divider between them (edit state of
+    // the slug preview)
+    .form-section-field#form-field-name {
+        padding-top: 0;
+        border-top: 0;
+    }
+
+    .form-text {
+        margin-bottom: var(--idb-space-xs);
+    }
 }
 
 // Members and Datasets cards of the Edit Organizational Unit page
 .organization-panel {
     display: flex;
     flex-direction: column;
-    gap: 1.125rem;
-    padding: 1.25rem 1rem;
+    gap: 1.25rem;
+    padding: 1.5rem 2rem;
     border: 1px solid var(--idb-color-border-n-variant80);
     border-radius: 0.5rem;
     background-color: $white;
@@ -671,6 +676,10 @@
     .tabulator-wrapper .tabulator {
         border: 1px solid var(--idb-color-border-default);
         border-radius: .5rem;
+        // ckanext-tables sets the Tabulator minHeight option to 300px, which
+        // leaves that much empty space under the rows. It is an inline style,
+        // so only !important overrides it: the table fits its content instead
+        min-height: 0 !important;
     }
 
     .tabulator-wrapper .tabulator .tabulator-header {
@@ -696,7 +705,7 @@
     .tabulator-wrapper .tabulator {
         .tabulator-header .tabulator-col:first-child .tabulator-col-content,
         .tabulator-row .tabulator-cell:first-child {
-            padding-left: var(--idb-space-md);
+            padding-left: 2.5rem;
         }
     }
 
@@ -719,6 +728,14 @@
         .tabulator-cell a {
             font-size: var(--idb-font-size-label-large);
             line-height: var(--idb-line-height-label-large);
+        }
+
+        .tabulator-cell[tabulator-field="__table_actions"] {
+            padding-right: 1.5rem                                                                           ;
+
+            > .d-flex {
+                justify-content: flex-end;
+            }
         }
 
         // the member cell: a 32px avatar and the name next to it
@@ -826,8 +843,8 @@
         margin-bottom: var(--idb-space-xs);
         color: var(--idb-color-text-primary, #272626);
         font-family: var(--idb-font-family-inter), sans-serif;
-        font-size: var(--idb-font-size-text);
-        line-height: var(--idb-line-height-text);
+        font-size: var(--idb-font-size-label-large);
+        line-height: var(--idb-line-height-label-large);
         font-weight: $font-weight-semibold;
     }
 
