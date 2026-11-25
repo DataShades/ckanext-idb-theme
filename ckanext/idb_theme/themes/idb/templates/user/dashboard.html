@@ -40,7 +40,8 @@
 {% endblock secondary %}
 
 {% block primary %}
-    <div class="primary dashboard-content col-12 col-md-8 col-lg-9" role="main">
+    {#- the full width when the page has no left menu (see page.html) #}
+    <div class="primary dashboard-content {{ 'col-12' if PAGE_LAYOUT == 'no-sidebar' else 'col-12 col-md-8 col-lg-9' }}" role="main">
         <div class="dashboard-header">
             <div class="dashboard-title">
                 {% block page_heading %}{% endblock %}
