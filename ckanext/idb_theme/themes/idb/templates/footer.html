@@ -44,7 +44,7 @@
                             (_('Data Standards'), '#'),
                             (_('Harmonization Guide'), '#'),
                         ] %}
-                        {% if h.check_access('iadb_iar_glossary_term_list') %}
+                        {% if h.idb_theme_check_access('iadb_iar_glossary_term_list') %}
                             {% do data_producer_links.append((_('Glossary'), '/glossary')) %}
                         {% endif %}
                         {% do data_producer_links.append((_('How-to Guides'), '#')) %}

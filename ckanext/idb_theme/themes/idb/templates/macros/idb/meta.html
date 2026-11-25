@@ -103,7 +103,7 @@
             (_('My Dashboard'), h.url_for('dashboard.datasets'), 'dashboard.datasets'),
             (_('Settings'), h.url_for('user.edit', id=current_user.name), 'user.edit'),
         ] -%}
-        {%- if h.check_access('iadb_iar_glossary_term_create') -%}
+        {%- if h.idb_theme_check_access('iadb_iar_glossary_term_create') -%}
             {%- do items.insert(2, (_('Glossary'), h.url_for('iadb_iar.glossary_admin_list'), 'iadb_iar.glossary_admin_list')) -%}
         {%- endif -%}
 

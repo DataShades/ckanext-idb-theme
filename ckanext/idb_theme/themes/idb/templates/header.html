@@ -32,7 +32,7 @@
                                     {%- endcall %}
                                 {%- endif %}
 
-                                {%- if h.check_access('iadb_iar_glossary_term_create') -%}
+                                {%- if h.idb_theme_check_access('iadb_iar_glossary_term_create') -%}
                                     {%- call ui.util.call(ui.account_nav_item, href=h.url_for('iadb_iar.glossary_admin_list'), aria={"label": _('Glossary')}) -%}
                                         {%- call ui.util.call(ui.tooltip, tooltip=_('Glossary')) -%}
                                             {{ ui.icon("book", aria={"hidden": "true"}) }}

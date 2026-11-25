@@ -1201,6 +1201,19 @@ def _date(value: str | None) -> str:
     return tk.h.localised_nice_date(tk.h.date_str_to_datetime(value), show_date=True, format="d MMM y")
 
 
+def idb_theme_check_access(action: str, data_dict: dict[str, Any] | None = None) -> bool:
+    """Like ``h.check_access``, but unknown auth functions return False.
+
+    ``h.check_access`` only catches ``NotAuthorized``. When the theme is
+    deployed ahead of an extension that registers ``action``, CKAN raises
+    ``ValueError: Authorization function not found`` and the page 500s.
+    """
+    try:
+        return bool(tk.h.check_access(action, data_dict or {}))
+    except ValueError:
+        return False
+
+
 def idb_theme_portal_text(section: str, lang: str | None = None) -> dict[str, Any]:
     """Return generic fallback copy for theme-level text blocks."""
     texts = {
