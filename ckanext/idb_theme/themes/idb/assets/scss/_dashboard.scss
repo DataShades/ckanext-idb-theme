@@ -1197,6 +1197,237 @@
     }
 }
 
+.dashboard-layout .dashboard-data-projects {
+    display: flex;
+    flex-direction: column;
+    gap: var(--idb-space-md);
+
+    .dashboard-data-projects-filters {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        padding: var(--idb-space-sm);
+        border: 1px solid var(--idb-color-border-n-variant80);
+        border-radius: var(--idb-border-radius);
+        background-color: var(--idb-color-on-primary);
+
+        .form-select {
+            --bs-form-select-bg-img: #{escape-svg(url("data:image/svg+xml,#{str-replace(map-get($facet-icons, "chevron"), "<path ", "<path fill='#{$facet-control-color}' ")}"))};
+            width: auto;
+            max-width: 100%;
+            height: 2.5rem;
+            padding: 0 2.5rem 0 0.75rem;
+            field-sizing: content;
+            background-position: right 0.75rem center;
+            background-size: 1.5rem;
+            border: 1px solid var(--idb-color-outline);
+            border-radius: var(--idb-border-radius-sm);
+            color: var(--idb-color-text-default);
+            font-size: var(--idb-font-size-label-large);
+            line-height: var(--idb-line-height-label-large);
+        }
+    }
+
+    .themes-search {
+        flex: 0 1 308px;
+        width: auto;
+        margin-right: auto;
+
+        .themes-search-input {
+            padding: 0 3.5rem 0 var(--idb-space-sm);
+            border-color: var(--idb-color-outline);
+            border-radius: var(--idb-border-radius-lg);
+
+            &::placeholder {
+                color: var(--idb-color-text-placeholder);
+            }
+        }
+
+        .facet-icon {
+            right: var(--idb-space-sm);
+            color: var(--idb-color-on-surface-variant);
+        }
+    }
+
+    .home-data-project-count {
+        display: flex;
+        flex-wrap: wrap;
+        column-gap: 40px;
+    }
+
+    .search-empty {
+        margin-top: var(--idb-space-md);
+    }
+
+    .search-empty-image {
+        margin-bottom: var(--idb-space-sm);
+    }
+
+    .search-empty-title {
+        font-family: var(--idb-font-family-inter), sans-serif;
+    }
+}
+
+.dashboard-layout .dashboard-content:has(.dashboard-data-project) .dashboard-header {
+    margin-bottom: 0;
+}
+
+.dashboard-layout .dashboard-data-project {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+
+    @include media-breakpoint-up(xl) {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 394px;
+    }
+
+    .dashboard-data-project-fields {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        min-width: 0;
+        margin: 0;
+        padding: var(--idb-space-md) 40px;
+        border: 1px solid var(--idb-color-border-n-variant80);
+        border-radius: var(--bs-border-radius-xl);
+        background-color: var(--idb-color-on-primary);
+
+        .dashboard-data-project-back {
+            display: inline-flex;
+            align-self: flex-start;
+            align-items: center;
+            gap: var(--idb-space-xs);
+            min-height: 1.75rem;
+            color: var(--idb-color-link-default);
+            font-family: var(--idb-font-family-inter), sans-serif;
+            font-size: var(--idb-font-size-label-large);
+            line-height: var(--idb-line-height-label-large);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        > .form-group {
+            margin: 0;
+            padding-bottom: 20px;
+            border-bottom: 0.5px dashed var(--idb-color-border-n-variant80);
+
+            .form-label {
+                margin-bottom: 6px;
+                color: var(--idb-color-primary-20);
+                font-family: var(--idb-font-family), sans-serif;
+                font-size: var(--idb-font-size-heading-small);
+                line-height: var(--idb-line-height-heading-small);
+                font-weight: 600;
+            }
+
+            .form-control {
+                height: 2.5rem;
+                padding: 0 0.75rem;
+                border: 1px solid rgba(var(--idb-color-neutral-4-rgb), 0.12);
+                border-radius: var(--idb-border-radius-sm);
+                background-color: rgba(var(--idb-color-neutral-4-rgb), 0.12);
+                color: rgba(var(--idb-color-neutral-4-rgb), 0.55);
+                font-size: var(--idb-font-size-label-large);
+                line-height: var(--idb-line-height-label-large);
+            }
+
+            textarea.form-control {
+                height: 75px;
+                padding: var(--idb-space-xs) 0.75rem;
+                resize: none;
+            }
+        }
+
+        .data-project-extras {
+            padding: 0 0 20px;
+            border-bottom: 0.5px dashed var(--idb-color-border-n-variant80);
+
+            &__title {
+                color: var(--idb-color-text-muted);
+            }
+
+            &__row {
+                .form-label {
+                    margin-bottom: 4px;
+                    color: var(--idb-color-text-disabled);
+                }
+
+                .form-control {
+                    height: 2.5rem;
+                    padding: 0 0.75rem;
+                    border: 1px solid var(--idb-color-border-default);
+                    background-color: var(--idb-color-interaction-disabled);
+                    color: var(--idb-color-text-disabled);
+                    font-size: var(--idb-font-size-label-large);
+                    line-height: var(--idb-line-height-label-large);
+                }
+
+                &:last-child {
+                    padding-bottom: 0;
+                    border-bottom: 0;
+                }
+            }
+        }
+    }
+
+    .dashboard-data-project-members {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        min-width: 0;
+        padding: 20px var(--idb-space-sm);
+        border: 1px solid var(--idb-color-border-n-variant80);
+        border-radius: var(--idb-border-radius);
+
+        @include media-breakpoint-up(xl) {
+            contain: size;
+        }
+
+        &-title {
+            margin: 0;
+            color: var(--idb-color-primary-20);
+            font-size: var(--idb-font-size-text);
+            line-height: var(--idb-line-height-text);
+            font-weight: 600;
+        }
+
+        .idb-members {
+            flex: 1 1 auto;
+            gap: 18px;
+            min-height: 0;
+        }
+
+        .idb-members-list {
+            min-height: 0;
+            margin: 0;
+            overflow-y: auto;
+        }
+
+        .idb-members-user {
+            min-height: 50px;
+            padding: 0 0.75rem;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            border-bottom: 1px solid var(--idb-color-border-subtle);
+            background-color: var(--idb-color-on-primary);
+            color: var(--idb-color-text-primary);
+            font-family: var(--idb-font-family-inter), sans-serif;
+            font-size: var(--idb-font-size-label-large);
+            line-height: var(--idb-line-height-label-large);
+
+            &:nth-child(odd) {
+                background-color: var(--idb-color-row-alternate);
+            }
+        }
+
+        .idb-members-avatar {
+            font-size: var(--idb-font-size-text);
+        }
+    }
+}
+
 // The row actions menu of the dashboard tables, as the dropdown menus of the
 // header (user, language, "More"), see `.dropdown-menu` in _masthead.scss.
 // Tabulator appends it to <body>, outside the table.
