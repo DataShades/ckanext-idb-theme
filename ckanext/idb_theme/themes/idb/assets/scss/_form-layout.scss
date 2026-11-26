@@ -1042,9 +1042,8 @@
     font-size: var(--idb-font-size-label-large);
     line-height: var(--idb-line-height-label-large);
 
-    // design: 4px #A31F37 accent, #FCF0F0 background
     &[data-state="error"] {
-        border-left-color: #A31F37;
+        border-left-color: var(--idb-color-error-status);
         background: #FCF0F0;
         color: var(--idb-color-error-40);
     }
@@ -1118,7 +1117,7 @@
     }
 
     &__status-icon--error {
-        color: #A31F37;
+        color: var(--idb-color-error-status);
     }
 
     &__status-text {
