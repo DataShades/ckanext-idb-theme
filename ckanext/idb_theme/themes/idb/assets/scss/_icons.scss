@@ -55,3 +55,26 @@
     background-size: contain;
     color: var(--idb-color-text-primary);
 }
+
+
+.fa-camera-o {
+    display: inline-block;
+    width: 1.5rem;
+    height: 1.5rem;
+    background-image: $cameraIcon;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    color: var(--idb-color-text-subtle);
+}
+
+.fa-lock-o {
+    display: inline-block;
+    width: 1.5rem;
+    height: 1.5rem;
+    background-image: $lockIcon;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    color: var(--idb-color-on-surface-variant);
+}

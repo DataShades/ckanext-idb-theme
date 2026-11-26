@@ -108,7 +108,8 @@
         {%- endif -%}
 
         {%- if current_user.image_url -%}
-            {%- set avatar = ui.image(h.url_for_static_or_external(current_user.image_url), alt=display_name, height=40, width=40, attrs={"class": "user-image"}) -%}
+            {%- set photo_url = current_user.image_url if current_user.image_url.startswith("http") else h.url_for_static("uploads/user/" ~ current_user.image_url) -%}
+            {%- set avatar = ui.image(photo_url, alt=display_name, height=40, width=40, attrs={"class": "user-image"}) -%}
         {%- else -%}
             {%- set avatar = ui.util.tag(initials, "span", attrs={"class": "header-user-initials", "aria-hidden": "true"}) -%}
         {%- endif -%}
@@ -117,11 +118,18 @@
             {%- call ui.util.call(ui.dropdown, title=avatar, attrs={"class": "dropdown-toggle"}, menu_class="dropdown-menu-end", aria={"label": _('User menu for {name}').format(name=display_name)}) -%}
                 {%- for label, url, endpoint in items -%}
                     {%- set active = request.endpoint == endpoint -%}
-                    {%- set item_attrs = {"class": "dropdown-item d-flex align-items-center justify-content-between" ~ (" active" if active else "")} -%}
-                    {%- if active -%}
-                        {%- do item_attrs.update({"aria-current": "page"}) -%}
-                    {%- endif -%}
-                    {{ ui.dropdown_item(label ~ (ui.icon("check", aria={"hidden": "true"}) if active else ""), href=url, attrs=item_attrs) }}
+                    {%- if endpoint == 'user.read' -%}
+                        {#- the profile is a modal of this page, not the public profile page #}
+                        <li>
+                            {{ ui.button(label, attrs={"class": "dropdown-item"}, data={"bs-toggle": "modal", "bs-target": "#user-profile-modal"}) }}
+                        </li>
+                    {%- else -%}
+                        {%- set item_attrs = {"class": "dropdown-item d-flex align-items-center justify-content-between" ~ (" active" if active else "")} -%}
+                        {%- if active -%}
+                            {%- do item_attrs.update({"aria-current": "page"}) -%}
+                        {%- endif %}
+                        {{ ui.dropdown_item(label ~ (ui.icon("check", aria={"hidden": "true"}) if active else ""), href=url, attrs=item_attrs) }}
+                    {%- endif %}
                 {%- endfor -%}
                 <li>
                     {%- call ui.util.call(ui.form, method="POST", action=h.url_for('user.logout')) -%}
