@@ -97,3 +97,19 @@
     {%- do kwargs -%}
     {%- include "macros/idb/snippets/search_form.html" -%}
 {%- endmacro %}
+
+{%- macro search_empty(title, text, image=none) -%}
+    <div {{ ui.util.attrs(kwargs, {"class": "search-empty"}) }}>
+        {%- if image %}
+            <img class="search-empty-image" src="{{ image }}" alt="">
+        {%- else %}
+            <img class="search-empty-image" src="{{ h.url_for_static('/images/no-results.svg') }}" alt="" width="272" height="278">
+        {%- endif %}
+        {%- if title %}
+            <h3 class="search-empty-title">{{ title }}</h3>
+        {%- endif %}
+        {%- if text %}
+            <p class="search-empty-text">{{ text }}</p>
+        {%- endif %}
+    </div>
+{%- endmacro %}
