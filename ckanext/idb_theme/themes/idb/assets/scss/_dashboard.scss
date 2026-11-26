@@ -506,6 +506,263 @@
                 }
             }
         }
+
+        &-export {
+            .modal-content:has(.dashboard-home-export-card:not([hidden])) {
+                border-color: var(--idb-color-border-n-variant95);
+                box-shadow: var(--idb-shadow-card);
+            }
+
+            .modal-body {
+                padding-bottom: 0;
+                color: var(--idb-color-text-muted);
+                font-family: var(--idb-font-family), sans-serif;
+
+                &:has(> .dashboard-home-export-card:not([hidden])) {
+                    padding: 20px;
+                }
+            }
+
+            .modal-footer {
+                padding: 20px 24px 16px;
+            }
+
+            .form-group {
+                margin-bottom: 20px;
+            }
+
+            .form-text {
+                margin: 0;
+                color: var(--idb-color-text-muted);
+                font-size: var(--idb-font-size-label);
+                line-height: var(--idb-line-height-label);
+            }
+
+            .form-check-label {
+                color: var(--idb-color-text-primary);
+                font-family: var(--idb-font-family-inter), sans-serif;
+                font-weight: var(--idb-font-weight);
+                font-size: var(--idb-font-size-label);
+                line-height: var(--idb-line-height-label);
+            }
+
+            .form-check-input {
+                float: none;
+                margin: 0;
+            }
+
+            &-intro {
+                margin: 0 0 20px;
+            }
+
+            &-period {
+                .controls {
+                    position: relative;
+                    max-width: 306px;
+                    margin-bottom: 6px;
+
+                    &::after {
+                        content: "";
+                        position: absolute;
+                        top: 50%;
+                        inset-inline-end: 14px;
+                        width: 15px;
+                        height: 17px;
+                        background-color: var(--idb-color-text-disabled);
+                        -webkit-mask: var(--idb-field-calendar) center / contain no-repeat;
+                        mask: var(--idb-field-calendar) center / contain no-repeat;
+                        transform: translateY(-50%);
+                        pointer-events: none;
+                    }
+                }
+
+                .form-control:disabled {
+                    padding-block: 10px;
+                    padding-inline: 12px 40px;
+                    border-color: var(--idb-color-border-default);
+                    border-radius: var(--idb-border-radius);
+                    background-color: var(--idb-color-interaction-disabled);
+                    color: var(--idb-color-text-disabled);
+                    font-family: var(--idb-font-family-inter), sans-serif;
+                    font-size: var(--idb-font-size-label-large);
+                    line-height: var(--idb-line-height-label-large);
+                }
+            }
+
+            &-formats {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 12px;
+            }
+
+            &-format {
+                position: relative;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin: 0;
+                padding: 12px 14px;
+                border: 1px solid var(--idb-color-border-n-variant80);
+                border-radius: var(--idb-border-radius-sm);
+                background-color: var(--idb-color-on-primary);
+
+                &:has(:checked) {
+                    border-color: var(--idb-color-button-flat-background);
+                    background-color: var(--idb-color-selected-container);
+                }
+
+                .form-check-input {
+                    width: 20px;
+                    height: 20px;
+                    border-color: var(--idb-color-button-stroke-border);
+
+                    &:checked {
+                        --bs-form-check-bg-image: radial-gradient(circle, var(--idb-color-button-flat-background) 5px, transparent 5px);
+                        border-color: var(--idb-color-radio-checked);
+                        background-color: var(--idb-color-on-primary);
+                    }
+                }
+
+                .form-check-label {
+                    flex: 1;
+
+                    &::after {
+                        content: "";
+                        position: absolute;
+                        inset: 0;
+                    }
+                }
+            }
+
+            &-columns-title {
+                color: $black;
+
+                .form-text {
+                    align-self: flex-start;
+                }
+            }
+
+            &-columns {
+                display: grid;
+                gap: 12px 16px;
+                padding-top: 4px;
+
+                @include media-breakpoint-up(md) {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                }
+
+                > div {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
+                }
+
+                .form-check {
+                    display: flex;
+                    align-items: center;
+                    gap: 2px;
+                    min-height: 20px;
+                    margin: 0;
+                    padding: 0;
+                }
+
+                .form-check-input {
+                    width: 16px;
+                    height: 16px;
+                    margin: 2px;
+                    border-radius: var(--idb-border-radius-sm);
+
+                    &:checked {
+                        --bs-form-check-bg-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%23fff' d='M6.37 12.301L2.27 8.2L3.53 6.939L6.37 9.78L12.47 3.672L13.74 4.933L6.37 12.301Z'/></svg>");
+                        border-color: var(--idb-color-button-flat-background);
+                        background-color: var(--idb-color-button-flat-background);
+                        background-origin: border-box;
+                    }
+                }
+            }
+
+            &-note {
+                padding-top: 20px;
+                border-top: 1px solid var(--idb-color-border-n-variant95);
+            }
+
+            &-card {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                column-gap: 14px;
+
+                > svg {
+                    flex-shrink: 0;
+                    margin-inline-start: 2px;
+                    color: var(--idb-color-success-md);
+                }
+
+                &--error > svg {
+                    color: var(--idb-color-error);
+                }
+
+                &--preparing {
+                    > svg {
+                        margin-inline-start: 0;
+                        color: var(--idb-color-button-flat-background);
+                        animation: 0.75s linear infinite spinner-border;
+                    }
+
+                    .dashboard-home-export-card-title {
+                        color: $black;
+                    }
+                }
+
+                > div {
+                    flex: 1;
+                    min-width: 0;
+                }
+
+                &-title {
+                    margin: 0 0 4px;
+                    color: var(--idb-color-text-default);
+                    font-size: var(--idb-font-size-label-large);
+                    line-height: var(--idb-line-height-label-large);
+                    font-weight: 600;
+                }
+
+                &-subtitle {
+                    margin: 0;
+                    color: var(--idb-color-text-muted);
+                    font-size: var(--idb-font-size-label);
+                    line-height: var(--idb-line-height-label);
+                    overflow-wrap: anywhere;
+                }
+
+                .progress {
+                    --bs-progress-height: 8px;
+                    --bs-progress-bg: var(--idb-color-interaction-disabled);
+                    --bs-progress-border-radius: var(--idb-border-radius-sm);
+                    --bs-progress-bar-bg: var(--idb-color-button-flat-background);
+                    flex-basis: 100%;
+                    margin-top: 12px;
+                }
+
+                .progress-bar {
+                    border-radius: var(--bs-progress-border-radius);
+                }
+
+                .btn {
+                    --bs-btn-padding-y: 8px;
+                    --bs-btn-padding-x: 16px;
+                    --bs-btn-font-size: var(--idb-font-size-label);
+                    --bs-btn-font-weight: 700;
+                    gap: 12px;
+                    height: 32px;
+                    line-height: var(--idb-line-height-label);
+
+                    &:focus:not(:focus-visible) {
+                        outline: 0;
+                    }
+                }
+            }
+        }
     }
 
     // Tables of the dashboard tabs (My Subscriptions, Manage Datasets): ckanext-tables
