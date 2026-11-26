@@ -226,19 +226,204 @@
             flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
-            gap: var(--idb-space-xs);
+            gap: 10px;
             padding-bottom: var(--idb-space-sm);
             border-bottom: 1px solid var(--idb-border-color);
 
+            // Same control chrome as .dashboard-table .table-quick-filters
             &-list {
                 display: flex;
                 flex-wrap: wrap;
-                gap: var(--idb-space-xs);
+                align-items: center;
+                gap: 10px;
                 min-width: 0;
 
                 .form-select {
                     width: auto;
+                    field-sizing: content;
                     max-width: 100%;
+                    padding: 8px 12px;
+                    padding-inline-end: 48px;
+                    background-color: var(--idb-color-on-primary);
+                    background-position: right 18px center;
+                    font-size: 0.75rem;
+                    line-height: 1rem;
+                    font-weight: 400;
+                    color: #272626;
+                    border: 1px solid #AEAEAD;
+                    border-radius: 8px;
+                    --bs-form-select-bg-img: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='none' stroke='%235C5A5A' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/></svg>");
+                }
+
+                .ts-wrapper.form-select {
+                    padding: 0;
+
+                    &.focus {
+                        box-shadow: none;
+                    }
+
+                    .ts-control {
+                        padding: 8px 12px;
+                        --ts-pr-min: 48px;
+                        --ts-pr-caret: 0px;
+                        --ts-pr-clear-button: 0px;
+                        font-size: inherit;
+                        line-height: inherit;
+                        font-weight: inherit;
+                        color: inherit;
+                        background: transparent;
+                        border: 0;
+                        box-shadow: none;
+                        cursor: pointer;
+                    }
+
+                    &.single .ts-control::after {
+                        display: none;
+                    }
+
+                    .ts-dropdown {
+                        min-width: 100%;
+                        width: max-content;
+                        max-width: min(320px, calc(100vw - 2rem));
+                        margin-top: 4px;
+                        font-size: var(--idb-font-size-label-large);
+                        border: 1px solid var(--idb-border-color);
+                        border-radius: var(--idb-border-radius-sm);
+                        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+                        .dropdown-input {
+                            padding: 6px 12px;
+                            font-size: inherit;
+                            border-bottom: 1px solid var(--idb-border-color);
+                        }
+
+                        &.ts-dropdown-end {
+                            left: auto;
+                            right: 0;
+                        }
+
+                        .option {
+                            overflow-wrap: anywhere;
+                        }
+
+                        .option.active {
+                            color: var(--idb-color-text-default);
+                            background-color: var(--idb-color-primary-light);
+                        }
+                    }
+                }
+            }
+
+            > .btn {
+                flex-shrink: 0;
+                white-space: nowrap;
+            }
+        }
+
+        // Custom term modal — DataHub Dashboard Producer View date range picker
+        &-custom-term {
+            display: flex;
+            flex-direction: column;
+            gap: var(--idb-space-sm);
+
+            &-label {
+                margin: 0;
+                font-size: var(--idb-font-size-label-large);
+                line-height: var(--idb-line-height-label-large);
+                font-weight: 600;
+                color: var(--idb-color-text-default);
+            }
+
+            &-field {
+                position: relative;
+
+                .form-control {
+                    padding: 10px 40px 10px 12px;
+                    font-size: 0.875rem;
+                    line-height: 1.25rem;
+                    color: #272626;
+                    background-color: var(--idb-color-on-primary);
+                    border: 1px solid #AEAEAD;
+                    border-radius: 8px;
+
+                    &::placeholder {
+                        color: #929090;
+                    }
+                }
+
+                > i {
+                    position: absolute;
+                    top: 50%;
+                    right: 14px;
+                    color: #535354;
+                    transform: translateY(-50%);
+                    pointer-events: none;
+                }
+            }
+
+            &-calendars {
+                display: flex;
+                flex-wrap: wrap;
+                gap: var(--idb-space-md);
+                justify-content: center;
+            }
+
+            &-calendar {
+                // Inline Datepicker on a div is always visible (no .datepicker-dropdown)
+                .datepicker {
+                    display: block;
+                    width: auto;
+                }
+
+                .datepicker-picker {
+                    border: 0;
+                    box-shadow: none;
+                }
+
+                .datepicker-view {
+                    width: 16.5rem;
+                }
+
+                .datepicker-grid {
+                    width: 100%;
+                }
+
+                .datepicker-cell {
+                    border-radius: 4px;
+                }
+
+                .datepicker-cell.selected,
+                .datepicker-cell.selected:hover,
+                .datepicker-cell.range-start,
+                .datepicker-cell.range-end {
+                    color: #fff;
+                    font-weight: 600;
+                    background-color: var(--idb-color-button-flat-background);
+                }
+
+                .datepicker-cell.range-start:not(.range-end) {
+                    border-radius: 4px 0 0 4px;
+                }
+
+                .datepicker-cell.range-end:not(.range-start) {
+                    border-radius: 0 4px 4px 0;
+                }
+
+                .datepicker-cell.range {
+                    color: var(--idb-color-text-default);
+                    background-color: var(--idb-color-primary-light);
+                    border-radius: 0;
+                }
+
+                .datepicker-controls .btn {
+                    color: var(--idb-color-text-default);
+                    background: transparent;
+                    border: 0;
+
+                    svg {
+                        width: 1rem;
+                        height: 1rem;
+                    }
                 }
             }
         }
@@ -437,73 +622,46 @@
                 margin-bottom: var(--idb-space-sm);
             }
 
-            &-scroll {
-                overflow-x: auto;
-            }
-
-            &-table {
-                width: 100%;
-                margin: 0;
-                border-collapse: collapse;
-                font-size: var(--idb-font-size-label);
-                line-height: var(--idb-line-height-label);
-                color: var(--idb-color-text-default);
-
-                th,
-                td {
-                    padding: 12px 16px;
-                    text-align: start;
-                    vertical-align: middle;
-                    border-bottom: 1px solid var(--idb-border-color);
-                }
-
-                th {
-                    font-weight: 600;
-                    color: var(--idb-color-text-subtle);
-                    background-color: var(--idb-color-neutral-99);
-                    white-space: nowrap;
-                }
-
-                tbody tr:last-child td {
-                    border-bottom: 0;
-                }
-
-                a {
-                    color: var(--idb-color-primary);
-                    text-decoration: none;
-                    font-weight: 600;
-
-                    &:hover {
-                        text-decoration: underline;
-                    }
+            // Home datasets table reuses .dashboard-table (ckanext-tables) chrome
+            .dashboard-home-datasets-table {
+                .tabulator-wrapper .tabulator.tabulator-container {
+                    margin-top: 0;
                 }
             }
+        }
+    }
 
-            &-num {
-                text-align: end;
-                font-variant-numeric: tabular-nums;
-                white-space: nowrap;
-            }
+    // Custom term modal chrome (Producer View date range picker)
+    #dashboard-home-custom-range-modal {
+        .modal-content {
+            border: 0;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(16, 15, 15, 0.16);
+        }
 
-            &-status {
-                display: inline-flex;
-                align-items: center;
-                padding: 2px 8px;
-                border-radius: 999px;
-                font-size: 0.75rem;
-                line-height: 1rem;
+        .modal-header {
+            padding: 20px 24px 8px;
+            border-bottom: 0;
+
+            .modal-title {
+                font-size: 1.125rem;
+                line-height: 1.5rem;
                 font-weight: 600;
-                white-space: nowrap;
+                color: var(--idb-color-primary);
+            }
+        }
 
-                &--active {
-                    color: var(--idb-color-success, #3a833a);
-                    background-color: rgba(58, 131, 58, 0.12);
-                }
+        .modal-body {
+            padding: 8px 24px 16px;
+        }
 
-                &--draft {
-                    color: var(--idb-color-text-subtle);
-                    background-color: var(--idb-color-neutral-99);
-                }
+        .modal-footer {
+            padding: 8px 24px 20px;
+            border-top: 0;
+
+            .btn-primary {
+                min-width: 96px;
+                border-radius: 999px;
             }
         }
     }
