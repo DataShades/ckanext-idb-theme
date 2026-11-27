@@ -62,9 +62,23 @@
     list-style: none;
 }
 
-// the sub-units of a unit are indented, as in the design
+// the sub-units of a unit are indented
 .organization-tree-children {
-    padding-inline-start: 48px;
+    .organization-row-chevron {
+        display: none;
+    }
+
+    $tree-indent: 3rem;
+    $tree-selector: '&';
+
+    // one rule per level of nesting: the deeper the level, the wider the indent
+    @for $level from 1 through 8 {
+        #{$tree-selector} > .organization-tree-item > .organization-row {
+            padding-inline-start: $tree-indent * $level;
+        }
+
+        $tree-selector: '#{$tree-selector} .organization-tree-children';
+    }
 }
 
 .organization-tree-item {
@@ -191,13 +205,9 @@
         width: 100%;
         flex: none;
     }
-
-    .organization-tree-children {
-        padding-inline-start: var(--idb-space-md);
-    }
 }
 
-// unit (organization) read page //////////////////////////////////////////////
+// unit (organization) read page
 
 // banner of the unit: image, name, description and actions; the layout itself
 // comes from Bootstrap utilities
