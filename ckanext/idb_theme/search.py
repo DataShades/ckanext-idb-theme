@@ -21,9 +21,9 @@ def datasets_page_search_params(search_params: dict[str, Any]) -> dict[str, Any]
     if not has_request_context():
         return search_params
 
-    is_datasets_page = tk.request.endpoint == f"{tk.h.default_package_type()}.search"
+    datasets_page = is_datasets_page()
 
-    if not is_datasets_page and not _is_group_read():
+    if not datasets_page and not _is_group_read():
         return search_params
 
     if search_params.get("rows") != tk.config.get("ckan.datasets_per_page"):
@@ -33,10 +33,15 @@ def datasets_page_search_params(search_params: dict[str, Any]) -> dict[str, Any]
     search_params["rows"] = per_page
     search_params["start"] = (tk.h.get_page_number(tk.request.args) - 1) * per_page
 
-    if is_datasets_page and not tk.request.args.get("sort"):
+    if datasets_page and not tk.request.args.get("sort"):
         search_params["sort"] = DATASETS_PAGE_SORT
 
     return search_params
+
+
+def is_datasets_page() -> bool:
+    """Return whether the current request is the Datasets page (htmx requests included)."""
+    return has_request_context() and tk.request.endpoint == f"{tk.h.default_package_type()}.search"
 
 
 def _is_group_read() -> bool:

@@ -21,7 +21,7 @@ Example:
     {%- endif %}
     {% if page.item_count %}
         {% block package_search_results_list %}
-            {% snippet 'snippets/package_list.html', packages=page.items %}
+            {% snippet 'snippets/package_list.html', packages=page.items, variant="search" %}
         {% endblock %}
 
         {% block page_pagination %}

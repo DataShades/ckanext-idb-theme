@@ -21,7 +21,9 @@
                         {{ self.breadcrumb() }}
                     </div>
 
-                    <h1 class="home-hero-title">{{ h.humanize_entity_type('dataset', dataset_type, 'page title') or _('Datasets') }}</h1>
+                    {% block search_hero_title %}
+                        <h1 class="home-hero-title">{{ h.humanize_entity_type('dataset', dataset_type, 'page title') or _('Datasets') }}</h1>
+                    {% endblock %}
 
                     {% snippet "package/snippets/search_hero_form.html",
                         dataset_type=dataset_type,
@@ -39,7 +41,13 @@
 {% endblock %}
 
 {% block pre_primary %}
-    {{ super() }}
+    {#- the buttons wrap on narrow screens; the results header below has its own top spacing -#}
+    {%- call ui.util.call(ui.content_action_wrapper, attrs={"class": "content_action flex-wrap gap-3"}) -%}
+        {% block content_action -%}
+            {% snippet "package/snippets/search_type_links.html", dataset_type=dataset_type, page=page, search_facets=search_facets %}
+            {{ ui.content_action(h.humanize_entity_type('package', dataset_type, 'add link') or _("Add Dataset"), href=h.url_for(dataset_type ~ '.new'), svg="add-dataset") if h.check_access('package_create') }}
+        {%- endblock %}
+    {%- endcall %}
 
     {% snippet "package/snippets/search_results_header.html",
         dataset_type=dataset_type,
@@ -47,13 +55,10 @@
         sort_by_selected=sort_by_selected,
         page=page,
         query_error=query_error,
-        fields=fields
+        fields=fields,
+        search_facets=search_facets
     %}
 {% endblock %}
-
-{% block content_action -%}
-    {{ ui.content_action(h.humanize_entity_type('package', dataset_type, 'add link') or _("Add Dataset"), href=h.url_for(dataset_type ~ '.new'), svg="add-dataset") if h.check_access('package_create') }}
-{%- endblock %}
 
 {% block primary_content %}
     {% snippet "package/snippets/dataset_search_results.html",

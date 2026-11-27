@@ -47,7 +47,13 @@
       sort_by_selected=sort_by_selected,
       page=page,
       query_error=query_error,
-      fields=fields
+      fields=fields,
+      search_facets=search_facets
+    %}
+    {% snippet "package/snippets/search_type_links.html",
+      dataset_type=dataset_type,
+      page=page,
+      search_facets=search_facets
     %}
     {% snippet "package/snippets/dataset_search_results.html",
       dataset_type=dataset_type,

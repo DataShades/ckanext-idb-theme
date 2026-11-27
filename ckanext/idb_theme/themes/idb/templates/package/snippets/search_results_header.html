@@ -1,7 +1,9 @@
 {#
-Results header of the Datasets page: the number of results, the "Filters"
-button that opens the filters panel on mobile and the "Order by" dropdown. The other search parameters are kept as hidden fields. The header is
-swapped out of band on htmx requests.
+Results header of the Datasets page, in two columns lined up with the filters
+and the results: the number of results on the left; the "Filters" button that
+opens the filters panel on mobile and the "Order by" dropdown on the right. The
+other search parameters are kept as hidden fields. The header is swapped out of
+band on htmx requests.
 
 dataset_type     - The dataset type.
 q                - The search query.
@@ -9,34 +11,45 @@ sort_by_selected - The sort expression of the search.
 page             - The page of the search results.
 query_error      - Whether the search failed.
 fields           - The list of active facet filters, (name, value) pairs.
+search_facets    - The facet results of the search.
 
 Example:
 
-{% snippet "package/snippets/search_results_header.html", dataset_type=dataset_type, q=q, sort_by_selected=sort_by_selected, page=page, query_error=query_error, fields=fields %}
+{% snippet "package/snippets/search_results_header.html", dataset_type=dataset_type, q=q, sort_by_selected=sort_by_selected, page=page, query_error=query_error, fields=fields, search_facets=search_facets %}
 
 #}
 {%- set count = page.item_count or 0 -%}
 
 <div id="dataset-search-results-header" class="search-results-header col-12" hx-swap-oob="true" hx-swap="none">
-    {{ ui.search_results_text(count=count, error=_('There was an error while searching. Please try again.') if query_error, type='dataset', query=q, attrs={"class": "search-results-count"}) }}
+    <div class="row align-items-center gy-3">
+        <div class="col-md-4 col-lg-3">
+            {% block search_results_text %}
+                {{ ui.search_results_text(count=count, error=_('There was an error while searching. Please try again.') if query_error, type='dataset', query=q, attrs={"class": "search-results-count"}) }}
+            {% endblock %}
+        </div>
 
-    {%- set temporal = request.args.get('ext_temporal_start') or request.args.get('ext_temporal_end') -%}
-    {%- set filter_count = (fields or []) | length + (1 if temporal else 0) -%}
-    {% snippet "snippets/search_filters_button.html", count=filter_count %}
+        <div class="col-md-8 col-lg-9 d-flex flex-wrap align-items-center gap-3">
+            {% block search_types_current %}{% endblock %}
 
-    {%- call ui.util.call(ui.form, action=h.url_for(dataset_type ~ '.search'), attrs={"class": "search-results-sort"}, hx={"boost": "true", "trigger": "change, submit"}) -%}
-        {%- for name, value in request.args.items(multi=True) -%}
-            {%- if name not in ['sort', 'page'] -%}
-                <input type="hidden" name="{{ name }}" value="{{ value }}">
-            {%- endif -%}
-        {%- endfor -%}
+            {%- set temporal = request.args.get('ext_temporal_start') or request.args.get('ext_temporal_end') -%}
+            {%- set filter_count = (fields or []) | length + (1 if temporal else 0) -%}
+            {% snippet "snippets/search_filters_button.html", count=filter_count %}
 
-        <label for="field-order-by">{{ _('Order by') }}</label>
-        <select id="field-order-by" name="sort" class="form-select" data-module="idb-select"{% if not count %} disabled{% endif %}>
-            {% for option in h.idb_theme_dataset_sort_options() %}
-                <option value="{{ option.value }}"{% if option.value == sort_by_selected %} selected{% endif %}>{{ option.label }}</option>
-            {% endfor %}
-        </select>
-        <button class="btn btn-secondary js-hide" type="submit">{{ _('Go') }}</button>
-    {%- endcall %}
+            {%- call ui.util.call(ui.form, action=h.url_for(dataset_type ~ '.search'), attrs={"class": "search-results-sort ms-auto"}, hx={"boost": "true", "trigger": "change, submit"}) -%}
+                {%- for name, value in request.args.items(multi=True) -%}
+                    {%- if name not in ['sort', 'page'] -%}
+                        <input type="hidden" name="{{ name }}" value="{{ value }}">
+                    {%- endif -%}
+                {%- endfor -%}
+
+                <label for="field-order-by">{{ _('Order by') }}</label>
+                <select id="field-order-by" name="sort" class="form-select" data-module="idb-select"{% if not count %} disabled{% endif %}>
+                    {% for option in h.idb_theme_dataset_sort_options() %}
+                        <option value="{{ option.value }}"{% if option.value == sort_by_selected %} selected{% endif %}>{{ option.label }}</option>
+                    {% endfor %}
+                </select>
+                <button class="btn btn-secondary js-hide" type="submit">{{ _('Go') }}</button>
+            {%- endcall %}
+        </div>
+    </div>
 </div>

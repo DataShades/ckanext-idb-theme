@@ -1,0 +1,14 @@
+{#
+Links from the Datasets page to other result types, shown before the
+"Add Dataset" button and refreshed on htmx requests. Empty by default:
+portal extensions override this snippet.
+
+dataset_type  - The dataset type.
+page          - The page of the search results.
+search_facets - The facet results of the search.
+
+Example:
+
+{% snippet "package/snippets/search_type_links.html", dataset_type=dataset_type, page=page, search_facets=search_facets %}
+
+#}

@@ -135,11 +135,6 @@
 }
 
 .search-results-header {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--idb-space-sm);
     margin: 20px 0;
 
     .search-results-count {
@@ -148,6 +143,20 @@
         font-size: var(--idb-font-size-subtitle);
         line-height: var(--idb-line-height-subtitle);
         font-weight: 700;
+    }
+}
+
+.search-types {
+    &-current {
+        color: var(--idb-color-text-subtle);
+        font-family: var(--idb-font-family-inter);
+    }
+
+    .btn-outline-primary {
+        --bs-btn-disabled-color: var(--idb-color-text-disabled);
+        --bs-btn-disabled-bg: #{$white};
+        --bs-btn-disabled-border-color: var(--idb-color-border-default);
+        --bs-btn-disabled-opacity: 1;
     }
 }
 
@@ -354,9 +363,4 @@
     .dataset-pagination {
         gap: var(--idb-space-sm);
     }
-}
-
-// the results header below the "Add Dataset" button has its own top spacing
-.page-dataset-search .content_action {
-    margin-bottom: 0 !important;
 }
