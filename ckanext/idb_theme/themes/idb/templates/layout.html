@@ -15,6 +15,14 @@
         {% include "header.html" %}
     {% endblock -%}
 
+    {#- the user profile modal of the avatar menu comes with ckanext-iadb-iar:
+        its layout is user/profile_base.html, the sections are user/snippets
+        (the Profile one is included by default). Without the extension the
+        include is skipped. #}
+    {%- block user_profile_modal %}
+        {% include "user/snippets/profile.html" ignore missing %}
+    {% endblock -%}
+
     {# The content block allows you to replace the content of the page if needed #}
     {%- block content %}
         {% block maintag %}<div class="main">{% endblock %}

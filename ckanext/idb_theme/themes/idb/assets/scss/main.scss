@@ -30,6 +30,7 @@
     --idb-color-on-success-container: #14361C;
     --idb-color-error: #C62828;
     --idb-color-error-40: #A60001;
+    --idb-color-error-status: #A31F37;
     --idb-color-warning: #8A6D00;
     --idb-color-warning-container: #FEF2E1;
     --idb-color-on-warning-container: #4C2E02;
@@ -40,6 +41,8 @@
     --idb-color-interaction-selected: #EDF5FA;
     --idb-color-interaction-hover-strong: #DFE7EB;
     --idb-color-interaction-disabled: #E5E4E4;
+    --idb-color-selected-container: #EAF9FF;
+    --idb-color-radio-checked: #00629D;
     --idb-color-surface-muted: #F1F5F9;
     --idb-color-surface-muted-border: #BDEAFF;
     --idb-color-text-disabled: #AFADAD;
@@ -67,6 +70,8 @@
     --idb-color-main-grey-background: #F9F9FA
     ;
     --idb-color-button-stroke-text-rgb: 0, 126, 182;
+    --idb-color-row-alternate: #FCFCFC;
+    --idb-color-neutral-4-rgb: 10, 10, 10;
 
     // font ///////////////////////////////////////////////////////////////////
     --idb-font-family: "Open Sans";
@@ -86,6 +91,8 @@
     --idb-line-height-display-small: 2.75rem;
     --idb-font-size-label-large: 0.875rem; // Label Large
     --idb-line-height-label-large: 1.25rem;
+    --idb-font-size-heading-small: 1.125rem;
+    --idb-line-height-heading-small: 1.5rem;
 
 
     // space //////////////////////////////////////////////////////////////////
@@ -101,6 +108,7 @@
     --idb-border-radius: 8px;
     --idb-border-radius-sm: 4px;
     --idb-border-radius-lg: 80px;
+    --idb-shadow-card: 0 0 10px 0 #0000000D;
 
     // accordion //////////////////////////////////////////////////////////////
     --idb-accordion-button-color: var(--idb-color-primary-dark);

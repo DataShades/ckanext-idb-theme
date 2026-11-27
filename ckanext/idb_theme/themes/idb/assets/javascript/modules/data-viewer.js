@@ -54,7 +54,7 @@ this.ckan.module('data-viewer', function (jQuery) {
         var frameDocument = this.el.contents()[0];
         var wrapper = frameDocument && frameDocument.getElementById('resize_wrapper');
         if (wrapper) {
-          var explorerHeight = Math.ceil(wrapper.getBoundingClientRect().height + 4);
+          var explorerHeight = Math.ceil(wrapper.getBoundingClientRect().height);
           if (explorerHeight > 0) {
             this.el.css('height', explorerHeight + 'px');
           }

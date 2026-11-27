@@ -35,11 +35,11 @@ an offcanvas detail panel (Category + Definition), like change history.
             %}
         {% endif %}
 
-        {% if view == 'all' %}
+        {% if view == 'all' and listing.results %}
             {% snippet "glossary/snippets/az.html", letter=letter, q=q, sort=sort %}
         {% endif %}
 
-        {% if view != 'favorites' or listing.results %}
+        {% if view != 'favorites' and listing.results %}
             <p class="glossary-count fs-22 fw-semibold">
                 {{ ungettext('{number} term', '{number} terms', listing.count).format(number=listing.count) }}
             </p>
@@ -67,8 +67,22 @@ an offcanvas detail panel (Category + Definition), like change history.
         {% else %}
             <div class="search-empty glossary-empty">
                 <img class="search-empty-image" src="{{ h.url_for_static('/images/no-results.svg') }}" alt="" width="272" height="278">
-                <h2 class="search-empty-title">{{ _('No terms found') }}</h2>
-                <p class="search-empty-text">{{ _('Try a different search or clear the filters to see more terms.') }}</p>
+                <h2 class="search-empty-title">{{ _('No terms match your search') }}</h2>
+                <p class="search-empty-text">{{ _('No terms match your current search. Try different word to find what you’re looking for.') }}</p>
+                {% set clear_endpoint = {
+                    'all': 'iadb_iar.glossary',
+                    'category': 'iadb_iar.glossary_category',
+                    'recent': 'iadb_iar.glossary_recent',
+                    'favorites': 'iadb_iar.glossary_favorites',
+                }.get(view, 'iadb_iar.glossary') %}
+                <a class="btn btn-outline-primary" href="{{ h.url_for(
+                    clear_endpoint,
+                    sort=sort,
+                    letter=letter if view == 'all' else none,
+                    category=selected_categories | join(',') if view == 'category' and selected_categories else none
+                ) }}">
+                    {{ _('Clear search') }}
+                </a>
             </div>
         {% endif %}
     </div>

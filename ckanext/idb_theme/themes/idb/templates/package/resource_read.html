@@ -31,7 +31,7 @@
     {{- ui.breadcrumb(h.resource_display_name(res)|truncate(30), href="", active=true, aria={"current": "page", "label": _('Current resource: {name}').format(name=h.resource_display_name(res))}) }}
 {%- endblock %}
 
-{% block maintag %}<div class="main resource-read bg-main-grey">{% endblock %}
+{% block maintag %}<div class="main resource-read bg-main-grey{% if current_resource_view and current_resource_view.view_type in ['datatables_view', 'charts_builder_view'] and resource_views %} has-data-explorer{% endif %}">{% endblock %}
 
 {% block pre_primary %}{% endblock %}
 
@@ -47,11 +47,11 @@
 
                 {% block resource_description %}
                     {% if card.description %}
-                        <div class="notes embedded-content text-iadb-netural-black mb-20">
+                        <div class="notes embedded-content text-idb-default mb-20">
                             {{ h.render_markdown(card.description) }}
                         </div>
                     {% elif package.notes %}
-                        <div class="notes embedded-content text-iadb-default mb-20">
+                        <div class="notes embedded-content text-idb-default mb-20">
                             {{ h.markdown_extract(h.get_translated(package, 'notes')) }}
                         </div>
                     {% endif %}

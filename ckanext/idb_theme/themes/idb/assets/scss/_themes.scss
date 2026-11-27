@@ -72,7 +72,10 @@
     .filters-panel {
         margin-bottom: 28px;
     }
+}
 
+.data-projects-page,
+.dashboard-layout .dashboard-data-projects {
     // the project cards reuse `.home-data-project-card` of the homepage
     .data-projects-grid {
         display: grid;

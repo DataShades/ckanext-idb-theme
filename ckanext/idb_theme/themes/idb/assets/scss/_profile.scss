@@ -1,6 +1,596 @@
+// User profile
+//
+// The user profile modal, opened from the avatar menu ("My Profile"). Its
+// markup and its photo upload live in ckanext-iadb-iar (templates/user/
+// profile_base.html, user/snippets/profile.html and
+// assets/scripts/iadb-iar-user-profile-modal.js), only the styles are here.
+
 .profile {
     .empty,
     .dataset-list {
-        margin-bottom: 20px;
+        margin-bottom: 1.25rem;
+    }
+}
+
+.modal.user-profile-modal {
+    --bs-modal-width: min(61.25rem, calc(100vw - 2rem));
+    --bs-modal-border-width: 0;
+    --bs-modal-border-radius: 1rem;
+    --bs-modal-padding: 1.25rem;
+
+    .modal-content {
+        max-height: calc(100vh - 2rem);
+        background-color: var(--idb-color-main-grey-background);
+        box-shadow: 0 .5rem .75rem .375rem rgba(0, 0, 0, .15), 0 .25rem .25rem rgba(0, 0, 0, .3);
+    }
+
+    // Esc and a click outside close the modal on every screen; the close
+    // button is only shown on mobile, where the dialog fills the screen
+    .modal-header {
+        display: none;
+    }
+
+    .modal-body {
+        display: flex;
+        padding: 1.25rem;
+        overflow-y: auto;
+        font-family: var(--idb-font-family);
+        font-size: .875rem;
+        line-height: 1.25rem;
+        color: var(--idb-color-text-default);
+    }
+}
+
+.user-profile {
+    display: flex;
+    flex: 1 1 auto;
+    align-items: flex-start;
+    gap: 1.25rem;
+    min-width: 0;
+}
+
+// Left menu //
+
+.user-profile__nav {
+    position: sticky;
+    top: 0;
+    flex: 0 0 20rem; // 320px
+    padding: 1rem .5rem;
+    background-color: var(--idb-color-on-primary);
+    border: .0625rem solid var(--idb-color-border-n-variant80);
+    border-radius: .5rem;
+}
+
+.user-profile__nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.user-profile__nav-link {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    width: 100%;
+    min-height: 2.75rem;
+    padding: .5rem .5rem .5rem 1rem;
+    border: 0;
+    border-radius: .5rem;
+    background-color: transparent;
+    font-family: var(--idb-font-family-inter);
+    font-size: .875rem;
+    font-weight: 400;
+    line-height: 1.25rem;
+    color: var(--idb-color-text-primary);
+    text-align: start;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--idb-color-interaction-selected);
+        color: var(--idb-color-link-default);
+
+        .user-profile__nav-icon {
+            color: inherit;
+        }
+    }
+
+    &:focus-visible {
+        outline: .125rem solid var(--idb-color-button-flat-background);
+        outline-offset: -.125rem;
+    }
+}
+
+.user-profile__nav-item.active .user-profile__nav-link {
+    background-color: var(--idb-color-interaction-selected);
+    color: var(--idb-color-link-default);
+    font-weight: 600;
+
+    .user-profile__nav-icon {
+        color: inherit;
+    }
+}
+
+.user-profile__nav-icon {
+    display: inline-flex;
+    flex: 0 0 1.5rem;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: var(--idb-color-on-surface-variant);
+}
+
+.user-profile__nav-text {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+// Section panel //
+
+.user-profile__content {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 1.25rem;
+    min-width: 0;
+    padding: 1rem 1.5rem 2rem;
+    background-color: var(--idb-color-on-primary);
+    border: .0625rem solid var(--idb-color-border-n-variant80);
+    border-radius: 1rem;
+}
+
+.user-profile__header {
+    display: flex;
+    flex-direction: column;
+    gap: .25rem;
+}
+
+.user-profile__title {
+    margin: 0;
+    font-family: var(--idb-font-family);
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.5rem;
+    color: var(--idb-color-primary-20);
+}
+
+.user-profile__subtitle {
+    margin: 0;
+    font-size: .875rem;
+    line-height: 1.25rem;
+    color: var(--idb-color-text-default);
+}
+
+// Profile photo //
+
+.user-profile__photo-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.25rem;
+}
+
+.user-profile__photo {
+    display: flex;
+    flex: 0 0 8.75rem; // 140px
+    flex-direction: column;
+    align-items: center;
+    gap: .625rem;
+    padding: .5rem .5rem 0;
+}
+
+.user-profile__avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 7.75rem; // 124px
+    height: 7.75rem;
+    overflow: hidden;
+    border-radius: 50%;
+    background-color: var(--idb-color-surface-variant);
+}
+
+.user-profile__avatar-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.user-profile__photo-label {
+    font-size: .75rem;
+    font-weight: 600;
+    line-height: 1rem;
+    color: var(--idb-color-text-default);
+    text-align: center;
+}
+
+.user-profile__remove {
+    padding: 0;
+    border: 0;
+    background: none;
+    font-size: .75rem;
+    font-weight: 600;
+    line-height: 1rem;
+    color: #790722;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+        color: #790722;
+        text-decoration: underline;
+    }
+
+    &[hidden] {
+        display: none;
+    }
+}
+
+.user-profile__uploader {
+    display: flex;
+    flex: 0 1 24.5rem; // 392px
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1rem;
+    min-width: 0;
+}
+
+.user-profile__dropzone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    margin: 0;
+    padding: 1.5rem 1rem;
+    background-color: var(--idb-color-on-primary);
+    border: .0625rem dashed var(--idb-color-button-stroke-border);
+    border-radius: .5rem;
+    cursor: pointer;
+
+    // the theme adds ":" to every label, this one is an area, not a field
+    &::after {
+        content: none;
+    }
+
+    &:hover,
+    &.is-dragover {
+        border-color: var(--idb-color-link-default);
+    }
+
+    &.is-dragover {
+        background-color: var(--idb-color-interaction-selected);
+    }
+
+    &:focus-within {
+        outline: .125rem solid var(--idb-color-button-flat-background);
+        outline-offset: .125rem;
+    }
+}
+
+.user-profile__dropzone-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: .0625rem solid var(--idb-color-button-stroke-border);
+    border-radius: 50%;
+    font-size: 1rem;
+    color: var(--idb-color-text-subtle);
+}
+
+.user-profile__dropzone-text {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: .5rem;
+    font-family: var(--idb-font-family);
+    font-size: 1rem;
+    font-weight: 600;
+    line-height: 1.5rem;
+    color: var(--idb-color-text-primary);
+    text-align: center;
+}
+
+.user-profile__dropzone-link {
+    color: var(--idb-color-link-default);
+}
+
+.user-profile__dropzone-hint {
+    font-family: var(--idb-font-family-inter);
+    font-size: .75rem;
+    font-weight: 600;
+    line-height: 1rem;
+    color: var(--idb-color-text-subtle);
+    text-align: center;
+}
+
+.user-profile__upload {
+    --bs-btn-padding-x: 1rem;
+    --bs-btn-padding-y: .5rem;
+    --bs-btn-font-size: .75rem;
+    --bs-btn-border-radius: 5rem;
+    min-width: 4.625rem; // 74px
+    font-family: var(--idb-font-family-inter);
+    font-weight: 600;
+
+    &:disabled {
+        background-color: var(--idb-color-interaction-disabled);
+        border-color: var(--idb-color-interaction-disabled);
+        color: var(--idb-color-text-disabled);
+        opacity: 1;
+    }
+}
+
+.user-profile__status {
+    align-self: stretch;
+    width: 100%;
+    padding: .375rem 1rem;
+
+    &[hidden] {
+        display: none;
+    }
+}
+
+.user-profile__status-icon {
+    display: inline-flex;
+    flex: 0 0 1.25rem;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.25rem;
+    font-size: 1.25rem;
+
+    svg {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+
+    &--file {
+        color: var(--idb-color-primary);
+    }
+
+    &--error {
+        color: var(--idb-color-error-status);
+    }
+}
+
+.user-profile__status-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    color: var(--idb-color-text-primary);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+// an error message wraps instead of being cut
+.user-profile__status[data-state="error"] .user-profile__status-text {
+    color: var(--idb-color-error-40);
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.user-profile__status-spinner {
+    flex: 0 0 auto;
+    width: 1.125rem;
+    height: 1.125rem;
+    margin: 0 .5rem;
+    border-width: .125rem;
+    border-right-color: transparent;
+    color: var(--idb-color-button-flat-background);
+}
+
+.user-profile__status-action {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    font-size: 1.125rem;
+    color: var(--idb-color-primary-dark);
+
+    &:hover,
+    &:focus-visible {
+        background: rgba(0, 0, 0, .06);
+    }
+
+    &:focus-visible {
+        outline: .125rem solid var(--idb-color-button-flat-background);
+        outline-offset: -.125rem;
+    }
+
+    svg {
+        width: .875rem;
+        height: 1.125rem;
+    }
+}
+
+.user-profile__status[data-state="error"] .user-profile__status-action {
+    color: var(--idb-color-error-40);
+}
+
+// one icon and one control per state
+.user-profile__status:not([data-state="error"]) .user-profile__status-icon--error,
+.user-profile__status[data-state="error"] .user-profile__status-icon--file,
+.user-profile__status:not([data-state="uploading"]) .user-profile__status-spinner,
+.user-profile__status:not([data-state="success"]) .user-profile__status-action--remove,
+.user-profile__status:not([data-state="error"]) .user-profile__status-action--dismiss {
+    display: none;
+}
+
+// Read only SSO fields //
+
+.user-profile__fields {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+}
+
+.user-profile__field {
+    display: flex;
+    flex-direction: column;
+    gap: .1875rem;
+}
+
+.user-profile__label {
+    margin: 0;
+    font-family: var(--idb-font-family);
+    font-size: .875rem;
+    font-weight: 600;
+    line-height: 1.25rem;
+    color: rgba(10, 10, 10, .38);
+    cursor: default;
+
+    // the theme adds ":" to every label, the design has none
+    &::after {
+        content: none;
+    }
+}
+
+.user-profile__input {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    min-height: 2.5rem;
+    padding: .5rem .75rem;
+    background-color: rgba(10, 10, 10, .12);
+    border: .0625rem solid rgba(10, 10, 10, .12);
+    border-radius: .25rem;
+}
+
+.user-profile__value {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    background: none;
+    font-family: var(--idb-font-family);
+    font-size: .875rem;
+    font-weight: 400;
+    line-height: 1.25rem;
+    color: rgba(10, 10, 10, .55);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: default;
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.user-profile__lock {
+    display: inline-flex;
+    flex: 0 0 1.5rem;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    color: var(--idb-color-on-surface-variant);
+}
+
+.user-profile__help {
+    padding: 0 .875rem;
+    font-family: var(--idb-font-family);
+    font-size: .75rem;
+    font-weight: 400;
+    line-height: 1rem;
+    color: var(--idb-color-on-surface-variant);
+}
+
+// Responsive //
+
+// the menu goes above the section as a horizontal list, the panels stack
+@include media-breakpoint-down(lg) {
+    .user-profile {
+        flex-direction: column;
+    }
+
+    .user-profile__nav {
+        position: static;
+        flex: 1 1 auto;
+        width: 100%;
+        padding: .5rem;
+    }
+
+    .user-profile__nav-list {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .user-profile__nav-link {
+        padding-inline-start: .5rem;
+        white-space: normal;
+    }
+
+    .user-profile__nav-icon {
+        flex: 0 0 auto;
+    }
+
+    .user-profile__content {
+        width: 100%;
+    }
+
+    .user-profile__photo-row {
+        flex-wrap: wrap;
+    }
+}
+
+// the modal fills the screen of a phone, where the design shows a close button
+@include media-breakpoint-down(md) {
+    .modal.user-profile-modal {
+        .modal-dialog:not(.modal-fullscreen) {
+            display: block;
+            min-height: 100%;
+            margin: 0;
+        }
+
+        .modal-content {
+            min-height: 100%;
+            max-height: none;
+            border-radius: 0;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: flex-end;
+            padding: .75rem .75rem 0;
+        }
+
+        .modal-body {
+            padding: .75rem;
+        }
+    }
+
+    .user-profile__content {
+        padding: 1rem;
+    }
+
+    .user-profile__photo-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .user-profile__photo {
+        flex: 1 1 auto;
+        width: 100%;
+    }
+
+    .user-profile__uploader {
+        flex: 1 1 auto;
+        max-width: none;
+    }
+
+    .user-profile__dropzone {
+        padding: 1.25rem .75rem;
     }
 }
