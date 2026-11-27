@@ -6,8 +6,8 @@
     --bs-card-cap-padding-y: .875rem;
     --bs-card-cap-padding-x: var(--bs-card-spacer-x);
     --bs-card-cap-bg: var(--idb-color-surface-variant);
-    --bs-card-border-radius: var(--bs-border-radius-lg);
-    --bs-card-inner-border-radius: calc(var(--bs-border-radius-lg) - var(--bs-card-border-width));
+    --bs-card-border-radius: var(--idb-border-radius);
+    --bs-card-inner-border-radius: calc(var(--idb-border-radius) - var(--bs-card-border-width));
     width: 100%;
     overflow-wrap: anywhere;
 
